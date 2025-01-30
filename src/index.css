@@ -1,0 +1,48 @@
+html{
+  background: black;
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: Roboto !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.noPadding {
+  padding: 0 !important;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.MuiFormControlLabel-label.Mui-disabled{
+  color: white !important;
+}
+
+.Mui-disabled{
+  -webkit-text-fill-color: white !important;
+}
+ 
+.MuiInputLabel-shrink {
+  left: -23px !important;
+}
+
+.inputed.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-outlined{
+  color: white;
+  margin-left: 30px;
+}
+/* 
+MuiFormLabel-root MuiInputLabel-root 
+MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium 
+MuiInputLabel-outlined MuiFormLabel-colorWhite MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-outlined css-1xoouti-MuiFormLabel-root-MuiInputLabel-root */
