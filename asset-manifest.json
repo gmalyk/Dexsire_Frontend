@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Dexsire_Frontend/static/css/main.7503c2b6.css",
+    "main.js": "/Dexsire_Frontend/static/js/main.d6493bf3.js",
+    "static/js/453.311d1bb7.chunk.js": "/Dexsire_Frontend/static/js/453.311d1bb7.chunk.js",
+    "index.html": "/Dexsire_Frontend/index.html",
+    "main.7503c2b6.css.map": "/Dexsire_Frontend/static/css/main.7503c2b6.css.map",
+    "main.d6493bf3.js.map": "/Dexsire_Frontend/static/js/main.d6493bf3.js.map",
+    "453.311d1bb7.chunk.js.map": "/Dexsire_Frontend/static/js/453.311d1bb7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7503c2b6.css",
+    "static/js/main.d6493bf3.js"
+  ]
+}
