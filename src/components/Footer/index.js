@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { FooterButtonContainer, FooterContainer, FooterContent, FooterEnd, FooterEndContainer, FooterInfo, FooterInfoText, FooterLogo, FooterOptionsContent, FooterSection, FooterSectionOptions, FooterSocial, FooterSocialIconContainer, FooterText } from './styled'
 import { Icon } from 'ui/styled'
 import Button from 'components/Form/Button'
@@ -11,15 +11,72 @@ import useI18n from 'hooks/useI18n'
 import { optionsLanguage } from 'utils/options'
 import LangSelector from 'components/LangSelector'
 import PaymentMethods from './means_of_payment.png'
+import styled from 'styled-components'
+
+const AddressSection = styled.div`
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    width: 100%;
+    padding-left: 16px;
+`;
+
+const AddressText = styled.span`
+    display: block;
+    text-align: left;
+`;
+
+// Add local data for regions and cities
+const LOCAL_OPTIONS = {
+    regions: [
+        { id: 1, title: 'Zürich', highlight: true },
+        { id: 2, title: 'Bern', highlight: true },
+        { id: 3, title: 'Luzern', highlight: true },
+        { id: 4, title: 'Uri', highlight: false },
+        { id: 5, title: 'Schwyz', highlight: true },
+        { id: 6, title: 'Geneva', highlight: true },
+        { id: 7, title: 'Lausanne', highlight: true },
+        { id: 8, title: 'Basel', highlight: true }
+    ],
+    cities: [
+        { id: 1, title: 'Zürich City', region: 1 },
+        { id: 2, title: 'Winterthur', region: 1 },
+        { id: 3, title: 'Uster', region: 1 },
+        { id: 4, title: 'Bern City', region: 2 },
+        { id: 5, title: 'Thun', region: 2 },
+        { id: 6, title: 'Biel', region: 2 },
+        { id: 7, title: 'Luzern City', region: 3 },
+        { id: 8, title: 'Emmen', region: 3 },
+        { id: 9, title: 'Geneva City', region: 6 },
+        { id: 10, title: 'Lausanne City', region: 7 },
+        { id: 11, title: 'Basel City', region: 8 }
+    ],
+    contact: {
+        email: 'contact@dexsire.com',
+        phone: '+41 21 376 34 52',
+        instagram: 'https://instagram.com/dexsire',
+        youtube: 'https://youtube.com/dexsire',
+        linkedin: 'https://linkedin.com/company/dexsire'
+    }
+};
 
 export default function Footer() {
 
   const history = useHistory();
   const navigate = to => history.push(`/${to}`);
 
-  const { setModal,setTracker, user, setUser, setServices, setRegions, setCities, setContactUs, regions, contactUs, setFilter } = useContext(CoreContext)
+  const { setModal,setTracker, user, setUser, setServices, setRegions, setCities, setContactUs, setFilter } = useContext(CoreContext)
 
   const { t, setLanguage, language } = useI18n()
+
+  // Use local data instead of context/API data
+  const [regions] = useState(LOCAL_OPTIONS.regions);
+  const [cities] = useState(LOCAL_OPTIONS.cities);
+  const [contactInfo] = useState(LOCAL_OPTIONS.contact);
 
   const exit = async () => {  
 		await DoLogout() 
@@ -29,19 +86,19 @@ export default function Footer() {
 	}  
 
   const socials = useMemo(() => [
-    !contactUs?.instagram ? null : {
+    !contactInfo?.instagram ? null : {
       icon: 'insta',
-      link: contactUs?.instagram
+      link: contactInfo?.instagram
     },
-    !contactUs?.youtube ? null : {
+    !contactInfo?.youtube ? null : {
       icon: 'youtube',
-      link:  contactUs?.youtube
+      link:  contactInfo?.youtube
     },
-    !contactUs?.linkedin ? null : {
+    !contactInfo?.linkedin ? null : {
       icon: 'linkedin',
-      link:  contactUs?.linkedin
+      link:  contactInfo?.linkedin
     }
-  ].filter(f => f), [contactUs])
+  ].filter(f => f), [contactInfo])
 
   const footerOptions = [
     // { title: 'Customer plans', },
@@ -55,9 +112,9 @@ export default function Footer() {
   }, [regions])
 
   const footerContact = useMemo(() => [
-    {title: contactUs?.email, icon: 'email' },
-    { title: contactUs?.phone, icon: 'phone-orange' },
-  ].filter(f => f), [contactUs])
+    {title: contactInfo?.email, icon: 'email' },
+    { title: contactInfo?.phone, icon: 'phone-orange' },
+  ].filter(f => f), [contactInfo])
  
   // const buttons = []
   const buttons = useMemo(() => [
@@ -161,6 +218,14 @@ export default function Footer() {
                   ))
                 }
               </FooterSectionOptions>
+              <FooterSection>
+                <AddressSection>
+                  <AddressText>Dexsire</AddressText>
+                  <AddressText>Route de Denges 37</AddressText>
+                  <AddressText>1027 Lonay</AddressText>
+                  <AddressText>021 376 34 52</AddressText>
+                </AddressSection>
+              </FooterSection>
             </FooterSection>
 
           </FooterOptionsContent>

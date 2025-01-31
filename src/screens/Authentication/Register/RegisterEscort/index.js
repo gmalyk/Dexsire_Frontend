@@ -133,6 +133,184 @@ const DEFAULT_OPTIONS = {
     }))
 }
 
+// Composant d'upload simplifié
+const SimpleUpload = ({ onChange, accept, children }) => {
+    const handleChange = (event) => {
+        const files = event.target.files;
+        if (files?.length) {
+            onChange(accept === "video/*" ? files[0] : files);
+        }
+    };
+
+    return (
+        <div style={{ cursor: 'pointer' }}>
+            <input
+                type="file"
+                onChange={handleChange}
+                accept={accept}
+                multiple={accept === "image/*"}
+                style={{ display: 'none' }}
+            />
+            {children}
+        </div>
+    );
+};
+
+// Remplacer l'ancien useFileUpload par cette version optimisée
+const useFileUpload = () => {
+    const [files, setFiles] = useState([]);
+    const [error, setError] = useState(null);
+
+    const uploadSingleFile = async (file) => {
+        if (!file) return null;
+        try {
+            const localUrl = URL.createObjectURL(file);
+            
+            const localFile = {
+                id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                url: localUrl,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                originalFile: file,
+                localFile: true
+            };
+            
+            setFiles([localFile]);
+            setError(null);
+            
+            return localFile;
+        } catch (error) {
+            console.error('File upload error:', error);
+            setError('Failed to upload file');
+            return null;
+        }
+    };
+
+    const uploadMultipleFiles = async (fileList) => {
+        if (!fileList?.length) return [];
+        try {
+            const localFiles = Array.from(fileList).map(file => {
+                const localUrl = URL.createObjectURL(file);
+                return {
+                    id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    url: localUrl,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    originalFile: file,
+                    localFile: true
+                };
+            });
+            
+            setFiles(prev => [...prev, ...localFiles]);
+            setError(null);
+            
+            return localFiles;
+        } catch (error) {
+            console.error('Multiple file upload error:', error);
+            setError('Failed to upload files');
+            return [];
+        }
+    };
+
+    const removeFile = (fileId) => {
+        setFiles(prev => {
+            const updatedFiles = prev.filter(file => file.id !== fileId);
+            prev.forEach(file => {
+                if (file.id === fileId && file.url.startsWith('blob:')) {
+                    URL.revokeObjectURL(file.url);
+                }
+            });
+            return updatedFiles;
+        });
+    };
+
+    const clearFiles = () => {
+        files.forEach(file => {
+            if (file.url.startsWith('blob:')) {
+                URL.revokeObjectURL(file.url);
+            }
+        });
+        setFiles([]);
+        setError(null);
+    };
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            files.forEach(file => {
+                if (file.url.startsWith('blob:')) {
+                    URL.revokeObjectURL(file.url);
+                }
+            });
+        };
+    }, [files]);
+
+    return {
+        files,
+        error,
+        uploadSingleFile,
+        uploadMultipleFiles,
+        removeFile,
+        clearFiles
+    };
+};
+
+// Add this wrapper component at the top of the file
+const LocalUploadWrapper = ({ children, onChange, skipApiCall }) => {
+    const handleUpload = async (files) => {
+        if (!files) return;
+        
+        // If it's a single file
+        if (!Array.isArray(files)) {
+            const file = files;
+            const localUrl = URL.createObjectURL(file);
+            const localFile = {
+                id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                url: localUrl,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                localFile: true
+            };
+            onChange(localFile);
+            return;
+        }
+
+        // If it's multiple files
+        const localFiles = Array.from(files).map(file => {
+            const localUrl = URL.createObjectURL(file);
+            return {
+                id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                url: localUrl,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                localFile: true
+            };
+        });
+        onChange(localFiles);
+    };
+
+    // Clone the child component with modified props
+    const modifiedChildren = React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+            return React.cloneElement(child, {
+                onChange: handleUpload,
+                skipApiCall: true,
+                // Override any API-related props to prevent API calls
+                uploadUrl: null,
+                postImage: handleUpload,
+                postVideo: handleUpload
+            });
+        }
+        return child;
+    });
+
+    return <>{modifiedChildren}</>;
+};
+
 export default function RegisterEscort() {
     const history = useHistory();
     const navigate = to => history.push(`/${to}`);
@@ -361,6 +539,36 @@ export default function RegisterEscort() {
         setPayments(value)
     }
 
+    // Gestionnaires d'upload modifiés
+    const video360Upload = useFileUpload();
+    const imagesUpload = useFileUpload();
+    const verificationPhotoUpload = useFileUpload();
+
+    // Gestionnaires d'upload modifiés
+    const handleVideo360Upload = async (file) => {
+        // Créer un fichier local avec une URL blob
+        const localFile = await video360Upload.uploadSingleFile(file);
+        if (localFile) {
+            setVideo360(localFile);
+        }
+    };
+
+    const handleImagesUpload = async (files) => {
+        // Gérer plusieurs fichiers localement
+        const localFiles = await imagesUpload.uploadMultipleFiles(files);
+        if (localFiles?.length) {
+            setImagesReview(prev => [...prev, ...localFiles]);
+        }
+    };
+
+    const handleVerificationPhotoUpload = async (file) => {
+        // Gérer un seul fichier localement
+        const localFile = await verificationPhotoUpload.uploadSingleFile(file);
+        if (localFile) {
+            setVerificationPhoto(localFile);
+        }
+    };
+
     return (
         <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
             {success ? <Success {...success} /> : (
@@ -422,43 +630,67 @@ export default function RegisterEscort() {
                         {infoOption === 'Appearance' && (
                             <>
                                 <Content>
-                                    <Title small maxwidth={289}>{ t("now_its_time_to_report_your_appearance") }</Title>
-                                    <Appearance uploadedFile={video360} setUploadedFile={setVideo360} />
-                                    <UploadAndPreview setUploadedFile={setImagesReview} />
-                                    <UploadID setUploadedFile={setImagesReview} />
+                                    <Title small maxwidth={289}>{t("now_its_time_to_report_your_appearance")}</Title>
+                                    <LocalUploadWrapper onChange={handleVideo360Upload}>
+                                        <Appearance 
+                                            uploadedFile={video360} 
+                                            setUploadedFile={handleVideo360Upload}
+                                        />
+                                    </LocalUploadWrapper>
+                                    <LocalUploadWrapper onChange={handleImagesUpload}>
+                                        <UploadAndPreview 
+                                            setUploadedFile={handleImagesUpload}
+                                            preview={imagesReview}
+                                        />
+                                    </LocalUploadWrapper>
+                                    <LocalUploadWrapper onChange={handleImagesUpload}>
+                                        <UploadID 
+                                            setUploadedFile={handleImagesUpload}
+                                            preview={imagesReview}
+                                        />
+                                    </LocalUploadWrapper>
 
                                     <VerificationUploadContainer>
-                                        <AppearanceTitle>{ t("verification_photo") }</AppearanceTitle>
-                                        <AppearanceText full>{ t("send_a_photo_holding") }</AppearanceText>
+                                        <AppearanceTitle>{t("verification_photo")}</AppearanceTitle>
+                                        <AppearanceText full>{t("send_a_photo_holding")}</AppearanceText>
                                         <VerificationUpload>
                                             <SampleContent>
-                                                <SampleTitle>{ t("exemple") }</SampleTitle>
+                                                <SampleTitle>{t("exemple")}</SampleTitle>
                                                 <SampleImage url={'/images/verification2.jpg'} />
-                                                <SampleTitle>{ t("exemple") }</SampleTitle>
+                                                <SampleTitle>{t("exemple")}</SampleTitle>
                                             </SampleContent>
 
-
-                                            <UploadFile
-                                                onChange={setVerificationPhoto} 
-                                                accept="image/*" 
-                                            >
-                                                <UploadFileContainer>
-                                                    {
-                                                        verificationPhoto ? 
-                                                            <SampleImage url={parseStrapiImage(verificationPhoto?.url)} /> : <>
+                                            <LocalUploadWrapper onChange={handleVerificationPhotoUpload}>
+                                                <UploadFile
+                                                    accept="image/*"
+                                                >
+                                                    <UploadFileContainer>
+                                                        {verificationPhoto ? (
+                                                            <SampleImage url={verificationPhoto.url} />
+                                                        ) : (
+                                                            <>
                                                                 <Container />
                                                                 <Icon icon="double-page" />
-                                                                <AppearanceText>{ t('drag_the_image_here_or_click_here') }</AppearanceText>
+                                                                <AppearanceText>
+                                                                    {t('drag_the_image_here_or_click_here')}
+                                                                </AppearanceText>
                                                             </>
-                                                    }
-                                                </UploadFileContainer>
-
-                                            </UploadFile>
+                                                        )}
+                                                    </UploadFileContainer>
+                                                </UploadFile>
+                                            </LocalUploadWrapper>
                                         </VerificationUpload>
                                     </VerificationUploadContainer>
                                     
                                     <ButtonContent width='531px'>
-                                        <Button outlineGradient rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Services offered')} between >{ t("advance") }</Button>
+                                        <Button 
+                                            outlineGradient 
+                                            rightIcon={'chevron-right'} 
+                                            onClick={() => handleHeaderInfo('Services offered')} 
+                                            between
+                                        >
+                                            {t("advance")}
+                                        </Button>
                                     </ButtonContent>
                                 </Content>
                             </>
