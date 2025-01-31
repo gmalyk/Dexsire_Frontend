@@ -27,7 +27,7 @@ export const static_translation = {
     "my_profile": "My profile",    
     "exit": "Exit",    
     "home": "Home",    
-    "advanced_search": "advanced search",    
+    "advanced_search": "Advanced Search",    
     "advertise_here": "Advertise here",    
     "contact": "Contact",    
     "im_a_escorts": "I'm a escorts",
