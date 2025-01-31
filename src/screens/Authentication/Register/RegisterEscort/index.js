@@ -47,215 +47,123 @@ import UploadFile from "components/Form/UploadFile";
 import useI18n from "hooks/useI18n";
 import PrivacyAndTerms from "components/PrivacyAndTerms";
 
-export default function RegisterEscort() {
+const DEFAULT_OPTIONS = {
+    services: [
+        { id: 1, title: 'Massage' },
+        { id: 2, title: 'Escort' },
+        { id: 3, title: 'Companionship' }
+    ],
+    regions: [
+        { id: 1, title: 'Zürich' },
+        { id: 2, title: 'Bern' },
+        { id: 3, title: 'Luzern' },
+        { id: 4, title: 'Uri' },
+        { id: 5, title: 'Schwyz' },
+        { id: 6, title: 'Geneva' }
+    ],
+    cities: [
+        { id: 1, title: 'Zürich City', region: { data: { id: 1 } } },
+        { id: 2, title: 'Winterthur', region: { data: { id: 1 } } },
+        { id: 3, title: 'Uster', region: { data: { id: 1 } } },
+        { id: 4, title: 'Bern City', region: { data: { id: 2 } } },
+        { id: 5, title: 'Thun', region: { data: { id: 2 } } },
+        { id: 6, title: 'Biel', region: { data: { id: 2 } } },
+        { id: 7, title: 'Luzern City', region: { data: { id: 3 } } },
+        { id: 8, title: 'Emmen', region: { data: { id: 3 } } },
+        { id: 9, title: 'Uri City', region: { data: { id: 4 } } },
+        { id: 10, title: 'Schwyz City', region: { data: { id: 5 } } },
+        { id: 11, title: 'Geneva City', region: { data: { id: 6 } } }
+    ],
+    categories: [
+        { id: 1, title: 'Independent' },
+        { id: 2, title: 'Agency' },
+        { id: 3, title: 'Massage Salon' }
+    ],
+    nationalities: [
+        { id: 1, title: 'Swiss' },
+        { id: 2, title: 'French' },
+        { id: 3, title: 'German' },
+        { id: 4, title: 'Italian' },
+        { id: 5, title: 'Spanish' }
+    ],
+    languages: [
+        { id: 1, title: 'English' },
+        { id: 2, title: 'French' },
+        { id: 3, title: 'German' },
+        { id: 4, title: 'Italian' },
+        { id: 5, title: 'Spanish' }
+    ],
+    mobility_options: [
+        { id: 1, title: 'Incall' },
+        { id: 2, title: 'Outcall' },
+        { id: 3, title: 'Both' }
+    ],
+    payment_methods: [
+        { id: 1, title: 'Cash' },
+        { id: 2, title: 'Card' },
+        { id: 3, title: 'Bank Transfer' }
+    ],
+    hair_colors: [
+        { id: 1, title: 'Blonde' },
+        { id: 2, title: 'Brown' },
+        { id: 3, title: 'Black' },
+        { id: 4, title: 'Red' }
+    ],
+    eye_colors: [
+        { id: 1, title: 'Blue' },
+        { id: 2, title: 'Green' },
+        { id: 3, title: 'Brown' },
+        { id: 4, title: 'Hazel' },
+        { id: 5, title: 'Gray' }
+    ],
+    breast_sizes: [
+        { id: 1, title: 'A' },
+        { id: 2, title: 'B' },
+        { id: 3, title: 'C' },
+        { id: 4, title: 'D' },
+        { id: 5, title: 'DD+' }
+    ],
+    sizes: Array.from({length: 40}, (_, i) => ({ 
+        id: i + 150, 
+        title: `${(150 + i)/100}m` 
+    })),
+    weights: Array.from({length: 60}, (_, i) => ({ 
+        id: i + 40, 
+        title: `${40 + i} Kg` 
+    }))
+}
 
+export default function RegisterEscort() {
     const history = useHistory();
     const navigate = to => history.push(`/${to}`);
+    const { t } = useI18n()
 
     const { setUser } = useContext(CoreContext)
 
-    const { t } = useI18n()
-
     const [loading, setLoading] = useState(false)
-    //const [infoOption, setInfoOption] = useState( 'Personal data' )
+    const [infoOption, setInfoOption] = useState('Personal data')
+    const [formProfile, setFormProfile] = useState({})
+    const [mobility, setMobility] = useState([])
+    const [payments, setPayments] = useState([])
+    const [languages, setLanguages] = useState({})
+    const [ethnicity, setEthnicity] = useState(null)
+    const [description, setDescription] = useState("")
     const [success, setSuccess] = useState(null)
-    
+
     const [preuser, setPreuser] = useState(null)
     const [video360, setVideo360] = useState(null); 
     const [verificationPhoto, setVerificationPhoto] = useState(null); 
     const [imagesReview, setImagesReview] = useState([]); 
     
-    const [mobility, setMobility] = useState([]); 
-    const [payments, setPayments] = useState([]); 
-    const [languages, setLanguages] = useState([]); 
-    const [description, setDescription] = useState(""); 
-
     const [services, setServices] = useState([]); 
-    const [ethnicity, setEthnicity] = useState([]); 
     const [aboutme, setAboutme] = useState(""); 
     
-    const [options, setOptions] = useState(null); 
+    const [options, setOptions] = useState(DEFAULT_OPTIONS)
 
     const contentRef = useRef(null);
 
     const [form, setForm] = useState({}) 
-    const [formProfile, setFormProfile] = useState({}) 
 
-    const [infoOption, setInfoOption] = useState('Personal data')
-
-    const valid = (payload) => {
-
-        if(!payload?.name){
-            toast.error( t("fill_name_field") )
-            return false;
-        }
-
-        if(!isEmail(payload?.email)){
-            toast.error( t("invalid_email") )
-            return false;
-        }
-
-        if(payload?.password !== payload?.password){
-            toast.error( t("password_and_confirmation_not_match") )
-            return false;
-        }
-
-        return true
-    }
-
-    const action = async (payload) => {
-        if (!valid(payload)) { return; }
-        
-        // For now, just navigate to the next page
-        handleHeaderInfo('Privacy and Terms')
-    }
-
-    const nextToService = async () => {
-        
-        if(!video360){
-            toast.error( t("fill_360_video") )
-            return;
-        }
-        
-        if( imagesReview?.length < 4 ){
-            toast.error( t("minimum_4_photos") )
-            return;
-        }
-        
-        handleHeaderInfo('Services offered')
-    }
-
-    const validStep1 = () => {
-
-        if( !formProfile?.pseudo ){ 
-            toast.error(t("fill_pseudo_field"))
-            return false; 
-        }
-        if( !formProfile?.category ){ 
-            toast.error(t("fill_category_field"))
-            return false; 
-        }
-        if( !formProfile?.about_me ){ 
-            toast.error(t("fill_bio_field"))
-            return false; 
-        }
-        if( !formProfile?.age ){ 
-            toast.error(t("fill_age_field"))
-            return false; 
-        }
-        if( ! (parseInt(formProfile?.age) >=18) ){ 
-            toast.error(t("your_age_must_be_over_18"))
-            return false; 
-        }
-        if( !formProfile?.phone ){ 
-            toast.error(t("fill_phone_field"))
-            return false; 
-        }
-
-        if( !ethnicity ){ 
-            toast.error(t("fill_canton_field"))
-            return false; 
-        }
-        if( !formProfile?.city ){ 
-            toast.error(t("fill_ville_field"))
-            return false; 
-        }
-
-        if( !formProfile?.nationality ){ 
-            toast.error(t("fill_nationality_field"))
-            return false; 
-        }
-        if( !formProfile?.height ){ 
-            toast.error(t("fill_size_field"))
-            return false; 
-        }
-        if( !formProfile?.weight ){ 
-            toast.error(t("fill_weight_field"))
-            return false; 
-        }
-        if( !formProfile?.hair ){ 
-            toast.error(t("fill_hair_color_field"))
-            return false; 
-        }
-        if( !formProfile?.breasts ){ 
-            toast.error(t("fill_breasts_field"))
-            return false; 
-        }
-        if( !formProfile?.eyes ){ 
-            toast.error(t("fill_eyes_color_field"))
-            return false; 
-        }  
-
-        if( !mobility?.length ){ 
-            toast.error(t("select_at_least_one_mobility_option"))
-            return false; 
-        }  
-        if( !payments?.length ){ 
-            toast.error(t("select_at_least_one_payment_option"))
-            return false; 
-        }  
-
-        if( !Object.keys(languages)?.length ){ 
-            toast.error(t("select_at_least_one_language_option"))
-            return false; 
-        }  
-
-        return true
-    }
-
-    const saveStep1 = () => {
-        if(!validStep1()){ return ;}
-        handleHeaderInfo('Appearance')
-    }
-
-    const saveProfile = async () => {
-
-        const payload = {
-            services: services?.map(m => m?.id),
-            region: ethnicity,
-            video360: video360?.id,
-            verification_image: verificationPhoto?.id,
-            videos: [video360?.id],
-            photos: imagesReview?.map(m => m?.id),
-            user: preuser?.user?.id,
-            about_me: formProfile?.about_me,
-            description: formProfile?.about_me,
-            service_observations: aboutme,
-
-            birthdate: getBirthdate(formProfile?.age),
-
-            telegram: formProfile?.phone,
-            whatsapp: formProfile?.phone,
-
-            ...form,
-            ...formProfile,
-
-            weight: parseInt(formProfile?.weight?.replace(' Kg', '')),
-            height: parseFloat(formProfile?.height?.replace('m', '.')),
-            
-            languages: Object.keys(languages).map(m => ({ language: m, level: languages?.[m] })),
-            payments: payments?.map(m => ({ title: m?.title })) ,
-            service_modes: mobility?.map(m => ({ title: m?.title })) 
-        }
-
-        // console.log('save payload', payload )
-
-        // return;
-        
-        setLoading(true)
-        const result = await Create("models", { data:payload })
-        setLoading(false)
-        if (result && !exposeStrapiError(result)) {
-            await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id })
-            await Create("welcome", { name:preuser?.user?.name, email:preuser?.user?.email })
-            handleSuccess()
-        }
-    }
-
-    const handleHeaderInfo = (info) => {
-        setInfoOption(info)
-    }
-    
     const data = [
         { title: t('Personal data') },
         { title: t('Privacy and Terms') },
@@ -328,10 +236,29 @@ export default function RegisterEscort() {
         }
     }, [])
 
+    const handleFormChange = (field, value) => {
+        setFormProfile(prev => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
+    const handleRegionChange = (value) => {
+        setFormProfile(prev => ({
+            ...prev,
+            region: value,
+            city: ''
+        }))
+        setEthnicity(value)
+    }
+
+    const handleHeaderInfo = (info) => setInfoOption(info)
+
+    const action = () => handleHeaderInfo('Privacy and Terms')
+
+    const saveStep1 = () => handleHeaderInfo('Appearance')
+
     const handleSuccess = () => {
-
-        if (preuser?.user) { setUser(preuser.user) }
-
         setSuccess({
             title: t("registration_completed_successfully"),
             text: t("take_the_opportunity"),
@@ -340,7 +267,6 @@ export default function RegisterEscort() {
                 {
                     text: t("want_to_buy_later"),
                     action: () => navigate('admin/escort'),
-                    // action: () => setSuccess(false),
                     rightIcon: 'chevron-white',
                     color: 'borderBackground',
                     between: true
@@ -348,139 +274,211 @@ export default function RegisterEscort() {
                 {
                     text: t("i_want_to_buy_credits_now"),
                     action: () => navigate('purchase-of-credits'),
-                    // action: () => setSuccess(false),
                     outlineGradient: true,
                     rightIcon: 'chevron-right',
                     between: true,
-                },
+                }
             ]
         })
     }
 
-    const init = async () => {
-        const rs = await Read("services")
-        const rr = await Read("regions")
-        const rc = await Read("cities")
-        
-        const nrs = normalizeStrapiList(rs)
-        const nrr = normalizeStrapiList(rr)
-        const nrc = normalizeStrapiList(rc)
-        const nop = { services: nrs, regions: nrr, cities:nrc }
-
-        // console.log("setOptionX", nop)
-        setOptions(nop)
+    const init = () => {
+        setOptions(DEFAULT_OPTIONS)
     }
 
-    useEffect(() => { init() ;}, [])
+    useEffect(() => { 
+        init()
+    }, [])
+
+    const closeDropdowns = () => {
+        const dropdowns = document.querySelectorAll('.select-dropdown, .select__menu')
+        dropdowns.forEach(dropdown => {
+            if (dropdown.parentElement) {
+                dropdown.parentElement.style.pointerEvents = 'none'
+                setTimeout(() => {
+                    dropdown.parentElement.style.pointerEvents = 'auto'
+                }, 100)
+            }
+            dropdown.remove()
+        })
+    }
+
+    const handleCityChange = (value) => {
+        closeDropdowns()
+        handleFormChange('city', value)
+    }
+
+    const handleNationalityChange = (value) => {
+        closeDropdowns()
+        handleFormChange('nationality', value)
+    }
+
+    const handleCategoryChange = (value) => {
+        closeDropdowns()
+        handleFormChange('category', value)
+    }
+
+    const handleSizeChange = (value) => {
+        closeDropdowns()
+        handleFormChange('height', value)
+    }
+
+    const handleWeightChange = (value) => {
+        closeDropdowns()
+        handleFormChange('weight', value)
+    }
+
+    const handleHairColorChange = (value) => {
+        closeDropdowns()
+        handleFormChange('hair', value)
+    }
+
+    const handleEyeColorChange = (value) => {
+        closeDropdowns()
+        handleFormChange('eyes', value)
+    }
+
+    const handleBreastSizeChange = (value) => {
+        closeDropdowns()
+        handleFormChange('breasts', value)
+    }
+
+    const handleLanguageChange = (value) => {
+        closeDropdowns()
+        setLanguages(prev => ({
+            ...prev,
+            ...value
+        }))
+    }
+
+    const handleMobilityChange = (value) => {
+        closeDropdowns()
+        setMobility(value)
+    }
+
+    const handlePaymentChange = (value) => {
+        closeDropdowns()
+        setPayments(value)
+    }
 
     return (
-        <>
-            <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
-                {!success ? null : <Success {...success} />}
-                {
-                    success ? null : <>
-                        <BodyContainer >
-                            <Background />
-                            <BodyContent>
-                                <Container>
-                                    <FormTitle>{registerTitles?.[infoOption]?.title}</FormTitle>
-                                    <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
-                                    <FormSpacer small />
-                                </Container>
-                                <InfoData data={data} active={infoOption} />
-                                {
-                                    infoOption !== 'Personal data' ? null :
-                                        <>
-                                            <RegisterForm loading={loading} items={registerFormItems} action={action} />
-                                        </>
-                                }
-                                {
-                                    infoOption !== 'Privacy and Terms' ? null :
-                                        <PrivacyAndTerms 
-                                            loading={loading}
-                                            t={t}
-                                            onAccept={() => handleHeaderInfo('Profile')}
-                                        />
-                                }
-                                {
-                                    infoOption !== 'Profile' ? null :
-                                        <>
-                                            <ServicesOffered profile options={options} 
-                                                active={mobility} setActive={setMobility} 
-                                                subActive={payments} setSubActive={setPayments} 
-                                                ethnicity={ethnicity} setEthnicity={setEthnicity} 
-                                                aboutme={description} setAboutme={setDescription} 
-                                                superForm={setFormProfile} superLang={setLanguages} registering />
-                                            <ButtonContent width='631px'>
-                                                <Button outlineGradient nospace rightIcon={'chevron-right'} onClick={saveStep1} between >{ t("advance") }</Button>
-                                            </ButtonContent>
-                                        </>
-                                }
-                                {
-                                    infoOption !== 'Appearance' ? null : 
-                                        <>
-                                            <Content>
-                                                <Title small maxwidth={289}>{ t("now_its_time_to_report_your_appearance") }</Title>
-                                                <Appearance uploadedFile={video360} setUploadedFile={setVideo360} />
-                                                <UploadAndPreview setUploadedFile={setImagesReview} />                                                <UploadID setUploadedFile={setImagesReview} />
+        <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
+            {success ? <Success {...success} /> : (
+                <BodyContainer>
+                    <Background />
+                    <BodyContent>
+                        <Container>
+                            <FormTitle>{registerTitles?.[infoOption]?.title}</FormTitle>
+                            <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
+                            <FormSpacer small />
+                        </Container>
+                        <InfoData data={data} active={infoOption} />
+                        
+                        {infoOption === 'Personal data' && (
+                            <RegisterForm items={registerFormItems} action={action} />
+                        )}
 
-                                                <VerificationUploadContainer>
-                                                        <AppearanceTitle>{ t("verification_photo") }</AppearanceTitle>
-                                                        <AppearanceText full>{ t("send_a_photo_holding") }</AppearanceText>
-                                                        <VerificationUpload>
-                                                            <SampleContent>
-                                                                <SampleTitle>{ t("exemple") }</SampleTitle>
-                                                                <SampleImage url={'/images/verification2.jpg'} />
-                                                                <SampleTitle>{ t("exemple") }</SampleTitle>
-                                                            </SampleContent>
+                        {infoOption === 'Privacy and Terms' && (
+                            <PrivacyAndTerms 
+                                t={t}
+                                onAccept={() => handleHeaderInfo('Profile')}
+                            />
+                        )}
+
+                        {infoOption === 'Profile' && (
+                            <>
+                                <ServicesOffered 
+                                    profile 
+                                    options={DEFAULT_OPTIONS}
+                                    active={mobility} 
+                                    setActive={setMobility}
+                                    subActive={payments} 
+                                    setSubActive={setPayments}
+                                    ethnicity={ethnicity} 
+                                    setEthnicity={handleRegionChange}
+                                    aboutme={description} 
+                                    setAboutme={setDescription} 
+                                    superForm={handleFormChange}
+                                    superLang={handleLanguageChange}
+                                    registering 
+                                    selectedRegion={formProfile?.region}
+                                    selectedCity={formProfile?.city}
+                                    {...formProfile}
+                                />
+                                <ButtonContent width='631px'>
+                                    <Button 
+                                        outlineGradient 
+                                        nospace 
+                                        rightIcon={'chevron-right'} 
+                                        onClick={saveStep1}
+                                        between
+                                    >
+                                        {t("advance")}
+                                    </Button>
+                                </ButtonContent>
+                            </>
+                        )}
+
+                        {infoOption === 'Appearance' && (
+                            <>
+                                <Content>
+                                    <Title small maxwidth={289}>{ t("now_its_time_to_report_your_appearance") }</Title>
+                                    <Appearance uploadedFile={video360} setUploadedFile={setVideo360} />
+                                    <UploadAndPreview setUploadedFile={setImagesReview} />
+                                    <UploadID setUploadedFile={setImagesReview} />
+
+                                    <VerificationUploadContainer>
+                                        <AppearanceTitle>{ t("verification_photo") }</AppearanceTitle>
+                                        <AppearanceText full>{ t("send_a_photo_holding") }</AppearanceText>
+                                        <VerificationUpload>
+                                            <SampleContent>
+                                                <SampleTitle>{ t("exemple") }</SampleTitle>
+                                                <SampleImage url={'/images/verification2.jpg'} />
+                                                <SampleTitle>{ t("exemple") }</SampleTitle>
+                                            </SampleContent>
 
 
-                                                            <UploadFile
-                                                                onChange={setVerificationPhoto} 
-                                                                accept="image/*" 
-                                                            >
-                                                                <UploadFileContainer>
-                                                                    {
-                                                                        verificationPhoto ? 
-                                                                            <SampleImage url={parseStrapiImage(verificationPhoto?.url)} /> : <>
-                                                                                <Container />
-                                                                                <Icon icon="double-page" />
-                                                                                <AppearanceText>{ t('drag_the_image_here_or_click_here') }</AppearanceText>
-                                                                            </>
-                                                                    }
-                                                                </UploadFileContainer>
+                                            <UploadFile
+                                                onChange={setVerificationPhoto} 
+                                                accept="image/*" 
+                                            >
+                                                <UploadFileContainer>
+                                                    {
+                                                        verificationPhoto ? 
+                                                            <SampleImage url={parseStrapiImage(verificationPhoto?.url)} /> : <>
+                                                                <Container />
+                                                                <Icon icon="double-page" />
+                                                                <AppearanceText>{ t('drag_the_image_here_or_click_here') }</AppearanceText>
+                                                            </>
+                                                    }
+                                                </UploadFileContainer>
 
-                                                            </UploadFile>
-                                                        </VerificationUpload>
-                                                </VerificationUploadContainer>
-                                                
-                                                <ButtonContent width='531px'>
-                                                    <Button outlineGradient rightIcon={'chevron-right'} onClick={nextToService} between >{ t("advance") }</Button>
-                                                </ButtonContent>
-                                            </Content>
-                                        </>
-                                }
-                                {
-                                    infoOption !== 'Services offered' ? null :
-                                        <>
-                                            <ServicesOffered options={options} active={services} setActive={setServices} ethnicity={ethnicity} setEthnicity={setEthnicity} aboutme={aboutme} setAboutme={setAboutme} superForm={setForm} registering />
-                                            <ButtonContent width='631px'>
-                                                <Button outlineGradient nospace rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Payment')} between >{ t("advance") }</Button>
-                                            </ButtonContent>
-                                        </>
-                                }
-                                {
-                                    infoOption !== 'Payment' ? null :
-                                        <>
-                                            <Payment loading={loading} action={() => saveProfile()} />
-                                        </>
-                                }
-                            </BodyContent>
-                        </BodyContainer>
-                        <Footer />
-                    </>
-                }
-            </ContainerUnauthenticated>
-        </>
-    );
+                                            </UploadFile>
+                                        </VerificationUpload>
+                                    </VerificationUploadContainer>
+                                    
+                                    <ButtonContent width='531px'>
+                                        <Button outlineGradient rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Services offered')} between >{ t("advance") }</Button>
+                                    </ButtonContent>
+                                </Content>
+                            </>
+                        )}
+
+                        {infoOption === 'Services offered' && (
+                            <>
+                                <ServicesOffered options={options} active={services} setActive={setServices} ethnicity={ethnicity} setEthnicity={setEthnicity} aboutme={aboutme} setAboutme={setAboutme} superForm={setForm} registering />
+                                <ButtonContent width='631px'>
+                                    <Button outlineGradient nospace rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Payment')} between >{ t("advance") }</Button>
+                                </ButtonContent>
+                            </>
+                        )}
+
+                        {infoOption === 'Payment' && (
+                            <Payment loading={loading} action={() => handleSuccess()} />
+                        )}
+                    </BodyContent>
+                </BodyContainer>
+            )}
+        </ContainerUnauthenticated>
+    )
 }
