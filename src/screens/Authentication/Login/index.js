@@ -10,7 +10,7 @@ import {
     LoginContainer,
     LoginContent,
 } from './styled'
-
+import Footer from "components/Footer";
 import Button from "components/Form/Button";
 import Input from 'components/Form/Input'
 
@@ -86,7 +86,9 @@ export default function Login() {
                         <ForgotLink onClick={() => navigate('forgot')}>{ t("i_forgot_my_password") }</ForgotLink>
                         <Button nospace primary loading={loading} outlineGradient width={'161px'} onClick={login}>{ t("to_enter") }</Button>
                     </LoginContainer> 
+                    
                 </LoginContent>
+                <Footer />
             </ContainerUnauthenticated>
         </>
     );
