@@ -52,12 +52,12 @@ export const FormInput = styled.div.attrs({
 
     input, select {
         width: 100%;
-        text-align: center;
+        text-align: left;
         
         &::placeholder {
             color: rgba(255, 255, 255, 0.7);
             opacity: 1;
-            text-align: center;
+            text-align: left;
         }
 
         &:focus {
