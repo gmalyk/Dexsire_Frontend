@@ -27,13 +27,16 @@ export default function HomeFilters() {
         placeholder: t('canton'),
         options: regions,
         customer: true,
-        onBlur: () => setChanged(!changed)
+        onBlur: () => setChanged(!changed),
+        noFloat: true
       }, 
       {
         ref: 'city',
         placeholder: t('ville'),
-        options: cities?.filter(f => form?.region && `${f?.region?.data?.id}` === `${form?.region}`),
-        customer: true
+        options: cities?.filter(f => form?.region && `${f?.region?.data?.id}` === `${form?.region}`) || [],
+        customer: true,
+        disabled: !form?.region,
+        noFloat: true
       },
       {
         ref: 'service',
@@ -41,12 +44,14 @@ export default function HomeFilters() {
         options: services,
         quarter: !filter,
         customer: !!filter,
+        noFloat: true
       },
       {
         ref: 'category',
         placeholder: t('category'),
         options: optionsCategory,
         customer: true,
+        noFloat: true
       },
       !filter ? null : {
         button: true,
@@ -79,7 +84,7 @@ export default function HomeFilters() {
         <FormContainer>
           <FormCore ref={formRef} register={filter} formItems={formItems} />
           <Button outlineGradient nospace onClick={() => setModal({ type: 'searchadvanced' })}>
-            { t('advanced_search') }
+            <strong>{ t('advanced_search') }</strong>
           </Button>
         </FormContainer>
       </FiltersContainer>
