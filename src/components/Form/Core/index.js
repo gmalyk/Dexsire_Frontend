@@ -55,6 +55,13 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
         getForm() { return form; }
     }), [form]))
 
+    const handleSelectChange = (item, val) => {
+        if (!item.disabled) {
+            changeForm(val, item.ref)
+            scheduleBlur(item)
+        }
+    }
+
     return (
         <>
             <ContentForm active={!!title}>
@@ -66,7 +73,15 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
                                 item.separator ? <FormSeparator /> : <FormInput full={item.full} half={item.half} quarter={item.quarter} twenty={item.twenty} customer={item.customer} key={key}>
                                     {
                                         item.custom ? item.custom : item.options ?
-                                            <Select placeholder={item.placeholder} options={item.options} value={formValue(item.ref)} onChange={val => { changeForm(val, item.ref); scheduleBlur(item); }} disabled={item.disabled || disabled} borderBackground={item.blue} />
+                                            <Select 
+                                                placeholder={item.placeholder} 
+                                                options={item.options} 
+                                                value={formValue(item.ref)} 
+                                                onChange={val => handleSelectChange(item, val)}
+                                                disabled={item.disabled}
+                                                borderBackground={item.blue}
+                                                hideLabel={true}
+                                            />
                                             : item.mask ?
                                                 <MaskedInput mask={item.mask} type={item.type} placeholder={item.placeholder} value={formValue(item.ref)} onChange={e => changeForm(e.target.value, item.ref)} onBlur={() => typeof item?.onBlur === "function" ? item.onBlur(formValue(item.ref)) : null} disabled={item.disabled || disabled} />
                                             : item.type === 'rate' ? 

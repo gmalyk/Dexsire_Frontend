@@ -103,57 +103,12 @@ export default function RegisterEscort() {
         return true
     }
 
-    const completeLogin = async (payload) => {
-        setLoading(true)
-        const result = await DoLogin({ ...payload, identifier: payload.email?.replace(/ /g, '') })
-        setLoading(false)
-        if (result && !exposeStrapiError(result)) {
-            setPreuser(result)
-            handleHeaderInfo('Privacy and Terms')
-        }
-    }
-
     const action = async (payload) => {
         if (!valid(payload)) { return; }
-        setLoading(true)
-
-        const result = await DoRegister({
-            ...payload,
-            username: payload?.email?.replace(/ /g, ''),
-            email: payload?.email?.replace(/ /g, ''),
-            confirmed: true,
-            blocked: false,
-            role: 3,
-            plan: 1
-        })
         
-        if (result && !exposeStrapiError(result)) {
-            completeLogin(payload)
-        } else {
-            setLoading(false)
-        }
+        // For now, just navigate to the next page
+        handleHeaderInfo('Privacy and Terms')
     }
-
-    // const action = async (payload) => {
-    //     if (!valid(payload)) { return; }
-    //     setLoading(true)
-
-    //     const result = await DoRegister({
-    //         ...payload,
-    //         username: payload?.email?.replace(/ /g, ''),
-    //         email: payload?.email?.replace(/ /g, ''),
-    //         confirmed: true,
-    //         blocked: false,
-    //         role: 3,
-    //         plan: 1
-    //     })
-        
-    //     if (result && !exposeStrapiError(result)) {
-    //         completeLogin(payload)
-    //     } else {
-    //         setLoading(false)
-    //     }
-    // }
 
     const nextToService = async () => {
         
@@ -301,16 +256,6 @@ export default function RegisterEscort() {
         setInfoOption(info)
     }
     
-    // const completeLogin = async (payload) => {
-    //     setLoading(true)
-    //     const result = await DoLogin({ ...payload, identifier: payload.email?.replace(/ /g, '') })
-    //     setLoading(false)
-    //     if (result && !exposeStrapiError(result)) {
-    //         setPreuser(result)
-    //         handleHeaderInfo('Privacy and Terms')  // Changed from 'Profile' to 'Privacy and Terms'
-    //     }
-    // }
-
     const data = [
         { title: t('Personal data') },
         { title: t('Privacy and Terms') },

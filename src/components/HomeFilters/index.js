@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState, useEffect } from 'react'
 import { FiltersContainer, FilterTitle, FormContainer } from './styled'
 import Button from 'components/Form/Button'
 import FormCore from '../../components/Form/Core'
@@ -9,12 +9,11 @@ import useI18n from 'hooks/useI18n'
 
 export default function HomeFilters() {
   const { setModal, regions, cities, services, filter, setFilter, escorts } = useContext(CoreContext)
-
   const { t } = useI18n()
-
   const [changed, setChanged] = useState(false)
-
+  const [nextPrint, setNextPrint] = useState([])
   const formRef = useRef()
+
   const formItems = useMemo(() => {
     const form = formRef?.current?.getForm()
       
@@ -27,16 +26,17 @@ export default function HomeFilters() {
         placeholder: t('canton'),
         options: regions,
         customer: true,
-        onBlur: () => setChanged(!changed),
-        noFloat: true
+        onBlur: () => {
+          setChanged(!changed)
+        }
       }, 
       {
         ref: 'city',
         placeholder: t('ville'),
-        options: cities?.filter(f => form?.region && `${f?.region?.data?.id}` === `${form?.region}`) || [],
+        options: form?.region ? cities?.filter(f => `${f?.region?.data?.id}` === `${form?.region}`) : [],
         customer: true,
         disabled: !form?.region,
-        noFloat: true
+        onBlur: () => setChanged(!changed)
       },
       {
         ref: 'service',
@@ -44,14 +44,12 @@ export default function HomeFilters() {
         options: services,
         quarter: !filter,
         customer: !!filter,
-        noFloat: true
       },
       {
         ref: 'category',
         placeholder: t('category'),
         options: optionsCategory,
         customer: true,
-        noFloat: true
       },
       !filter ? null : {
         button: true,
@@ -74,6 +72,26 @@ export default function HomeFilters() {
     setFilter({ ...form })
     window.scrollTo(0, 720)
   }
+
+  useEffect(() => {
+    setNextPrint(formItems)
+  }, [formItems])
+
+  useEffect(() => {
+    const currentForm = formRef?.current?.getForm()
+    if (currentForm?.region) {
+      const updatedFormItems = nextPrint.map(item => {
+        if (item.ref === 'city') {
+          return {
+            ...item,
+            disabled: false
+          }
+        }
+        return item
+      })
+      setNextPrint(updatedFormItems)
+    }
+  }, [formRef?.current?.getForm()?.region, nextPrint])
 
   return (
     <>

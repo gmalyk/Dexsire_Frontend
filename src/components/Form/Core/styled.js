@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export const Content = styled.div.attrs({
 })`
@@ -49,6 +49,50 @@ export const FormInput = styled.div.attrs({
     @media(max-width:767px){
         max-width: 100%;
     }
+
+    input, select {
+        width: 100%;
+        text-align: center;
+        
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            opacity: 1;
+            text-align: center;
+        }
+
+        &:focus {
+            text-align: left;
+            
+            &::placeholder {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+    }
+
+    /* For select elements */
+    select {
+        color: rgba(255, 255, 255, 0.7);
+        
+        &:focus {
+            color: white;
+        }
+        
+        option {
+            color: black;
+            background: white;
+            text-align: left;
+        }
+    }
+
+    /* Maintain disabled states */
+    select:disabled,
+    input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 `;
 
 export const FormSeparator = styled.div.attrs({
@@ -79,3 +123,4 @@ export const ContentFormHeader = styled.div.attrs({
         ` : ``
     }
 `;
+
