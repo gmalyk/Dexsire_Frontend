@@ -11,6 +11,8 @@ import useI18n from 'hooks/useI18n'
 import { optionsLanguage } from 'utils/options'
 import LangSelector from 'components/LangSelector'
 import PaymentMethods from './means_of_payment.png'
+import PaymentMethods2 from './Google_Pay_Logo.png'
+import PaymentMethods3 from './Apple_Pay_logo.png'
 import styled from 'styled-components'
 
 const AddressSection = styled.div`
@@ -63,6 +65,17 @@ const LOCAL_OPTIONS = {
         linkedin: 'https://linkedin.com/company/dexsire'
     }
 };
+
+// Add this styled component
+const PaymentMethodsContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    margin: 4px 0;
+    padding-left: 16px;
+`;
 
 export default function Footer() {
 
@@ -270,16 +283,32 @@ export default function Footer() {
                 {t("Report")}
               </FooterInfoText>
             </FooterInfo>
-            <img 
-              src={PaymentMethods} 
-              alt="Payment Methods"
-              style={{
-                width: '100%',
-                maxWidth: '150px',
-                marginTop: '4px',
-                marginBottom: '4px'
-              }}
-            />
+            <PaymentMethodsContainer>
+                <img 
+                    src={PaymentMethods} 
+                    alt="Payment Methods"
+                    style={{
+                        height: '30px',
+                        objectFit: 'contain'
+                    }}
+                />
+                <img 
+                    src={PaymentMethods2} 
+                    alt="Payment Methods2"
+                    style={{
+                        height: '30px',
+                        objectFit: 'contain'
+                    }}
+                />
+                <img 
+                    src={PaymentMethods3} 
+                    alt="Payment Methods3"
+                    style={{
+                        height: '30px',
+                        objectFit: 'contain'
+                    }}
+                />
+            </PaymentMethodsContainer>
           </FooterEnd>
         </FooterContent>
       </FooterContainer>
