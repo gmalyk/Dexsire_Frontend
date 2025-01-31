@@ -4,43 +4,36 @@ export const Content = styled.div.attrs({
 })`
 `;
 
-export const FormWrapper = styled.div.attrs({
-})`
+export const FormWrapper = styled.div`
+    width: 100%;
+    max-width: 526px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 16px 0;
-    @media(max-width:767px){
-        flex-direction: column;
-    }
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 0 auto;
 `;
 
-export const FormInput = styled.div.attrs({
-})`
+export const FormInput = styled.div`
     width: 100%;
-    max-width: calc(calc(100% - 24px) / 3);
-    ${props => props.full ? `
-            max-width: 100%;
-        ` : ``
-    }
-    ${props => props.half ? `
-            max-width: calc(calc(100% - 12px) / 2);
-        ` : ``
-    }
-    ${props => props.quarter ? `
-            max-width: calc(calc(100% - 36px) / 4);
-        ` : ``
-    }
-    
-    ${props => props.twenty ? `
-            max-width: calc(calc(100% - 48px) / 5);
-        ` : ``
-    }
-    
-    ${props => props.customer ? `
-            max-width: calc(calc(100% - 60px) / 6);
-        ` : ``
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    ${props => props.full && `
+        width: 100%;
+    `}
+    ${props => props.half && `
+        width: 48%;
+    `}
+    ${props => props.quarter && `
+        width: 23%;
+    `}
+    ${props => props.twenty && `
+        width: 20%;
+    `}
+    ${props => props.customer && `
+        width: 31%;
+    `}
 
     @media(max-width:991px){
         max-width:${props => props.full ? `` : `calc(calc(100% - 12px) / 2)`};
@@ -52,12 +45,12 @@ export const FormInput = styled.div.attrs({
 
     input, select {
         width: 100%;
-        text-align: center;
+        text-align: left;
         
         &::placeholder {
             color: rgba(255, 255, 255, 0.7);
             opacity: 1;
-            text-align: center;
+            text-align: left;
         }
 
         &:focus {
@@ -102,25 +95,21 @@ export const FormSeparator = styled.div.attrs({
     border-bottom: 1px solid ${props => props.theme.palette.colors.shadow};
 `;
 
-export const ContentForm = styled.div.attrs({
-})`
-    ${p => p.active ? `
-            padding: 12px;
-            border: 1px solid ${p.theme.palette.colors.shadow};
-            border-radius: 8px;
-        ` : ``
-    }
+export const ContentForm = styled.div`
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
 `;
 
-export const ContentFormHeader = styled.div.attrs({
-})`
+export const ContentFormHeader = styled.div`
     ${p => p.active ? `
-            font-size: 16px;
-            color: ${p.theme.palette.colors.grey};
-            padding: 8px 0 14px 8px;
-            border-bottom: 1px solid ${p.theme.palette.colors.shadow};
-        ` : ``
-    }
+        font-size: 16px;
+        color: ${p.theme.palette.colors.grey};
+        padding: 8px 0 14px 8px;
+        border-bottom: 1px solid ${p.theme.palette.colors.shadow};
+        text-align: left;
+    ` : ``}
 `;
 
