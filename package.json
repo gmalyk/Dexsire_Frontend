@@ -35,7 +35,7 @@
     },
     "scripts": {
         "predeploy": "yarn build",
-        "deploy": "gh-pages -d build",
+        "deploy": "gh-pages -d dist",
         "start": "react-scripts start",
         "build": "react-scripts build && rm -rf dist && mv build dist",
         "test": "npx cypress open-ct",

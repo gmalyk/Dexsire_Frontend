@@ -1,5 +1,5 @@
 import React from "react"; 
- 
+import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min";
 import Banner from "components/Landpage/Banner";
 import HowWorks from 'components/Landpage/HowWorks'
 import MoreInfos from 'components/Landpage/MoreInfos'
@@ -13,6 +13,7 @@ export default function Landpage(){
  
     return ( 
         <ContainerLandpage> 
+            <BrowserRouter basename="/Dexsire_Frontend/">
 
                 <Banner /> 
                 <HowWorks /> 
@@ -20,6 +21,7 @@ export default function Landpage(){
                 <CommomCases /> 
                 <KnowMore /> 
                 <LittleMore />  
+            </BrowserRouter>
  
         </ContainerLandpage>
     );
