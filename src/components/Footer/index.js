@@ -10,6 +10,7 @@ import { normalizeStrapiList, normalizeStrapiRegister } from 'utils'
 import useI18n from 'hooks/useI18n'
 import { optionsLanguage } from 'utils/options'
 import LangSelector from 'components/LangSelector'
+import PaymentMethods from './means_of_payment.png'
 
 export default function Footer() {
 
@@ -54,8 +55,8 @@ export default function Footer() {
   }, [regions])
 
   const footerContact = useMemo(() => [
-    !contactUs?.email ? null :{ title: contactUs?.email, icon: 'email' },
-    !contactUs?.phone ? null :{ title: contactUs?.phone, icon: 'phone-orange' },
+    {title: contactUs?.email, icon: 'email' },
+    { title: contactUs?.phone, icon: 'phone-orange' },
   ].filter(f => f), [contactUs])
  
   // const buttons = []
@@ -204,6 +205,16 @@ export default function Footer() {
                 {t("Report")}
               </FooterInfoText>
             </FooterInfo>
+            <img 
+              src={PaymentMethods} 
+              alt="Payment Methods"
+              style={{
+                width: '100%',
+                maxWidth: '150px',
+                marginTop: '4px',
+                marginBottom: '4px'
+              }}
+            />
           </FooterEnd>
         </FooterContent>
       </FooterContainer>
