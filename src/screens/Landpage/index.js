@@ -13,7 +13,7 @@ export default function Landpage(){
  
     return ( 
         <ContainerLandpage> 
-            <BrowserRouter basename="/Dexsire_Frontend/">
+            
 
                 <Banner /> 
                 <HowWorks /> 
@@ -21,7 +21,6 @@ export default function Landpage(){
                 <CommomCases /> 
                 <KnowMore /> 
                 <LittleMore />  
-            </BrowserRouter>
  
         </ContainerLandpage>
     );

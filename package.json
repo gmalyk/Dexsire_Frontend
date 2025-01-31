@@ -59,7 +59,7 @@
             }
         ]
     },
-    "homepage": "https://gmalyk.github.io/Dexsire_Frontend",
+    "homepage": ".",
     "browserslist": {
         "production": [
             ">0.2%",
