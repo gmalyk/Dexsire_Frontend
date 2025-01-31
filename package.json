@@ -37,7 +37,7 @@
         "predeploy": "yarn build",
         "deploy": "gh-pages -d dist",
         "start": "react-scripts start",
-        "build": "react-scripts build && rm -rf dist && mv build dist",
+        "build": "react-scripts build",
         "test": "npx cypress open-ct",
         "eject": "react-scripts eject",
         "storybook": "start-storybook -p 6006 -s public",
