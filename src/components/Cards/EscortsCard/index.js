@@ -140,11 +140,11 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
           </CardHeaderContent>
           <HalfContent className='cant-openmodel'>
             <ButtonNextAndPrev onClick={prevImage}>
-              <Icon icon="arrow-left" />
+              <Icon icon="arrow-left" nomargin />
             </ButtonNextAndPrev>
             <CardLogo />
             <ButtonNextAndPrev onClick={nextImage}>
-              <Icon icon="arrow-right" />
+              <Icon icon="arrow-right" nomargin />
             </ButtonNextAndPrev>
           </HalfContent>
           <EndContent>

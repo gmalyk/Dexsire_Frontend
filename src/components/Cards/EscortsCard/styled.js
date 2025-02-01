@@ -142,7 +142,13 @@ export const HalfContent = styled.div.attrs({})`
   padding: 0 24px;
   z-index: 2;
 
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
 
+  @media (max-width: 480px) {
+    padding: 0 12px;
+  }
 `;
 
 export const ButtonNextAndPrev = styled.div.attrs({})`
@@ -156,13 +162,26 @@ export const ButtonNextAndPrev = styled.div.attrs({})`
   cursor: pointer;
 
   @media (max-width: 768px) {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+
+    img {
+      width: 12px;
+      height: 12px;
+    }
   }
 
   @media (max-width: 480px) {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+
+    img {
+      width: 10px;
+      height: 10px;
+    }
   }
 `;
 
