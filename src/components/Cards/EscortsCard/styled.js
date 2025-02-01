@@ -48,16 +48,24 @@ export const CardContainer = styled.div.attrs({
   background: 
     linear-gradient(315deg, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.15) 70%),
     center / cover no-repeat url('${p => p.src}');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 40px;
   overflow: hidden;
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 
   @media (max-width: 768px) {
-    padding: 20px;
-    width: ${p => p.emphasis ? '96%' : '100%'};
+    padding: 16px;
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
   }
 `;
 
@@ -129,6 +137,16 @@ export const CardLogo = styled.img.attrs({
 })`
   filter: invert(0.2);
   opacity: 0.6;
+  max-width: 120px;
+  height: auto;
+  
+  @media (max-width: 768px) {
+    max-width: 100px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 80px;
+  }
 `;
 
 export const HalfContent = styled.div.attrs({})`
@@ -136,18 +154,23 @@ export const HalfContent = styled.div.attrs({})`
   justify-content: space-between;
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
+  transform: translateY(-50%);
   width: 100%;
-  padding: 0 24px;
+  padding: 0 16px;
   z-index: 2;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
 
   @media (max-width: 768px) {
-    padding: 0 16px;
+    padding: 0 12px;
   }
 
   @media (max-width: 480px) {
-    padding: 0 12px;
+    padding: 0 8px;
   }
 `;
 
@@ -160,6 +183,8 @@ export const ButtonNextAndPrev = styled.div.attrs({})`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
 
   @media (max-width: 768px) {
     width: 24px;
@@ -185,44 +210,27 @@ export const ButtonNextAndPrev = styled.div.attrs({})`
   }
 `;
 
-export const EndContent = styled.div.attrs({})`
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  align-items: center;
-  flex-direction: column;
-  z-index: 1;
-
-  @media (max-width: 768px) {
-    gap: 8px;
-  }
-
-  @media (max-width: 480px) {
-    gap: 6px;
-  }
-`;
-
 export const CardTitle = styled.div.attrs({
 })`
   font-family: Inter;
   font-size: 24px;
   font-weight: 500;
-  line-height: 29.05px;
+  line-height: 1;
   text-align: center;
   color: ${props => props.theme.palette.colors.white};
   display: flex;
   gap: 8px;
   align-items: center;
+  padding: 0;
+  margin: 0;
 
   @media (max-width: 768px) {
     font-size: 18px;
-    line-height: 22px;
     gap: 6px;
   }
 
   @media (max-width: 480px) {
     font-size: 16px;
-    line-height: 20px;
     gap: 4px;
   }
 `;
@@ -230,6 +238,8 @@ export const CardTitle = styled.div.attrs({
 export const ButtonContainer = styled.div.attrs({})`
   display: flex;
   gap: 8px;
+  padding: 0;
+  margin: 0;
 
   @media (max-width: 768px) {
     gap: 4px;
@@ -239,6 +249,7 @@ export const ButtonContainer = styled.div.attrs({})`
       padding: 2px 8px !important;
       height: 22px !important;
       min-height: unset !important;
+      line-height: 1 !important;
     }
   }
 
@@ -250,6 +261,42 @@ export const ButtonContainer = styled.div.attrs({})`
       padding: 2px 6px !important;
       height: 20px !important;
       min-height: unset !important;
+    }
+  }
+`;
+
+export const EndContent = styled.div.attrs({})`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1;
+  margin-top: auto;
+  padding-bottom: 8px;
+  position: relative;
+  gap: 16px;
+
+  & > * {
+    margin: 0;
+    padding: 0;
+  }
+
+  & ${CardTitle} + ${ButtonContainer} {
+    margin-top: 0;
+  }
+
+  @media (max-width: 768px) {
+    gap: 0;
+    padding-bottom: 6px;
+    & ${CardTitle} + ${ButtonContainer} {
+      margin-top: -6px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding-bottom: 4px;
+    & ${CardTitle} + ${ButtonContainer} {
+      margin-top: -5px;
     }
   }
 `;
