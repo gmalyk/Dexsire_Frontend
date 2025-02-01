@@ -23,7 +23,7 @@ export default function HomeFilters() {
     return [
       {
         ref: 'region',
-        placeholder: t('canton'),
+        placeholder: t('All Cantons'),
         options: regions,
         customer: true,
         onBlur: () => {
