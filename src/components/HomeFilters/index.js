@@ -14,16 +14,12 @@ export default function HomeFilters() {
   const formRef = useRef()
 
   const formItems = useMemo(() => {
-    const form = formRef?.current?.getForm()
-      
-    const prices = escorts?.map((m) => m?.profile?.prices)?.reduce((p, c) => [...p, ...(c||[])] , [])
-      ?.reduce((p, c) => p?.includes(c?.text) ? p : [...p, c?.text] , [])?.filter(f => f)?.map(m => ({ id:m, title:m }))
-
     const allRegionsOptions = [
       { id: 'all', title: t('All Cantons') },
+      { id: '1', title: t('Geneva') },
       ...(regions || []).filter(r => r.id !== 'all')
     ]
-
+  
     return [
       {
         ref: 'region',
@@ -35,12 +31,14 @@ export default function HomeFilters() {
           setSelectedRegion(value)
           const form = formRef?.current?.getForm()
           if (form) {
+            // Reset city when changing region
             form.city = ''
             if (value === 'all') {
               delete form.region
             } else {
               form.region = value
             }
+            formRef.current.resetField('city')  // Reset the city field explicitly
           }
           setChanged(!changed)
         }
@@ -51,12 +49,17 @@ export default function HomeFilters() {
         options: selectedRegion === 'all' ? [] : 
           cities?.filter(f => `${f?.region?.data?.id}` === `${selectedRegion}`),
         customer: true,
-        disabled: selectedRegion === 'all',
-        style: selectedRegion === 'all' ? { 
-          opacity: 0.5,
-          pointerEvents: 'none',
-          backgroundColor: 'rgba(255, 255, 255, 0.1)'
-        } : {}
+        disabled: selectedRegion === 'all',  // This should disable the field when "all" is selected
+        hidden: selectedRegion === 'all',    // Optionally hide the field when disabled
+        onChange: (value) => {
+          if (selectedRegion !== 'all') {  // Only process changes when not "all"
+            const form = formRef?.current?.getForm()
+            if (form) {
+              form.city = value
+              setChanged(!changed)
+            }
+          }
+        }
       },
       {
         ref: 'service',

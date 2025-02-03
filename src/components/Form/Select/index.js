@@ -14,15 +14,18 @@ export const Select = ({
   id, 
   secondary, 
   borderBackground, 
-  formed 
+  formed,
+  disabled  // Add disabled prop
 }) => {
   const [opened, setOpened] = useState(false);
   
   const toggleOpen = () => {
+    if (disabled) return; // Prevent opening if disabled
     setOpened(!opened);
   };
 
   const optionAction = item => {
+    if (disabled) return; // Prevent changes if disabled
     if (onChange && typeof onChange === 'function') {
       onChange(item.target.value);
     }
@@ -35,6 +38,7 @@ export const Select = ({
         <MaterialSelect
           small={small}
           displayEmpty
+          disabled={disabled}  // Add disabled prop
           color={secondary ? 'secondary' : 'background'}
           borderBackground={borderBackground}
           id={`select-${id}`}
@@ -66,6 +70,7 @@ Select.propTypes = {
   small: PropTypes.bool,
   secondary: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,  // Add disabled to propTypes
 };
 
 Select.defaultProps = {
@@ -75,6 +80,7 @@ Select.defaultProps = {
   small: false,
   secondary: false,
   onChange: undefined,
+  disabled: false,  // Add disabled default prop
 };
 
 export default Select;
