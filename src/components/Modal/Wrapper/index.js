@@ -28,12 +28,7 @@ export default function Wrapper({ children, noClose, center, background, logo })
           <ModalContent 
             id="modal-content" 
             center={center} 
-            style={{
-              backgroundImage: background ? `url(${background})` : 'none',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
+            background={background}
           >
             {noClose ? null : <CloseContainer logo={logo}>
               {!logo ? null : <Icon icon="logo" />}

@@ -215,7 +215,8 @@ export const ModalContainer = styled.div.attrs({})`
   box-sizing: border-box;
 `;
 
-export const ModalContent = styled.div.attrs({})`
+export const ModalContent = styled.div.attrs({
+})`
   width: 100%;
   overflow-y: auto;
   height: 100%;
@@ -228,10 +229,17 @@ export const ModalContent = styled.div.attrs({})`
     ${p.nojustify ? `` : `justify-content: center;`}
   ` : ``}
   
-  background-image: url('/images/background.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  ${props => props.background && `
+    background-image: url(${props.background});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    @media (max-width: 768px) {
+      background-position: 80% center;
+    }
+  `}
+
   padding: 24px 40px 40px 40px;
 
   @media (max-width: 1000px) {
