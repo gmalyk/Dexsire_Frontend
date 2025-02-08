@@ -70,9 +70,11 @@ export default function HomeFilters() {
       },
       {
         ref: 'category',
-        placeholder: t('category'),
+        placeholder: t('Escort'),
         options: optionsCategory,
         customer: true,
+        defaultValue: 'Escort',
+        value: 'Escort'
       },
       !filter ? null : {
         button: true,
