@@ -129,11 +129,10 @@ export default function Footer() {
     { title: contactInfo?.phone, icon: 'phone-orange' },
   ].filter(f => f), [contactInfo])
  
-  // const buttons = []
   const buttons = useMemo(() => [
     user?.email ? null : { title: t("login_register"), icon: 'user', action: () => navigate('pre-login') },
     user?.email ? null : { title: t("announcement"), icon: 'megaphone', action:() => navigate('announcement') },
-    !user?.email ? null : { title: t("my_profile"), icon: 'lock', action:  (user?.model || user?.admin) ? () => setModal({ type: 'profile' }) : () => navigate('profile/customer') },
+    { title: t("my_profile"), icon: 'lock', action: (user?.model || user?.admin) ? () => setModal({ type: 'profile' }) : () => navigate('profile/customer') },
     !user?.email ? null : { title: t("exit"), icon: 'exit', action: () => exit() },
   ].filter(f => f), [user, t])
 
