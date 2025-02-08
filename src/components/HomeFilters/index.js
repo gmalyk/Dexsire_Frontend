@@ -31,14 +31,12 @@ export default function HomeFilters() {
           setSelectedRegion(value)
           const form = formRef?.current?.getForm()
           if (form) {
-            // Reset city when changing region
             form.city = ''
             if (value === 'all') {
               delete form.region
             } else {
               form.region = value
             }
-            formRef.current.resetField('city')  // Reset the city field explicitly
           }
           setChanged(!changed)
         }
@@ -80,7 +78,24 @@ export default function HomeFilters() {
         button: true,
         label: t('clear_filter'),
         customer: !!filter,
-        action: () => setFilter(null),
+        action: () => {
+          // Reset filter state
+          setFilter(null)
+          
+          // Reset region selection
+          setSelectedRegion('all')
+          
+          // Reset form values if getForm is available
+          const form = formRef?.current?.getForm()
+          if (form) {
+            form.region = 'all'
+            form.city = ''
+            form.category = 'Escort'
+          }
+          
+          // Trigger re-render
+          setChanged(!changed)
+        }
       },
       {
         button: true,
