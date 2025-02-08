@@ -116,7 +116,7 @@ export default function ModalSearchAdvanced() {
 
   return (
     <>
-      <Wrapper background3 logo>
+      <Wrapper background="/images/background3.jpeg" logo>
         <SearchAdvancedContent>
           <SearchAdvancedTitle>{ t("advancedsearch_title") }</SearchAdvancedTitle>
           <SearchAdvancedForm>
