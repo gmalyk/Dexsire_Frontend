@@ -12,6 +12,15 @@ export const InfoDataContainer = styled.div.attrs({
     @media (max-width: 768px) {
         gap: 12px;
         padding: 0 16px;
+        overflow-x: auto;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 `;
 
