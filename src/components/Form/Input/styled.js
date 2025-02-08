@@ -29,6 +29,20 @@ export const MaterialInput = styled(Input)(({ theme, ...props }) => ({
   '& .MuiInputAdornment-root': {
     marginRight: '12px',
     marginLeft: '32px',
+    color: theme.palette.primary.contrastText,
+    position: 'relative',
+    zIndex: 9999,
+    pointerEvents: 'all'
+  },
+
+  '& .MuiIconButton-root': {
+    color: theme.palette.primary.contrastText,
+    position: 'relative',
+    zIndex: 9999,
+    pointerEvents: 'all',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
 
   '&:focus': {
@@ -81,6 +95,20 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
   '& .MuiInputAdornment-root': {
     marginRight: '12px',
     marginLeft: '32px',
+    color: theme.palette.white.main,
+    position: 'relative',
+    zIndex: 9999,
+    pointerEvents: 'all'
+  },
+
+  '& .MuiIconButton-root': {
+    color: theme.palette.white.main,
+    position: 'relative',
+    zIndex: 9999,
+    pointerEvents: 'all',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
 
   '&:focus': {

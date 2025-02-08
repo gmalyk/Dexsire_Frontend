@@ -316,7 +316,7 @@ export default function RegisterEscort() {
     const navigate = to => history.push(`/${to}`);
     const { t } = useI18n()
 
-    const { setUser } = useContext(CoreContext)
+    const { setUser, reloadMe } = useContext(CoreContext)
 
     const [loading, setLoading] = useState(false)
     const [infoOption, setInfoOption] = useState('Personal data')
@@ -361,10 +361,10 @@ export default function RegisterEscort() {
                 outline: true,
             },
             {
-                password: true,
                 ref: 'password',
                 placeholder: t('password'),
                 type: 'password',
+                password: true,
                 full: true,
                 outline: true,
             },
@@ -372,6 +372,7 @@ export default function RegisterEscort() {
                 ref: 'cpassword',
                 placeholder: t('confirm_password'),
                 type: 'password',
+                password: true,
                 full: true,
                 outline: true,
             },
@@ -425,7 +426,58 @@ export default function RegisterEscort() {
 
     const handleHeaderInfo = (info) => setInfoOption(info)
 
-    const action = () => handleHeaderInfo('Privacy and Terms')
+    const action = async (payload) => {
+        if (!valid(payload, registerFormItems)) { 
+            return; 
+        }
+
+        setLoading(true)
+        // Add username derived from email
+        const registrationPayload = {
+            ...payload,
+            role: 'model',
+            username: payload.email.split('@')[0] // Use part before @ as username
+        }
+        
+        const result = await DoRegister(registrationPayload)
+        setLoading(false)
+
+        if (result && !exposeStrapiError(result)) {
+            if (result?.user) {
+                const u = await reloadMe()
+                completeRegister(u)
+            }
+        }
+    };
+
+    const completeRegister = (user) => {
+        if(user?.model){
+            navigate('profile/model')
+            return;
+        }
+        navigate('profile/customer')
+    }
+
+    const valid = (payload, array) => {
+        for (let item of array) {
+            if (item?.ref && !payload?.[item?.ref]) {
+                toast.error(t("fill_all_fields"))
+                return false;
+            }
+        }
+
+        if(!isEmail(payload?.email)){
+            toast.error(t("invalid_email"))
+            return false;
+        }
+
+        if(payload?.password !== payload?.cpassword){
+            toast.error(t("password_and_confirmation_not_match"))
+            return false;
+        }
+
+        return true;
+    };
 
     const saveStep1 = () => handleHeaderInfo('Appearance')
 

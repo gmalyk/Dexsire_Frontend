@@ -82,7 +82,7 @@ export default function Login() {
                         </Container>
                         <FormSpacer />
                         <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')} startIcon={"letter"} />
-                        <Input placeholder={ t("password") } type="password" noHolder value={formValue('password')} onChange={e => changeForm(e.target.value, 'password')} onSubmitEditing={login} startIcon={"lock-medium"} />
+                        <Input placeholder={ t("password") } type="password" password noHolder value={formValue('password')} onChange={e => changeForm(e.target.value, 'password')} onSubmitEditing={login} startIcon={"lock-medium"} />
                         <ForgotLink onClick={() => navigate('forgot')}>{ t("i_forgot_my_password") }</ForgotLink>
                         <Button 
                             primary 

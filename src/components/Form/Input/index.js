@@ -24,76 +24,69 @@ import { Icon } from "ui/styled";
 export const Input = (props) => {
     const [visible, setVisible] = useState(false)
 
-    const handleClickShowPassword = () => {
+    const handleClickShowPassword = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setVisible(!visible);
     };
 
-    const handleMouseDown = (event) => {
+    const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
 
     const GInput = props.outline ? MaterialInputOutline : MaterialInput;
 
     return (
-        <>
-            <ThemedComponent>
-                <FormControl fullWidth variant={props.outline ? "outlined" : "outlined"}>
-                    <GInput
-                        id={props.id}
-                        type={props.type === 'password' ? visible ? 'text' : 'password' : props.type}
-                        value={props.value}
-                        multiline={props.type === 'textarea'}
-                        maxRows={2}
-                        textarea={props.type === 'textarea'}
-                        disableUnderline
-                        placeholder={props.placeholder}
-                        onChange={props.onChange}
-                        noHolder={props.noHolder}
-                        onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
-                        disabled={props.disabled}
-                        formed={props.formed}
-                        spaced={props.spaced}
-                        startAdornment={
-                            !props.startIcon ? null :
-                                <InputAdornment position="start">
-                                    <IconButton>
-                                        <Icon icon={props.startIcon} />
-                                    </IconButton>
-                                </InputAdornment>
-                        }
-                        endAdornment={<>
-                            {
-                                props.type === 'password' ?
-                                    <InputAdornment position="end">
-                                        {
-                                            props.type === 'password' ?
-                                                <IconButton
-                                                    aria-label="toggle password visibility"
-                                                    onClick={handleClickShowPassword}
-                                                    onMouseDown={handleMouseDown} >
-                                                    {visible ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
-                                                : null
-                                        }
-                                    </InputAdornment>
-                                    : null
-                            }
-                            <InputAdornment position="end">
-                                {
-                                    !props.endIcon ? null :
-                                        <InputAdornment>
-                                            <IconButton>
-                                                <Icon icon={props.endIcon} />
-                                            </IconButton>
-                                        </InputAdornment>
-                                }
+        <ThemedComponent>
+            <FormControl fullWidth variant={props.outline ? "outlined" : "outlined"}>
+                <GInput
+                    {...props}
+                    type={(props.type === 'password' && visible) ? 'text' : props.type}
+                    value={props.value}
+                    multiline={props.type === 'textarea'}
+                    maxRows={2}
+                    textarea={props.type === 'textarea'}
+                    disableUnderline
+                    placeholder={props.placeholder}
+                    onChange={props.onChange}
+                    noHolder={props.noHolder}
+                    onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
+                    disabled={props.disabled}
+                    formed={props.formed}
+                    spaced={props.spaced}
+                    startAdornment={
+                        !props.startIcon ? null :
+                            <InputAdornment position="start">
+                                <IconButton>
+                                    <Icon icon={props.startIcon} />
+                                </IconButton>
                             </InputAdornment>
-                        </>
-                        }
-                    />
-                </FormControl>
-            </ThemedComponent>
-        </>
+                    }
+                    endAdornment={
+                        props.type === 'password' && (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                >
+                                    <Icon 
+                                        icon={visible ? "eye-off" : "eye"} 
+                                        style={{ 
+                                            color: '#fff',
+                                            position: 'relative',
+                                            zIndex: 9999,
+                                            pointerEvents: 'all'
+                                        }} 
+                                    />
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }
+                />
+            </FormControl>
+        </ThemedComponent>
     );
 }
 
