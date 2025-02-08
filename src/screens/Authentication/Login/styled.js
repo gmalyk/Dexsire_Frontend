@@ -8,7 +8,12 @@ export const FormTitle = styled.div.attrs({
     line-height: 19.36px;
     text-align: left;
     color: ${props => props.theme.palette.colors.orange};
+
+    @media (max-width: 768px) {
+        text-align: center;
+    }
 `;
+
 export const FormText = styled.div.attrs({
 })`           
     font-family: Inter;
@@ -17,12 +22,15 @@ export const FormText = styled.div.attrs({
     line-height: 38.73px;
     text-align: left;
     color: ${props => props.theme.palette.colors.white};
+
+    @media (max-width: 768px) {
+        text-align: center;
+    }
 `;
 
 export const FormSpacer = styled.div.attrs({
 })`           
 `;
-
 
 export const ForgotLink = styled.div.attrs({
 })`           
@@ -35,6 +43,11 @@ export const ForgotLink = styled.div.attrs({
     cursor: pointer;
     &:hover{
         text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        text-align: center;
+        width: 100%;
     }
 `;
 
@@ -61,10 +74,17 @@ export const CardContainer = styled.div.attrs({
 export const LoginContainer = styled.div.attrs({
 })` 
     max-width: 526px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    @media (max-width: 768px) {
+        align-items: center;
+        padding: 0 16px;
+    }
 `;
+
 export const LoginContent = styled.div.attrs({
 })` 
     padding: 85px 70px;

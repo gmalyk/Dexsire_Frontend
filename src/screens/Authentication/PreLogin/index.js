@@ -1,9 +1,11 @@
 import React, { useContext, useMemo, useState } from "react";
 import { useHistory } from 'react-router-dom';
+import Footer from "components/Footer";
 
 import {
     CardContainer,
     LoginContent,
+    PreLoginContainer,
 } from './styled'
 
 import ContainerUnauthenticated from "containers/Unauthenticated";
@@ -36,15 +38,16 @@ export default function PreLogin() {
     return (
         <>
             <ContainerUnauthenticated background={'/images/background.jpeg'} login>
-                <LoginContent> 
-                    <CardContainer>
-                        {
-                            cardsContent.map((item, index) => {
+                <PreLoginContainer>
+                    <LoginContent> 
+                        <CardContainer>
+                            {cardsContent.map((item, index) => {
                                 return ( <LoginCard key={index} {...item} /> )
-                            })
-                        }
-                    </CardContainer> 
-                </LoginContent>
+                            })}
+                        </CardContainer> 
+                    </LoginContent>
+                    <Footer />
+                </PreLoginContainer>
             </ContainerUnauthenticated>
         </>
     );

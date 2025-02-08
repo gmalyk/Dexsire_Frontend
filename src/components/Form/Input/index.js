@@ -37,29 +37,25 @@ export const Input = (props) => {
     return (
         <>
             <ThemedComponent>
-                {/* standard | outlined | filled */}
                 <FormControl fullWidth variant={props.outline ? "outlined" : "outlined"}>
-                { props.noHolder && false ? null : <InputLabel className="inputed" htmlFor={props.id} color={'white'} >{props.placeholder}</InputLabel>}
                     <GInput
                         id={props.id}
-                        // as={props.type === 'textarea' && 'textarea'}
                         type={props.type === 'password' ? visible ? 'text' : 'password' : props.type}
                         value={props.value}
                         multiline={props.type === 'textarea'}
-                        maxRows={ 2 }
+                        maxRows={2}
                         textarea={props.type === 'textarea'}
                         disableUnderline
-                        placeholder={false && props.placeholder}
+                        placeholder={props.placeholder}
                         onChange={props.onChange}
                         noHolder={props.noHolder}
                         onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
                         disabled={props.disabled}
                         formed={props.formed}
                         spaced={props.spaced}
-
                         startAdornment={
                             !props.startIcon ? null :
-                                <InputAdornment >
+                                <InputAdornment position="start">
                                     <IconButton>
                                         <Icon icon={props.startIcon} />
                                     </IconButton>

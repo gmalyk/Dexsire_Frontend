@@ -10,29 +10,37 @@ export const MaterialInput = styled(Input)(({ theme, ...props }) => ({
   background: theme.palette.primary.main,
   height: props.textarea ? '176px' : '56px',
   borderRadius: props.textarea ? '40px' : '100px',
-  fontSize: '14px',
+  fontSize: '16px',
   fontWeight: 500,
   lineHeight: '24px',
   fontFamily: 'Inter',
   padding: props.textarea ? '24px 16px ' : props.noHolder ? '0' : '0 32px',
   borderColor: theme.palette.borderBackground.main,
+  '-webkit-text-size-adjust': '100%',
 
   '& .MuiInputBase-input': {
     color: theme.palette.primary.contrastText,
+    '&::placeholder': {
+      color: theme.palette.primary.contrastText,
+      opacity: 1,
+    }
   },
 
-  '& .MuiInputBase-input::placeholder': {
-    color: theme.palette.primary.contrastText,
-    opacity: 1,
+  '& .MuiInputAdornment-root': {
+    marginRight: '12px',
+    marginLeft: '32px',
   },
 
+  '&:focus': {
+    fontSize: '16px',
+  },
 }));
 
 
 export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) => ({
   height: props.textarea ? '176px' : '56px',
   borderRadius: props.textarea ? '40px' : '100px',
-  fontSize: '14px',
+  fontSize: '16px',
   fontWeight: 500,
   lineHeight: '24px',
   fontFamily: 'Inter',
@@ -42,6 +50,7 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
   borderColor: theme.palette.borderBackground.main,
   color: theme.palette.primary.contrastText,
   resize: 'none',
+  '-webkit-text-size-adjust': '100%',
 
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: theme.palette.borderBackground.main,
@@ -63,12 +72,20 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
 
   '& .MuiInputBase-input': {
     color: theme.palette.white.main,
-  },
-  '& .MuiInputBase-input::placeholder': {
-    color: theme.palette.white.main,
-    opacity: 1,
+    '&::placeholder': {
+      color: theme.palette.white.main,
+      opacity: 1,
+    }
   },
 
+  '& .MuiInputAdornment-root': {
+    marginRight: '12px',
+    marginLeft: '32px',
+  },
+
+  '&:focus': {
+    fontSize: '16px',
+  },
 }));
 
 

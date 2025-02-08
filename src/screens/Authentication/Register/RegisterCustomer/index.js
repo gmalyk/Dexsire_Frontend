@@ -48,7 +48,7 @@ export default function RegisterCustomer() {
         return [
             {
                 ref: 'name',
-                placeholder: t('name'),
+                placeholder: t('pseudo'),
                 type: 'text',
                 full: true,
                 outline: true,
@@ -96,7 +96,7 @@ export default function RegisterCustomer() {
             return false;
         }
 
-        if(payload?.password !== payload?.password){
+        if(payload?.password !== payload?.cpassword){
             toast.error(t("password_and_confirmation_not_match"))
             return false;
         }
@@ -169,9 +169,9 @@ export default function RegisterCustomer() {
                             {
                                 infoOption === 'Plan' ? null :
                                     <>
-                                        <Container>
-                                            <FormTitle>{ t("fill_in_your_details") }</FormTitle>
-                                            <Title nomargin>{ t("user_registration") }</Title> 
+                                        <Container style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <FormTitle>{t("fill_in_your_details")}</FormTitle>
+                                            <Title nomargin>{t("user_registration")}</Title> 
                                         </Container>
                                         <RegisterForm items={registerFormItems} action={action} />
                                     </>

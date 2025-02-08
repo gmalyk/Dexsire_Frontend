@@ -2,20 +2,20 @@ import { ReadObject, SaveObject } from './storage'
 
 const ENDPOINTS = {
 	// 'localhost' : 'http://localhost:1337/api',
-	'localhost' : 'https://api.dexsire.com/api',
-	'dexsire.com' : 'https://api.dexsire.com/api'
+	'localhost' : 'http://84.234.17.254:1337/api',
+	'dexsire.com' : 'http://84.234.17.254:1337/api'
 } 
 
 const BUCKET_ENDPOINTS = {
 	// 'localhost' : 'http://localhost:1337',
-	'localhost' : 'https://api.dexsire.com',
-	'dexsire.com' : 'https://api.dexsire.com'
+	'localhost' : 'http://84.234.17.254:1337',
+	'dexsire.com' : 'http://84.234.17.254:1337'
 } 
  
 const SOCKET_ENDPOINTS =  {
 	// 'localhost' : 'http://localhost:1337',
-	'localhost' : 'https://api.dexsire.com',
-	'dexsire.com' : 'https://api.dexsire.com'
+	'localhost' : 'http://84.234.17.254:1337',
+	'dexsire.com' : 'http://84.234.17.254:1337'
 }
  
 const CHECKOUT_ENDPOINTS =  {

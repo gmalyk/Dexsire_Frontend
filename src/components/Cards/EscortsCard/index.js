@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react'
 import { ButtonContainer, ButtonNextAndPrev, CardBorderBackground, CardContainer, CardHeaderContent, CardLogo, CardTitle, Content, Decoration, EndContent, EscortsInfoEmphasis, HalfContent, IconContent, IconsContainer } from './styled'
 import { Icon, Load } from 'ui/styled'
 import Button from 'components/Form/Button';
@@ -19,6 +19,37 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
   const [isLike, setIsLike] = useState(null)
   const [belling, setBelling] = useState(false)
   const [isBell, setIsBell] = useState(null)
+
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const cardRef = useRef(null);
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextImage(new Event('swipe'));
+    }
+    if (isRightSwipe) {
+      prevImage(new Event('swipe'));
+    }
+  };
 
   const openModel = (e) => { 
     if(!e.target.closest('.cant-openmodel')){
@@ -120,7 +151,14 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
   return (
     <>
       <CardBorderBackground emphasis={emphasis} onClick={openModel}>
-        <CardContainer src={urls?.[currentImageIndex]} emphasis={emphasis}>
+        <CardContainer
+          ref={cardRef}
+          src={urls?.[currentImageIndex]}
+          emphasis={emphasis}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
           <CardHeaderContent>
             <Content>
               {!emphasis ? null : <EscortsInfoEmphasis>Emphasis</EscortsInfoEmphasis>}

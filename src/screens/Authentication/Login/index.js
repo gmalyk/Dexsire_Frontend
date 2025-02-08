@@ -84,7 +84,16 @@ export default function Login() {
                         <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')} startIcon={"letter"} />
                         <Input placeholder={ t("password") } type="password" noHolder value={formValue('password')} onChange={e => changeForm(e.target.value, 'password')} onSubmitEditing={login} startIcon={"lock-medium"} />
                         <ForgotLink onClick={() => navigate('forgot')}>{ t("i_forgot_my_password") }</ForgotLink>
-                        <Button nospace primary loading={loading} outlineGradient width={'161px'} onClick={login}>{ t("to_enter") }</Button>
+                        <Button 
+                            primary 
+                            loading={loading} 
+                            outlineGradient 
+                            width={'100%'} 
+                            style={{ height: '56px' }}
+                            onClick={login}
+                        >
+                            { t("to_enter") }
+                        </Button>
                     </LoginContainer> 
                     
                 </LoginContent>

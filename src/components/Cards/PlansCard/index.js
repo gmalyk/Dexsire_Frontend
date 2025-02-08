@@ -6,13 +6,15 @@ import Check from 'components/Form/Check'
 import { Container } from 'reactstrap'
 import useI18n from 'hooks/useI18n'
 
-export default function PlansCard({ item, action, loading }) {
+export default function PlansCard({ item = {}, loading, action }) {
 
   const { t } = useI18n()
   
   const benefits = useMemo(() => {
-    return item?.benefits
+    return item?.benefits || []
   }, [item]) 
+
+  const features = item?.features || []
 
   return (
     <>

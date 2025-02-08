@@ -5,9 +5,15 @@ export const FormTitle = styled.div.attrs({
     color: ${props => props.theme.palette.primary.main}; 
     font-weight: bold;
     font-size: 20px; 
-
     margin: 50px 0 10px;
+    text-align: center;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        margin: 30px 0 8px;
+    }
 `;
+
 export const FormText = styled.div.attrs({
 })`           
     font-size: 15px; 
@@ -30,8 +36,6 @@ export const RegisterCall = styled.div.attrs({
     font-weight: bold;
 `;
 
-
-
 export const BodyContainer = styled.div.attrs({
 })`
     width: 100%;
@@ -51,6 +55,7 @@ export const Background = styled.div.attrs({
     top: 0;
     z-index: 0;
 `;
+
 export const BodyContent = styled.div.attrs({
 })`
     z-index: 1;
@@ -68,5 +73,39 @@ export const BodyContent = styled.div.attrs({
     @media (max-width: 991px) {
         padding: 142px 20px 20px 20px;
     };
+
+    @media (max-width: 768px) {
+        padding: 120px 16px 16px 16px;
+        text-align: center;
+    }
+`;
+
+export const FormContainer = styled.div.attrs({
+})`
+    width: 100%;
+    max-width: 526px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        padding: 0 16px;
+    }
+`;
+
+export const Title = styled.div.attrs({
+})`
+    text-align: center;
+    width: 100%;
+`;
+
+export const StepsContainer = styled.div.attrs({
+})`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
 `;
 

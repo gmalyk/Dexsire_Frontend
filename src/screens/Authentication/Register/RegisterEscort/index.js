@@ -354,15 +354,8 @@ export default function RegisterEscort() {
     const registerFormItems = useMemo(() => {
         return [
             {
-                ref: 'name',
-                placeholder: 'Name',
-                type: 'text',
-                full: true,
-                outline: true,
-            },
-            {
                 ref: 'email',
-                placeholder: 'Email',
+                placeholder: t('email'),
                 type: 'text',
                 full: true,
                 outline: true,
@@ -370,14 +363,14 @@ export default function RegisterEscort() {
             {
                 password: true,
                 ref: 'password',
-                placeholder: 'Password',
+                placeholder: t('password'),
                 type: 'password',
                 full: true,
                 outline: true,
             },
             {
                 ref: 'cpassword',
-                placeholder: 'Confirm password',
+                placeholder: t('confirm_password'),
                 type: 'password',
                 full: true,
                 outline: true,

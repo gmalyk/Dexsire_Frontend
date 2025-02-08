@@ -28,8 +28,11 @@ export const ColorButton = styled(Button)(({ theme, nospace, small, width, white
     textTransform: 'none',
     color: white ? theme.palette.primary.contrastText : '',
     whiteSpace: 'nowrap',
-}));
 
+    '& .MuiButton-label': {
+        fontWeight: 700,
+    }
+}));
 
 export const ButtonTextContainer = styledCmp.div.attrs({
 })`
@@ -41,6 +44,7 @@ export const ButtonTextContainer = styledCmp.div.attrs({
     ${p => p.end ? `justify-content: flex-end;` : ``}
     width: 100%;
     gap: 12px;
+    font-weight: 700;
 `;
 
 export const ButtonGradient = styledCmp.div`

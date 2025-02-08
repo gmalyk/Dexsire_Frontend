@@ -4,17 +4,14 @@ import { Icon } from "ui/styled";
 export const InfoDataContainer = styled.div.attrs({
 })`
     display: flex;
-    gap: 40px 20px;
-    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
     width: 100%;
-    justify-content: center;
+    gap: 16px;
 
-    @media(max-width: 492px){
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      justify-content: flex-start;
-      gap: 12px;
+    @media (max-width: 768px) {
+        gap: 12px;
+        padding: 0 16px;
     }
 `;
 
@@ -42,9 +39,9 @@ export const InfoDataContent = styled.div.attrs({
 export const InfoDataItem = styled.div.attrs({
 })`
     display: flex;
-    gap: 14px;
     align-items: center;
-    flex-direction: column;
+    gap: 8px;
+    text-align: center;
 
     @media(max-width: 492px){
       min-width: auto;

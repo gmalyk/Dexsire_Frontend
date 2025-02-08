@@ -41,7 +41,13 @@ export const MaterialSelect = styled(Select)(({ theme, ...props }) => ({
   },
   borderRadius: 100,
   color: theme.palette.white.main,
-  paddingLeft: props.formed ? 32 : 0
+  paddingLeft: props.formed ? 32 : 0,
+  fontSize: '16px', // Minimum font size to prevent iOS zoom
+  '-webkit-text-size-adjust': '100%',
+  // Add these styles to prevent zoom
+  '& .MuiSelect-select:focus': {
+    fontSize: '16px',
+  },
 }));
 
 export const MaterialLabel = styled(InputLabel)(({ theme, ...props }) => ({

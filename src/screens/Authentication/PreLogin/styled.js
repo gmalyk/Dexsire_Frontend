@@ -51,11 +51,15 @@ export const CardContainer = styled.div.attrs({
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 90px;
     width: 100%;
     gap: 20px;
     flex-wrap: wrap;
     z-index: 1;
+    margin: 0;
+
+    @media(max-width: 991px) {
+        margin: 0;
+    }
 `;
 
 export const LoginContainer = styled.div.attrs({
@@ -68,12 +72,26 @@ export const LoginContainer = styled.div.attrs({
 export const LoginContent = styled.div.attrs({
 })` 
     padding: 85px 70px;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     align-items: center;
-    height: 100vh;
-    max-height: 881px;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+
     @media(max-width: 991px){
         padding: 85px 20px 20px 20px;
     }
+`;
+
+export const PreLoginContainer = styled.div.attrs({
+})`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 `;

@@ -55,6 +55,8 @@ export const CardContainer = styled.div.attrs({
   overflow: hidden;
   padding: 24px;
   display: flex;
+  touch-action: pan-y pinch-zoom;
+  transition: background-image 0.3s ease;
   flex-direction: column;
   justify-content: space-between;
   position: relative;

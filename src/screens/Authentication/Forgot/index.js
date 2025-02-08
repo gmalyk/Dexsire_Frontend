@@ -83,7 +83,18 @@ export default function Forgot() {
                         </Container>
                         <FormSpacer />
                         <Input placeholder={ t("forgot_input_email") } id={'email'} value={formValue('email')} onChange={e => changeForm(e.target.value, 'email')} noHolder startIcon={'letter'} />
-                        <Button primary loading={loading} onClick={action} outlineGradient width={'fit-content'}>{ t("forgot_action") }</Button>
+                        <Button 
+                            primary 
+                            loading={loading} 
+                            onClick={action} 
+                            outlineGradient 
+                            width={'100%'}
+                            style={{ 
+                                height: '56px'
+                            }}
+                        >
+                            { t("forgot_action") }
+                        </Button>
                     </ForgotContainer>
                 </ForgotContent>
                 }
