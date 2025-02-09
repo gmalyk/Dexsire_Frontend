@@ -24,7 +24,7 @@ export default function ModalAgeVerification() {
   }
 
   return (
-    <Wrapper noClose center>
+    <Wrapper background="/images/background.jpeg" noClose center>
       <AgeVerification>
         <Logo icon={"logo"} />
         <ModalTitle upper nomargin>{ t("ageverification_title") }</ModalTitle>
