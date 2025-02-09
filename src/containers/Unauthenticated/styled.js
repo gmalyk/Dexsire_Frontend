@@ -61,6 +61,10 @@ export const FormContent = styled.div.attrs({
     position: relative;
     z-index: 1;
     flex: 1;
+
+    @media (max-width: 768px) {
+        padding: 0 20px;
+    }
 `;
 export const AppLogo = styled.img.attrs({
     src: '/logo1024.png',
@@ -79,6 +83,11 @@ export const LoginPage = styled.div.attrs({
     min-height: 100vh;
     margin: 0;
     padding: 0;
+
+    @media (max-width: 768px) {
+        background-size: cover;
+        background-position: 80% top;
+    }
 `;
 
 export const Content = styled.div.attrs({
@@ -92,6 +101,10 @@ export const Content = styled.div.attrs({
     padding: 0;
     display: flex;
     flex-direction: column;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 export const Touch = styled.div.attrs({
