@@ -56,6 +56,11 @@ export const SideBackgroundImageDegree = styled.div.attrs({
 export const FormContent = styled.div.attrs({
 })`           
     width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    flex: 1;
 `;
 export const AppLogo = styled.img.attrs({
     src: '/logo1024.png',
@@ -65,20 +70,28 @@ export const AppLogo = styled.img.attrs({
 
 export const LoginPage = styled.div.attrs({
 })`           
-    background: center / cover no-repeat url(${p => p.src});
+    background: url(${p => p.src});
+    background-size: contain;
+    background-position: top center;
+    background-repeat: no-repeat;
     position: relative;
-    max-width: 1440px;
-    margin: 0 auto;
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 `;
 
 export const Content = styled.div.attrs({
 })`           
-
     min-height: 100vh;
     max-height: 100vh;
     background: ${p => p.theme.palette.colors.black};
     overflow: auto;
-
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 `;
 
 export const Touch = styled.div.attrs({
