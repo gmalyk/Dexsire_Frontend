@@ -16,7 +16,27 @@ export default function HomeFilters() {
   const formItems = useMemo(() => {
     const allRegionsOptions = [
       { id: 'all', title: t('All Cantons') },
+      { id: '1', title: t('Aarau') },
+      { id: '1', title: t('Basel') },
+      { id: '1', title: t('Berne') },
+      { id: '1', title: t('Fribourg') },
       { id: '1', title: t('Geneva') },
+      { id: '1', title: t('Glaris') },
+      { id: '1', title: t('Graubunden') },
+      { id: '1', title: t('Luzern') },
+      { id: '1', title: t('Neuchâtel') },
+
+      { id: '1', title: t('Nidwald') },
+      { id: '1', title: t('Solothurn') },
+      { id: '1', title: t('St. Gallen') },
+      { id: '1', title: t('Thurgau') },
+      { id: '1', title: t('Ticino') },
+      { id: '1', title: t('Valais') },
+      { id: '1', title: t('Vaud') },
+      { id: '1', title: t('Zurich') },
+
+
+
       ...(regions || []).filter(r => r.id !== 'all')
     ]
   
