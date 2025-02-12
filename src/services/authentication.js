@@ -1,8 +1,25 @@
 import { GET, POST } from './api'
 import { ReadObject, SaveObject } from './storage'
 
-export const DoRegister = async params => {
-	return await POST(`/users`, params)
+export const DoRegister = async (data) => {
+	try {
+		const response = await POST('/auth/local/register', {
+			username: data.email.split('@')[0],
+			email: data.email,
+			password: data.password,
+			role: 'escort',
+			provider: 'local'
+		});
+
+		if (response.error) {
+			throw new Error(response.error.message);
+		}
+
+		return response;
+	} catch (error) {
+		console.error('Registration error:', error);
+		throw error;
+	}
 }
 
 export const DoLogin = async params => {

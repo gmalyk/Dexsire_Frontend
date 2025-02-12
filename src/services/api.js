@@ -39,6 +39,16 @@ export const S3_ENDPOINT = envEndpoint(BUCKET_ENDPOINTS)
 export const SOCKET_ENDPOINT = envEndpoint(SOCKET_ENDPOINTS)
 export const CHECKOUT_ENDPOINT = envEndpoint(CHECKOUT_ENDPOINTS)
 
+const API_URL = process.env.REACT_APP_API_URL || 'https://api.dexsire.com';
+
+export const getHeaders = () => {
+	return {
+		'Accept': 'application/json',
+		'Content-Type': 'application/json',
+		'Access-Control-Allow-Origin': '*',
+	};
+};
+
 export const GetHeaders = async authenticated => {
 	const headers = { 'Content-Type': 'application/json' }
 	const authentication = await ReadObject('authentication')
