@@ -40,6 +40,28 @@ export const BodyContainer = styled.div.attrs({
     position: relative;
     background: ${p => p.theme.palette.colors.black};
     padding-bottom: 80px;
+
+    @media (max-width: 768px) {
+        ${p => ['Profile', 'Appearance', 'Services offered'].includes(p.infoOption) && `
+            &::before {
+                content: '';
+                position: fixed;
+                top: 300px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('/images/announcement.png');
+                background-size: cover;
+                background-position: top center;
+                background-repeat: no-repeat;
+                z-index: 0;
+                mask-image: linear-gradient(to bottom, transparent 0%, black 50px);
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50px);
+            }
+            position: relative;
+            z-index: 1;
+        `}
+    }
 `;
 
 export const Background = styled.div.attrs({
@@ -53,13 +75,14 @@ export const Background = styled.div.attrs({
 `;
 export const BodyContent = styled.div.attrs({
 })`
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     padding: 142px 72px 0px 72px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 56px;
+    position: relative;
 
     @media (max-width: 1440px) {
         height: auto;

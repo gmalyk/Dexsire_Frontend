@@ -431,24 +431,7 @@ export default function RegisterEscort() {
         if (!valid(payload, registerFormItems)) { 
             return; 
         }
-
-        setLoading(true)
-        // Add username derived from email
-        const registrationPayload = {
-            ...payload,
-            role: 'model',
-            username: payload.email.split('@')[0] // Use part before @ as username
-        }
-        
-        const result = await DoRegister(registrationPayload)
-        setLoading(false)
-
-        if (result && !exposeStrapiError(result)) {
-            if (result?.user) {
-                const u = await reloadMe()
-                completeRegister(u)
-            }
-        }
+        handleHeaderInfo('Privacy and Terms');
     };
 
     const completeRegister = (user) => {
@@ -617,8 +600,10 @@ export default function RegisterEscort() {
 
     return (
         <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
-            {success ? <Success {...success} /> : (
-                <BodyContainer>
+            {success ? (
+                <Success {...success} />
+            ) : (
+                <BodyContainer infoOption={infoOption}>
                     <Background />
                     <BodyContent>
                         <Container>
