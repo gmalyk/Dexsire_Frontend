@@ -368,6 +368,11 @@ export default function RegisterEscort() {
                 password: true,
                 full: true,
                 outline: true,
+                inputProps: {
+                    autocomplete: "new-password",
+                    "data-lpignore": "true",
+                    "data-form-type": "other"
+                }
             },
             {
                 ref: 'cpassword',
@@ -376,9 +381,14 @@ export default function RegisterEscort() {
                 password: true,
                 full: true,
                 outline: true,
+                inputProps: {
+                    autocomplete: "off",
+                    "data-lpignore": "true",
+                    "data-form-type": "other"
+                }
             },
         ]
-    }, [])
+    }, [t])
 
     const registerTitles = useMemo(() => {
         return {

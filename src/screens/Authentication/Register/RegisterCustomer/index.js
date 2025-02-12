@@ -61,23 +61,29 @@ export default function RegisterCustomer() {
                 outline: true,
             },
             {
-                ref: 'password',
-                placeholder: t('password'),
+                name: 'password',
+                label: t('password'),
                 type: 'password',
-                password: true,
-                full: true,
-                outline: true,
+                required: true,
+                inputProps: {
+                    autocomplete: "new-password",
+                    "data-lpignore": "true",
+                    "data-form-type": "other"
+                }
             },
             {
-                ref: 'cpassword',
-                placeholder: t('confirm_password'),
+                name: 'confirmPassword',
+                label: t('confirm_password'),
                 type: 'password',
-                password: true,
-                full: true,
-                outline: true,
+                required: true,
+                inputProps: {
+                    autocomplete: "off",
+                    "data-lpignore": "true",
+                    "data-form-type": "other"
+                }
             },
         ]
-    }, [])
+    }, [t])
 
     const data = [
         { title: t('personal_data') },
@@ -97,7 +103,7 @@ export default function RegisterCustomer() {
             return false;
         }
 
-        if(payload?.password !== payload?.cpassword){
+        if(payload?.password !== payload?.confirmPassword){
             toast.error(t("password_and_confirmation_not_match"))
             return false;
         }
