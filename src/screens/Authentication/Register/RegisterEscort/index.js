@@ -354,6 +354,13 @@ export default function RegisterEscort() {
     const registerFormItems = useMemo(() => {
         return [
             {
+                ref: 'name',
+                placeholder: 'Name',
+                type: 'text',
+                full: true,
+                outline: true,
+            },
+            {
                 ref: 'email',
                 placeholder: t('email'),
                 type: 'text',

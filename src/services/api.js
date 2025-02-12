@@ -1,19 +1,24 @@
 import { ReadObject, SaveObject } from './storage'
 
 const ENDPOINTS = {
-    'localhost': 'https://api.dexsire.com/api',
-    'dexsire.com': 'https://api.dexsire.com/api'
-};
+	// 'localhost' : 'http://localhost:1337/api',
+	'localhost' : 'https://api.dexsire.com/api',
+	'dexsire.com' : 'https://api.dexsire.com/api',
+	'localhost:3001': 'http://localhost:1337/api',
+
+} 
 
 const BUCKET_ENDPOINTS = {
-    'localhost': 'https://api.dexsire.com',
-    'dexsire.com': 'https://api.dexsire.com'
-};
-
+	// 'localhost' : 'http://localhost:1337',
+	'localhost' : 'https://api.dexsire.com',
+	'dexsire.com' : 'https://api.dexsire.com'
+} 
+ 
 const SOCKET_ENDPOINTS =  {
-    'localhost': 'wss://api.dexsire.com',
-    'dexsire.com': 'wss://api.dexsire.com'
-};
+	// 'localhost' : 'http://localhost:1337',
+	'localhost' : 'https://api.dexsire.com',
+	'dexsire.com' : 'https://api.dexsire.com'
+}
  
 const CHECKOUT_ENDPOINTS =  {
 	// 'localhost' : 'http://localhost:3001',
@@ -44,40 +49,23 @@ export const GetHeaders = async authenticated => {
 }
 
 export const ServerFetch = async (url, options, authenticated) => {
-    try {
-        // Get headers first
-        const authHeaders = await GetHeaders(authenticated)
-        console.log('Request headers:', authHeaders.headers)  // Debug line
-        
-        // Make the fetch request with properly initialized headers
-        const response = await fetch(url, { 
-            ...options, 
-            headers: authHeaders.headers 
-        })
-        
-        console.log('Response status:', response.status)  // Debug line
-        
-        if (response.status === 403 && authenticated) {
-            await SaveObject('authentication', {})
-            console.log('Cleared authentication due to 403')
-        }
-        
-        if (!response.ok) {
-            const errorData = await response.text()
-            console.log('Error response:', errorData)
-            return { error: true, message: errorData }
-        }
-        
-        try {
-            return await response.json()
-        } catch(err) {
-            console.log('ServerParseError', err)
-            return { error: true, message: response }
-        }
-    } catch(error) {
-        console.log('ServerFetchError', error)
-        return { error: true, message: error.message }
-    }
+	const { headers } = await GetHeaders(authenticated)
+	// console.info(url, options, headers)
+	try{
+		const response = await fetch(url, { ...options, headers }) 
+		if (response.statusCode === 403 && authenticated) {
+			await SaveObject('authentication', {})
+		}
+		try{
+			return await response.json()
+		}catch(err){
+			console.log('ServerParseError', err)
+			return { error:true, message:response }
+		}  
+	}catch(error){
+		console.log('ServerFetchError', error)
+		return false;
+	}
 }
 
 export const GET = async (path, authenticated = false) => {
