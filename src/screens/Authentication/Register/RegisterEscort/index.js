@@ -369,9 +369,9 @@ export default function RegisterEscort() {
                 full: true,
                 outline: true,
                 inputProps: {
-                    autocomplete: "new-password",
+                    autoComplete: "off",
                     "data-lpignore": "true",
-                    "data-form-type": "other"
+                    webkitautofill: "off"
                 }
             },
             {
@@ -382,9 +382,9 @@ export default function RegisterEscort() {
                 full: true,
                 outline: true,
                 inputProps: {
-                    autocomplete: "off",
+                    autoComplete: "off",
                     "data-lpignore": "true",
-                    "data-form-type": "other"
+                    webkitautofill: "off"
                 }
             },
         ]

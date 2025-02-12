@@ -87,10 +87,54 @@ export const FormContainer = styled.div.attrs({
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 24px;
 
-    @media (max-width: 768px) {
-        padding: 0 16px;
+    input, select {
+        width: 100%;
+        height: 48px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 100px;
+        padding: 0 24px;
+        color: ${props => props.theme.palette.colors.white};
+        font-size: 16px;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        &:focus {
+            outline: none;
+            border-color: ${props => props.theme.palette.colors.white};
+        }
+    }
+
+    .MuiFormControl-root {
+        width: 100%;
+    }
+
+    .MuiOutlinedInput-root {
+        border-radius: 100px;
+        background: transparent;
+        color: ${props => props.theme.palette.colors.white};
+
+        fieldset {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &:hover fieldset {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        &.Mui-focused fieldset {
+            border-color: ${props => props.theme.palette.colors.white};
+        }
+    }
+
+    button {
+        height: 48px;
+        border-radius: 100px;
+        font-weight: 500;
     }
 `;
 
@@ -106,6 +150,39 @@ export const StepsContainer = styled.div.attrs({
     justify-content: center;
     align-items: center;
     width: 100%;
+    gap: 32px;
+    margin-bottom: 32px;
+
+    @media(max-width: 767px) {
+        gap: 24px;
+        margin: 0 auto 32px;
+    }
+`;
+
+export const Step = styled.div`
+    display: flex;
+    align-items: center;
     gap: 8px;
+    color: ${props => props.active ? props.theme.palette.colors.white : props.theme.palette.colors.gray};
+    font-size: 14px;
+    font-weight: 500;
+
+    @media(max-width: 767px) {
+        text-align: center;
+    }
+`;
+
+export const StepNumber = styled.div`
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${props => props.active ? 'linear-gradient(90deg, #FF0000 0%, #FF0099 100%)' : 'transparent'};
+    border: 1px solid ${props => props.active ? 'transparent' : props.theme.palette.colors.gray};
+    color: ${props => props.active ? props.theme.palette.colors.white : props.theme.palette.colors.gray};
+    font-size: 12px;
+    font-weight: 500;
 `;
 
