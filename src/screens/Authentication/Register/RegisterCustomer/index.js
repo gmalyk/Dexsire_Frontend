@@ -175,113 +175,99 @@ export default function RegisterCustomer() {
         })
     }
 
-    const init = async () => {
-        try {
-            setLoading(true)
-            const result = await GET("/plans")
-            if (result?.data) {
-                const normalResult = normalizeStrapiList(result.data)
-                setPlans(normalResult)
-            }
-        } catch (err) {
-            setError(err.message)
-            toast.error(t("error_loading_data"))
-        } finally {
-            setLoading(false)
-            setInitialized(true)
-        }
-    }
-
     useEffect(() => {
-        init()
-        // Cleanup function
+        const initializeComponent = async () => {
+            try {
+                setLoading(true)
+                // Only fetch plans if we need them
+                if (infoOption === 'Plan') {
+                    const result = await GET("/plans")
+                    if (result?.data) {
+                        const normalResult = normalizeStrapiList(result.data)
+                        setPlans(normalResult)
+                    }
+                }
+                setInitialized(true)
+            } catch (err) {
+                console.error('Initialization error:', err)
+                setError(err.message)
+                toast.error(t("error_loading_data"))
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        initializeComponent()
+
         return () => {
             setPlans([])
             setForm({})
             setError(null)
         }
-    }, [])
-
-    if (!initialized && loading) {
-        return (
-            <ContainerUnauthenticated>
-                <BodyContainer>
-                    <Background />
-                    <BodyContent>
-                        <Container style={{ 
-                            width: '100%', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            minHeight: '50vh'
-                        }}>
-                            <Title>{t("loading")}...</Title>
-                        </Container>
-                    </BodyContent>
-                </BodyContainer>
-                <Footer />
-            </ContainerUnauthenticated>
-        );
-    }
-
-    if (error) {
-        return (
-            <ContainerUnauthenticated>
-                <BodyContainer>
-                    <Background />
-                    <BodyContent>
-                        <Container style={{ 
-                            width: '100%', 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            minHeight: '50vh'
-                        }}>
-                            <Title>{t("error_loading_data")}</Title>
-                        </Container>
-                    </BodyContent>
-                </BodyContainer>
-                <Footer />
-            </ContainerUnauthenticated>
-        );
-    }
+    }, [infoOption, t])
 
     return (
-        <>
-            <ContainerUnauthenticated background={success ? '/images/success.png' : ''} scrollTo={infoOption} >
-                {!success ? null : <Success {...success} footer />}
-                {success ? null : <>
+        <ContainerUnauthenticated background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
+            {success ? (
+                <Success {...success} footer />
+            ) : (
+                <>
                     <BodyContainer>
                         <Background />
                         <BodyContent>
-                            <InfoData data={data} active={infoOption} />
-                            {
-                                infoOption === 'Plan' ? null :
-                                    <>
-                                        <Container style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                            <FormTitle>{t("fill_in_your_details")}</FormTitle>
-                                            <Title nomargin>{t("user_registration")}</Title> 
-                                        </Container>
-                                        <RegisterForm items={registerFormItems} action={action} />
-                                    </>
-                            }
-                            {
-                                infoOption !== 'Plan' ? null :
-                                    <>
-                                        <Container>
-                                            <FormTitle>{ t("plan") }</FormTitle>
-                                            <Title nomargin>{ t("select_a_plan") }</Title>
-                                        </Container>
-                                        <PlansCard item={plans?.find(f => f.title === 'Free')} loading={loading} action={() => save(plans?.find(f => f.title === 'Free')?.id)} /> 
-                                    </>
-                            }
+                            {(!initialized || loading) ? (
+                                <Container style={{ 
+                                    width: '100%', 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    minHeight: '50vh'
+                                }}>
+                                    <Title>{t("loading")}...</Title>
+                                </Container>
+                            ) : error ? (
+                                <Container style={{ 
+                                    width: '100%', 
+                                    display: 'flex', 
+                                    flexDirection: 'column', 
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    minHeight: '50vh'
+                                }}>
+                                    <Title>{t("error_loading_data")}</Title>
+                                </Container>
+                            ) : (
+                                <>
+                                    <InfoData data={data} active={infoOption} />
+                                    {infoOption === 'Plan' ? (
+                                        <>
+                                            <Container>
+                                                <FormTitle>{t("plan")}</FormTitle>
+                                                <Title nomargin>{t("select_a_plan")}</Title>
+                                            </Container>
+                                            <PlansCard 
+                                                item={plans?.find(f => f.title === 'Free')} 
+                                                loading={loading} 
+                                                action={() => save(plans?.find(f => f.title === 'Free')?.id)} 
+                                            /> 
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Container style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <FormTitle>{t("fill_in_your_details")}</FormTitle>
+                                                <Title nomargin>{t("user_registration")}</Title> 
+                                            </Container>
+                                            <RegisterForm items={registerFormItems} action={action} />
+                                        </>
+                                    )}
+                                </>
+                            )}
                         </BodyContent>
                     </BodyContainer>
                     <Footer />
-                </>}
-            </ContainerUnauthenticated>
-        </>
-    );
+                </>
+            )}
+        </ContainerUnauthenticated>
+    )
 }

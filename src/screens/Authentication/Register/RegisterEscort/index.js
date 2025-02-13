@@ -632,23 +632,26 @@ export default function RegisterEscort() {
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        // Initialize component
-        try {
-            setLoading(true)
-            // Any initialization logic here
-            setInitialized(true)
-        } catch (err) {
-            setError(err.message)
-            toast.error(t("error_loading_data"))
-        } finally {
-            setLoading(false)
+        const initializeComponent = async () => {
+            try {
+                setLoading(true)
+                setInitialized(true)
+            } catch (err) {
+                console.error('Initialization error:', err)
+                setError(err.message)
+                toast.error(t("error_loading_data"))
+            } finally {
+                setLoading(false)
+            }
         }
+
+        initializeComponent()
 
         return () => {
             setFormProfile({})
             setError(null)
         }
-    }, [])
+    }, [t])
 
     if (!initialized && loading) {
         return (
