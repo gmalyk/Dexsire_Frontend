@@ -632,22 +632,68 @@ export default function RegisterEscort() {
     const [initialized, setInitialized] = useState(false)
 
     useEffect(() => {
-        // Initialize any required data
-        setInitialized(true)
-        
-        // Cleanup function
+        // Initialize component
+        try {
+            setLoading(true)
+            // Any initialization logic here
+            setInitialized(true)
+        } catch (err) {
+            setError(err.message)
+            toast.error(t("error_loading_data"))
+        } finally {
+            setLoading(false)
+        }
+
         return () => {
-            setForm({})
+            setFormProfile({})
             setError(null)
         }
     }, [])
 
-    if (!initialized) {
-        return <div>Loading...</div> // Or your loading component
+    if (!initialized && loading) {
+        return (
+            <ContainerUnauthenticated>
+                <BodyContainer>
+                    <Background />
+                    <BodyContent>
+                        <Container style={{ 
+                            width: '100%', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '50vh'
+                        }}>
+                            <Title>{t("loading")}...</Title>
+                        </Container>
+                    </BodyContent>
+                </BodyContainer>
+                <Footer />
+            </ContainerUnauthenticated>
+        );
     }
 
     if (error) {
-        return <div>{error}</div> // Or your error component
+        return (
+            <ContainerUnauthenticated>
+                <BodyContainer>
+                    <Background />
+                    <BodyContent>
+                        <Container style={{ 
+                            width: '100%', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '50vh'
+                        }}>
+                            <Title>{t("error_loading_data")}</Title>
+                        </Container>
+                    </BodyContent>
+                </BodyContainer>
+                <Footer />
+            </ContainerUnauthenticated>
+        );
     }
 
     return (

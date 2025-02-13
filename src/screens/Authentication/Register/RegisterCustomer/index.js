@@ -203,11 +203,49 @@ export default function RegisterCustomer() {
     }, [])
 
     if (!initialized && loading) {
-        return <div>Loading...</div> // Or your loading component
+        return (
+            <ContainerUnauthenticated>
+                <BodyContainer>
+                    <Background />
+                    <BodyContent>
+                        <Container style={{ 
+                            width: '100%', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '50vh'
+                        }}>
+                            <Title>{t("loading")}...</Title>
+                        </Container>
+                    </BodyContent>
+                </BodyContainer>
+                <Footer />
+            </ContainerUnauthenticated>
+        );
     }
 
     if (error) {
-        return <div>{error}</div> // Or your error component
+        return (
+            <ContainerUnauthenticated>
+                <BodyContainer>
+                    <Background />
+                    <BodyContent>
+                        <Container style={{ 
+                            width: '100%', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '50vh'
+                        }}>
+                            <Title>{t("error_loading_data")}</Title>
+                        </Container>
+                    </BodyContent>
+                </BodyContainer>
+                <Footer />
+            </ContainerUnauthenticated>
+        );
     }
 
     return (
