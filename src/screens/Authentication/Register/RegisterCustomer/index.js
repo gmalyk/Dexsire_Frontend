@@ -13,7 +13,7 @@ import {
 
 import ContainerUnauthenticated from "containers/Unauthenticated";
 
-import { DoRegister } from "services/authentication";
+import { DoRegister, Create, GET } from "services/api";
 import { exposeStrapiError, normalizeStrapiList } from "utils";
 import { Background, FormSpacer, FormTitle, Title } from "ui/styled";
 import { Container } from "reactstrap";
@@ -26,7 +26,6 @@ import PlansCard from "components/Cards/PlansCard";
 import Success from "components/Success";
 
 import { isEmail } from "utils/validators";
-import { Create, Read } from "services/core";
 import useI18n from "hooks/useI18n";
 
 export default function RegisterCustomer() {
@@ -37,12 +36,12 @@ export default function RegisterCustomer() {
     const { t } = useI18n()
 
     const [plans, setPlans] = useState([])
-
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
     const [infoOption, setInfoOption] = useState(t('personal_data'))
     const [success, setSuccess] = useState(null)
-
-    const [form, setForm] = useState({}) 
+    const [form, setForm] = useState({})
+    const [initialized, setInitialized] = useState(false)
 
     const registerFormItems = useMemo(() => {
         return [
@@ -169,16 +168,39 @@ export default function RegisterCustomer() {
     }
 
     const init = async () => {
-        const result = await Read("plans")
-        if(result){
-            const normalResult = normalizeStrapiList(result)
-            setPlans(normalResult)
+        try {
+            setLoading(true)
+            const result = await GET("/plans")
+            if (result?.data) {
+                const normalResult = normalizeStrapiList(result.data)
+                setPlans(normalResult)
+            }
+        } catch (err) {
+            setError(err.message)
+            toast.error(t("error_loading_data"))
+        } finally {
+            setLoading(false)
+            setInitialized(true)
         }
     }
 
     useEffect(() => {
         init()
+        // Cleanup function
+        return () => {
+            setPlans([])
+            setForm({})
+            setError(null)
+        }
     }, [])
+
+    if (!initialized && loading) {
+        return <div>Loading...</div> // Or your loading component
+    }
+
+    if (error) {
+        return <div>{error}</div> // Or your error component
+    }
 
     return (
         <>

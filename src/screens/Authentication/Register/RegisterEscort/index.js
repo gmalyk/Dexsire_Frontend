@@ -319,6 +319,7 @@ export default function RegisterEscort() {
     const { setUser, reloadMe } = useContext(CoreContext)
 
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
     const [infoOption, setInfoOption] = useState('Personal data')
     const [formProfile, setFormProfile] = useState({})
     const [mobility, setMobility] = useState([])
@@ -619,6 +620,27 @@ export default function RegisterEscort() {
             setVerificationPhoto(localFile);
         }
     };
+
+    const [initialized, setInitialized] = useState(false)
+
+    useEffect(() => {
+        // Initialize any required data
+        setInitialized(true)
+        
+        // Cleanup function
+        return () => {
+            setForm({})
+            setError(null)
+        }
+    }, [])
+
+    if (!initialized) {
+        return <div>Loading...</div> // Or your loading component
+    }
+
+    if (error) {
+        return <div>{error}</div> // Or your error component
+    }
 
     return (
         <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
