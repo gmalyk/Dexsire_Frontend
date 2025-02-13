@@ -67,7 +67,7 @@ export default function RegisterCustomer() {
                 full: true,
                 outline: true,
                 inputProps: {
-                    autoComplete: "new-password",
+                    autoComplete: "off",
                     "data-lpignore": "true",
                     "data-form-type": "other",
                     webkitautofill: "off",
@@ -75,7 +75,11 @@ export default function RegisterCustomer() {
                     spellCheck: "false",
                     autoCapitalize: "off",
                     "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true"
+                    "data-disable-password-manager": "true",
+                    "data-private": "true",
+                    maxLength: "524288",
+                    autoSave: "off",
+                    role: "presentation"
                 }
             },
             {
@@ -86,7 +90,7 @@ export default function RegisterCustomer() {
                 full: true,
                 outline: true,
                 inputProps: {
-                    autoComplete: "new-password",
+                    autoComplete: "off",
                     "data-lpignore": "true",
                     "data-form-type": "other",
                     webkitautofill: "off",
@@ -94,7 +98,11 @@ export default function RegisterCustomer() {
                     spellCheck: "false",
                     autoCapitalize: "off",
                     "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true"
+                    "data-disable-password-manager": "true",
+                    "data-private": "true",
+                    maxLength: "524288",
+                    autoSave: "off",
+                    role: "presentation"
                 }
             }
         ]

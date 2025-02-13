@@ -352,7 +352,7 @@ export default function RegisterEscort() {
         { title: t('Payment') },
     ]
 
-    const registerFormItems = useMemo(() => {
+    const formItems = useMemo(() => {
         return [
             
             {
@@ -370,7 +370,7 @@ export default function RegisterEscort() {
                 full: true,
                 outline: true,
                 inputProps: {
-                    autoComplete: "new-password",
+                    autoComplete: "off",
                     "data-lpignore": "true",
                     "data-form-type": "other",
                     webkitautofill: "off",
@@ -378,7 +378,11 @@ export default function RegisterEscort() {
                     spellCheck: "false",
                     autoCapitalize: "off",
                     "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true"
+                    "data-disable-password-manager": "true",
+                    "data-private": "true",
+                    maxLength: "524288",
+                    autoSave: "off",
+                    role: "presentation"
                 }
             },
             {
@@ -389,7 +393,7 @@ export default function RegisterEscort() {
                 full: true,
                 outline: true,
                 inputProps: {
-                    autoComplete: "new-password",
+                    autoComplete: "off",
                     "data-lpignore": "true",
                     "data-form-type": "other",
                     webkitautofill: "off",
@@ -397,7 +401,11 @@ export default function RegisterEscort() {
                     spellCheck: "false",
                     autoCapitalize: "off",
                     "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true"
+                    "data-disable-password-manager": "true",
+                    "data-private": "true",
+                    maxLength: "524288",
+                    autoSave: "off",
+                    role: "presentation"
                 }
             },
         ]
@@ -451,7 +459,7 @@ export default function RegisterEscort() {
     const handleHeaderInfo = (info) => setInfoOption(info)
 
     const action = async (payload) => {
-        if (!valid(payload, registerFormItems)) { 
+        if (!valid(payload, formItems)) { 
             return; 
         }
         handleHeaderInfo('Privacy and Terms');
@@ -658,7 +666,7 @@ export default function RegisterEscort() {
                         <InfoData data={data} active={infoOption} />
                         
                         {infoOption === 'Personal data' && (
-                            <RegisterForm items={registerFormItems} action={action} />
+                            <RegisterForm items={formItems} action={action} />
                         )}
 
                         {infoOption === 'Privacy and Terms' && (
