@@ -371,7 +371,10 @@ export default function RegisterEscort() {
                 inputProps: {
                     autoComplete: "off",
                     "data-lpignore": "true",
-                    webkitautofill: "off"
+                    "data-form-type": "other",
+                    webkitautofill: "off",
+                    autoCorrect: "off",
+                    spellCheck: "false"
                 }
             },
             {
@@ -384,7 +387,10 @@ export default function RegisterEscort() {
                 inputProps: {
                     autoComplete: "off",
                     "data-lpignore": "true",
-                    webkitautofill: "off"
+                    "data-form-type": "other",
+                    webkitautofill: "off",
+                    autoCorrect: "off",
+                    spellCheck: "false"
                 }
             },
         ]
