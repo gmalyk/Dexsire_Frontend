@@ -158,6 +158,7 @@ export const ReadAddressesByZipCode = async (zipCode) => {
     }catch(err){ return false; }
 }
 
+    //test the db connection
 
 
 export const PostImage = async (fileToUpload) => {
