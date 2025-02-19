@@ -2,9 +2,11 @@ import React, { useContext } from 'react';
 import { CoreContext } from '../contexts/CoreContext';
 import Modal from '../components/Modal';
 import CGUScreen from './screens/CGU';
+import RefundPage from './screens/Refund';
 import ProviderAgreementPage from './pages/ProviderAgreement';
 import LegalNoticePage from './pages/LegalNotice';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import routes from './routes';
 
 const App = () => {
     const { modal } = useContext(CoreContext);
@@ -12,13 +14,22 @@ const App = () => {
     return (
         <>
             {modal && <Modal type={modal.type} />}
-            <Switch>
-                {/* Your existing routes */}
-                <Route exact path="/cgu" component={CGUScreen} />
-                <Route exact path="/provider-agreement" component={ProviderAgreementPage} />
-                <Route exact path="/legal-notice" component={LegalNoticePage} />
-                {/* Add your other existing routes here */}
-            </Switch>
+            <Router>
+                <Switch>
+                    <Route exact path="/cgu" component={CGUScreen} />
+                    <Route exact path="/refund" component={RefundPage} />
+                    <Route exact path="/provider-agreement" component={ProviderAgreementPage} />
+                    <Route exact path="/legal-notice" component={LegalNoticePage} />
+                    {routes.map((route, i) => (
+                        <Route
+                            key={i}
+                            path={route.path}
+                            exact={route.exact}
+                            component={route.component}
+                        />
+                    ))}
+                </Switch>
+            </Router>
         </>
     );
 };

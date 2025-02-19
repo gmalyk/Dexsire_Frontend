@@ -115,7 +115,6 @@ export const CenteredContainer = styled.div`
     min-height: 100vh;
     padding: 40px 20px;
 `; 
-
 export const CloseIconContent = styled.div.attrs({})`           
   display: flex;
   justify-content: center;

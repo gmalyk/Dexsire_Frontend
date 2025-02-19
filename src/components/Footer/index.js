@@ -232,9 +232,9 @@ export default function Footer() {
               </FooterSectionOptions>
               <FooterSection>
                 <AddressSection>
-                  <AddressText>Dexsire</AddressText>
-                  <AddressText>Route de Denges 37</AddressText>
-                  <AddressText>1027 Lonay</AddressText>
+                  <AddressText>Luxeo Sarl</AddressText>
+                  <AddressText>Route des deux Villages 57</AddressText>
+                  <AddressText>1806 St-Legier</AddressText>
                   <AddressText>021 376 34 52</AddressText>
                 </AddressSection>
               </FooterSection>
@@ -269,7 +269,7 @@ export default function Footer() {
               <FooterInfoText link onClick={() => setModal({ type: 'terms' })}>
                 { t("service_terms") }                
               </FooterInfoText>
-              <FooterInfoText link onClick={() => setModal({ type: 'cgu' })}>
+              <FooterInfoText link onClick={() => navigate('cgu')}>
                 {t("CGU")}
               </FooterInfoText>
               <FooterInfoText link onClick={() => setModal({ type: 'provider-agreement' })}>
@@ -280,6 +280,9 @@ export default function Footer() {
               </FooterInfoText>
               <FooterInfoText link onClick={() => setModal({ type: 'human-trafficking-report' })}>
                 {t("Report")}
+              </FooterInfoText>
+              <FooterInfoText link onClick={() => navigate('refund')}>
+                {t("Refund Cancellation Policies")}
               </FooterInfoText>
             </FooterInfo>
             <PaymentMethodsContainer>

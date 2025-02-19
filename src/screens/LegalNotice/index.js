@@ -2,6 +2,7 @@ import React from 'react'
 import ContainerAuthenticated from 'containers/Authenticated'
 import { TermsContainer, TermsTitle, TermsContent, TermsSection, SectionTitle, SectionText } from 'components/Terms/styled';
 import useI18n from 'hooks/useI18n';
+import { PageBackground } from 'components/Terms/styled';
 
 export default function LegalNoticePage() {
     const { t } = useI18n()
@@ -18,17 +19,19 @@ export default function LegalNoticePage() {
 
     return (
         <ContainerAuthenticated title="Legal Notice">
-            <TermsContainer>
-                <TermsTitle>Mentions Légales</TermsTitle>
-                <TermsContent>
-                    {legalSections.map((section, index) => (
-                        <TermsSection key={index}>
-                            <SectionTitle>{section.title}</SectionTitle>
-                            <SectionText>{section.content}</SectionText>
-                        </TermsSection>
-                    ))}
-                </TermsContent>
-            </TermsContainer>
+            <PageBackground>
+                <TermsContainer>
+                    <TermsTitle>Mentions Légales</TermsTitle>
+                    <TermsContent>
+                        {legalSections.map((section, index) => (
+                            <TermsSection key={index}>
+                                <SectionTitle>{section.title}</SectionTitle>
+                                <SectionText>{section.content}</SectionText>
+                            </TermsSection>
+                        ))}
+                    </TermsContent>
+                </TermsContainer>
+            </PageBackground>
         </ContainerAuthenticated>
     )
 } 

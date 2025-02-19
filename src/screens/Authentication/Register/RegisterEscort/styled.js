@@ -164,15 +164,16 @@ export const SampleImage = styled.div.attrs({
 
 
 
-export const AppearanceTitle = styled.div.attrs({
-})`
-  font-family: Inter;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 19.36px; 
-  color: ${props => props.theme.palette.colors.white};
-  width: 80%;
-  padding-top: 24px;
+export const AppearanceTitle = styled.div`
+    font-size: 24px;
+    font-weight: 700;
+    color: ${props => props.theme.palette.colors.white};
+    margin-bottom: 24px;
+
+    @media (max-width: 768px) {
+        text-align: center;
+        margin-bottom: 16px;
+    }
 `;
 
 
@@ -225,4 +226,19 @@ export const AppearanceText = styled.div.attrs({
         width: 80%;
     ` : ``
   }
+`;
+
+export const AppearanceContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1075px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 24px;
+        background: ${props => props.theme.palette.colors.black};
+        border-radius: 12px;
+        padding: 16px;
+    }
 `; 

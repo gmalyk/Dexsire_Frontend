@@ -1,5 +1,13 @@
 import styled from "styled-components";
 
+export const PageBackground = styled.div`
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('/images/background.jpeg') center/cover no-repeat fixed;
+    padding: 40px 20px;
+`;
+
 export const Container = styled.div.attrs({})`
   display: flex;
   flex-direction: column;

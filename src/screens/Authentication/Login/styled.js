@@ -97,3 +97,20 @@ export const LoginContent = styled.div.attrs({
         padding: 85px 20px 20px 20px;
     }
 `;
+
+export const LoginText = styled.div`
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 700;
+    color: ${props => props.theme.palette.colors.white};
+    text-align: center;
+    margin: 0 auto;
+    white-space: pre-line;
+    
+    @media (max-width: 768px) {
+        font-size: 24px;
+        line-height: 32px;
+        width: 280px;  // Adjusted width to ensure proper break point
+        margin-bottom: 32px;
+    }
+`;

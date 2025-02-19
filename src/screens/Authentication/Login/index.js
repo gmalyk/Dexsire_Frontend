@@ -9,6 +9,7 @@ import {
     ForgotLink,
     LoginContainer,
     LoginContent,
+    LoginText,
 } from './styled'
 import Footer from "components/Footer";
 import Button from "components/Form/Button";
@@ -78,7 +79,9 @@ export default function Login() {
                     <LoginContainer>
                         <Container>
                             <FormTitle>{ t("login") }</FormTitle>
-                            <FormText>{ t("enter_your_username_and_password") }</FormText>
+                            <LoginText>
+                                {t("Enter your username and\npassword.")}
+                            </LoginText>
                         </Container>
                         <FormSpacer />
                         <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')} startIcon={"letter"} />

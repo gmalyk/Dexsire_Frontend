@@ -13,7 +13,8 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
   const navigate = to => history.push(`/${ to }`); 
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { setFilter } = useContext(CoreContext)
+  const { setModal } = useContext(CoreContext);
+  const cardRef = useRef();
 
   const [likeing, setLikeing] = useState(false)
   const [isLike, setIsLike] = useState(null)
@@ -22,7 +23,6 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
 
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const cardRef = useRef(null);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -53,31 +53,49 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
 
   const openModel = (e) => { 
     if(!e.target.closest('.cant-openmodel')){
-      setFilter(null)
+      setModal(null)
       navigate(`profile/escort/${ profile?.id || "" }`) 
     }
   }
 
-  const icons = useMemo(() => {
-    return [
-      !user ? null : {
-        icon: "heart",
-        iconActive: "heart-white",
-        action: () => handleLike()
-      },
-      !profile?.whatsapp ? null : {
-        icon: "message",
-        iconActive: "message-white",
-        action: () => window.open(`https://wa.me/${profile?.whatsapp?.replace(/\ |\(|\)|\-/g,"")}`)
-      },
-      !user ? null : {
-        icon: "bell",
-        iconActive: "bell-white",
-        action: () => handleBell()
-      },
-    ].filter(f => f)
-  }, [user, profile, isLike, isBell])
+  const handleLike = async () => {
+    setLikeing(true)
+    if(isLike){
+      await Delete('likes', isLike?.id)
+      setIsLike(null)
+    } else {
+      await Create('likes', { data: { user:user?.id, model: profile?.id } })
+    }
+    reload()
+  }
 
+  const handleBell = async () => {
+    setBelling(true)
+    if(isBell){
+      await Delete('bells', isBell?.id)
+      setIsLike(null)
+    } else {
+      await Create('bells', { data: { user:user?.id, model: profile?.id } })
+    }
+    reload()
+  }
+
+  const icons = [
+    {
+      icon: "heart",
+      iconActive: "heart-active",
+      action: handleLike
+    },
+    {
+      icon: "message",
+      action: () => navigate(`chat/${profile?.id}`)
+    },
+    {
+      icon: "bell",
+      iconActive: "bell-active",
+      action: handleBell
+    }
+  ]
 
   const nextImage = (e) => {
     e.preventDefault();
@@ -95,17 +113,6 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
     return false;
   };
 
-  const handleLike = async () => {
-    setLikeing(true)
-    if(isLike){
-      await Delete('likes', isLike?.id)
-      setIsLike(null)
-    } else {
-      await Create('likes', { data: { user:user?.id, model: profile?.id } })
-    }
-    reload()
-  }
-
   const checkLike = async () => {
     if(user?.id && profile?.id){
       const result = await Read(`likes?filters[user]=${user?.id}&filters[model]=${profile?.id}`)
@@ -117,17 +124,6 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
       })
     }
     setLikeing(false)
-  }
-
-  const handleBell = async () => {
-    setBelling(true)
-    if(isBell){
-      await Delete('bells', isBell?.id)
-      setIsLike(null)
-    } else {
-      await Create('bells', { data: { user:user?.id, model: profile?.id } })
-    }
-    reload()
   }
 
   const checkBell = async () => {
@@ -164,16 +160,16 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
               {!emphasis ? null : <EscortsInfoEmphasis>Emphasis</EscortsInfoEmphasis>}
             </Content>
             <IconsContainer className='cant-openmodel'>
-                {icons.map((m, k) => (
-                    ((likeing && k === 0)||(belling && k === (icons?.length-1))) ? <Load /> :
-                      <IconContent
-                        key={k}
-                        onClick={m.action}
-                        active={((isLike && k === 0) || (isBell && k === (icons?.length-1) ))}
-                      >
-                        <Icon icon={((isLike && k === 0) || (isBell && k === (icons?.length-1) )) ? m?.iconActive : m?.icon} nomargin />
-                      </IconContent>
-                ))}
+              {icons.map((m, k) => (
+                ((likeing && k === 0)||(belling && k === (icons?.length-1))) ? <Load /> :
+                  <IconContent
+                    key={k}
+                    onClick={m.action}
+                    active={((isLike && k === 0) || (isBell && k === (icons?.length-1) ))}
+                  >
+                    <Icon icon={((isLike && k === 0) || (isBell && k === (icons?.length-1) )) ? m?.iconActive : m?.icon} nomargin />
+                  </IconContent>
+              ))}
             </IconsContainer>
           </CardHeaderContent>
           <HalfContent className='cant-openmodel'>
@@ -188,24 +184,19 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
           <EndContent>
             <CardTitle>
               {name}
-
-              {
-                !verified ? null :
+              {!verified ? null :
                 <IconContent active>
                   <Icon icon="verification" nomargin />
                 </IconContent>
-              } 
-              
+              }
             </CardTitle>
             <ButtonContainer>
-              {
-               !location.city ? null :
+              {!location.city ? null :
                 <Button small outline width={"fit-content"} >
                   {location.city}
                 </Button>
               }
-              {
-               !location.state ? null :
+              {!location.state ? null :
                 <Button small outline width={"fit-content"}>
                   {location.state}
                 </Button>

@@ -262,11 +262,11 @@ export default function HomeFilters() {
     };
 
     return [
-        {
-            ref: 'region',
+      {
+        ref: 'region',
             placeholder: t('All Cantons'),
             options: allRegionsOptions,
-            customer: true,
+        customer: true,
             defaultValue: 'all',
             onChange: (value) => {
                 setSelectedRegion(value)
@@ -281,9 +281,9 @@ export default function HomeFilters() {
                     setChanged(!changed)
                 }
             }
-        },
-        {
-            ref: 'city',
+      }, 
+      {
+        ref: 'city',
             placeholder: t('Select City'),
             options: selectedRegion === 'all' ? [] : citiesByRegion[selectedRegion] || [],
             customer: true,
@@ -295,26 +295,26 @@ export default function HomeFilters() {
                     setChanged(!changed)
                 }
             }
-        },
-        {
-            ref: 'service',
-            placeholder: t('services_offered'),
-            options: services,
-            quarter: !filter,
-            customer: !!filter,
-        },
-        {
-            ref: 'category',
+      },
+      {
+        ref: 'service',
+        placeholder: t('services_offered'),
+        options: services,
+        quarter: !filter,
+        customer: !!filter,
+      },
+      {
+        ref: 'category',
             placeholder: t('Escort'),
-            options: optionsCategory,
-            customer: true,
+        options: optionsCategory,
+        customer: true,
             defaultValue: 'Escort',
             value: 'Escort'
-        },
-        !filter ? null : {
-            button: true,
-            label: t('clear_filter'),
-            customer: !!filter,
+      },
+      !filter ? null : {
+        button: true,
+        label: t('clear_filter'),
+        customer: !!filter,
             action: () => {
                 // Reset filter state
                 setFilter(null)
@@ -333,39 +333,39 @@ export default function HomeFilters() {
                 // Trigger re-render
                 setChanged(!changed)
             }
-        },
-        {
-            button: true,
-            label: t('find_escorts'),
-            quarter: !filter,
-            customer: !!filter,
-            action: () => save(),
-        },
+      },
+      {
+        button: true,
+        label: t('find_escorts'),
+        quarter: !filter,
+        customer: !!filter,
+        action: () => save(),
+      },
     ].filter(f => f)
 }, [regions, services, escorts, cities, filter, changed, selectedRegion, t])
 
-const save = () => {
+  const save = () => {
     const form = formRef?.current?.getForm()
     if (form && form.region === 'all') {
         const { region, ...restForm } = form
         setFilter(restForm)
     } else {
-        setFilter({ ...form })
+    setFilter({ ...form })
     }
     window.scrollTo(0, 720)
-}
+  }
 
-return (
-    <FiltersContainer>
+  return (
+      <FiltersContainer>
         <FilterTitle>
             {t('find_the_ideal_model')}
         </FilterTitle>
         <FormContainer>
-            <FormCore ref={formRef} register={filter} formItems={formItems} />
-            <Button outlineGradient nospace onClick={() => setModal({ type: 'searchadvanced' })}>
+          <FormCore ref={formRef} register={filter} formItems={formItems} />
+          <Button outlineGradient nospace onClick={() => setModal({ type: 'searchadvanced' })}>
                 <strong>{t('advanced_search')}</strong>
-            </Button>
+          </Button>
         </FormContainer>
-    </FiltersContainer>
-)
+      </FiltersContainer>
+  )
 }

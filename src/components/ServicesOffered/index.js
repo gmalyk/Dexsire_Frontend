@@ -90,7 +90,7 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
             
             <Select formed borderBackground placeholder={ t('Nationality') } options={optionsOrigin} onChange={e => changeForm(e, 'nationality') } value={formValue('nationality') } />
             
-            <Select formed borderBackground placeholder={ t('Size') } options={optionsSize} onChange={e => changeForm(e, 'height') } value={formValue('height') } />
+            <Select formed borderBackground placeholder={ t('Height') } options={optionsSize} onChange={e => changeForm(e, 'height') } value={formValue('height') } />
             <Select formed borderBackground placeholder={ t('Weight') } options={optionsWeight} onChange={e => changeForm(e, 'weight') } value={formValue('weight') } />
             <Select formed borderBackground placeholder={ t('Hair color') } options={optionsHair} onChange={e => changeForm(e, 'hair') } value={formValue('hair') } />
             <Select formed borderBackground placeholder={ t('Breasts') } options={optionsBoobs} onChange={e => changeForm(e, 'breasts') } value={formValue('breasts') } />

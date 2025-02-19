@@ -4,6 +4,7 @@ import { Container, SubTitle, TermContainer, TermContent, TermText, TermTitle, T
 import { FormSpacer, Title } from 'ui/styled'
 import useI18n from 'hooks/useI18n';
 import { TermsContainer, TermsTitle, TermsContent, TermsSection, SectionTitle, SectionText } from 'components/Terms/styled';
+import { PageBackground } from 'components/Terms/styled';
 
 export default function ProviderAgreementPage() {
     const { t } = useI18n()
@@ -115,17 +116,19 @@ export default function ProviderAgreementPage() {
 
     return (
         <ContainerAuthenticated title="Provider Agreement">
-            <TermsContainer>
-                <TermsTitle>Accord du Fournisseur de Contenu</TermsTitle>
-                <TermsContent>
-                    {providerSections.map((section, index) => (
-                        <TermsSection key={index}>
-                            <SectionTitle>{section.title}</SectionTitle>
-                            <SectionText>{section.content}</SectionText>
-                        </TermsSection>
-                    ))}
-                </TermsContent>
-            </TermsContainer>
+            <PageBackground>
+                <TermsContainer>
+                    <TermsTitle>Accord du Fournisseur de Contenu</TermsTitle>
+                    <TermsContent>
+                        {providerSections.map((section, index) => (
+                            <TermsSection key={index}>
+                                <SectionTitle>{section.title}</SectionTitle>
+                                <SectionText>{section.content}</SectionText>
+                            </TermsSection>
+                        ))}
+                    </TermsContent>
+                </TermsContainer>
+            </PageBackground>
         </ContainerAuthenticated>
     )
 } 

@@ -96,3 +96,14 @@ export const HomeText = styled.div.attrs({})`
     margin-top: 24px;
 
 `;
+
+export const HomeContainer = styled.div`
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+
+    @media (max-width: 768px) {
+        padding: 16px;
+    }
+`;

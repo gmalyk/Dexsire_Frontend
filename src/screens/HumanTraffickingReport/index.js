@@ -4,6 +4,7 @@ import { Container, SubTitle, TermContainer, TermContent, TermText, TermTitle, T
 import { FormSpacer, Title } from 'ui/styled'
 import useI18n from 'hooks/useI18n';
 import { TermsContainer, TermsTitle, TermsContent, TermsSection, SectionTitle, SectionText } from 'components/Terms/styled';
+import { PageBackground } from 'components/Terms/styled';
 
 export default function HumanTraffickingReportPage() {
     const { t } = useI18n()
@@ -85,18 +86,20 @@ export default function HumanTraffickingReportPage() {
     ];
 
     return (
-        <ContainerAuthenticated title="Rapport sur la traite des êtres humains">
-            <TermsContainer>
-                <TermsTitle>Rapport sur la traite des êtres humains</TermsTitle>
-                <TermsContent>
-                    {sections.map((section, index) => (
-                        <TermsSection key={index}>
-                            <SectionTitle>{section.title}</SectionTitle>
-                            <SectionText>{section.content}</SectionText>
-                        </TermsSection>
-                    ))}
-                </TermsContent>
-            </TermsContainer>
+        <ContainerAuthenticated title="Human Trafficking Report">
+            <PageBackground>
+                <TermsContainer>
+                    <TermsTitle>Rapport sur la traite des êtres humains</TermsTitle>
+                    <TermsContent>
+                        {sections.map((section, index) => (
+                            <TermsSection key={index}>
+                                <SectionTitle>{section.title}</SectionTitle>
+                                <SectionText>{section.content}</SectionText>
+                            </TermsSection>
+                        ))}
+                    </TermsContent>
+                </TermsContainer>
+            </PageBackground>
         </ContainerAuthenticated>
     )
 } 

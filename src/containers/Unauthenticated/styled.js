@@ -110,4 +110,16 @@ export const Content = styled.div.attrs({
 export const Touch = styled.div.attrs({
 })`           
     cursor: pointer;
+`;
+
+export const Container = styled.div`
+    width: 100%;
+    min-height: 100vh;
+    background: ${props => props.background ? 
+        `linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${props.background})` : 
+        'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))'};
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 `; 

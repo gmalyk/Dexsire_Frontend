@@ -41,7 +41,7 @@ export default function Escorts() {
 
       console.log("normalresult", normalresult)
 
-      const next = normalresult?.filter(f => f?.user?.name)?.sort(sortBoost)?.map(m => (  {
+      const next = normalresult?.filter(f => f?.user?.name)?.sort(sortBoost)?.map(m => ({
         name: m?.user?.name,
         emphasis: !!m?.boost?.spended,
         location: {
@@ -50,7 +50,15 @@ export default function Escorts() {
         },
         urls: m?.photos?.map(m => parseStrapiImage(m?.url)),
         verified: m?.verified,
-        profile: m
+        profile: {
+          id: m?.id,
+          age: m?.age,
+          posts: m?.posts,
+          videos: m?.videos,
+          likes: m?.likes,
+          comments: m?.comments,
+          ...m  // Include other profile data
+        }
       }))
 
 

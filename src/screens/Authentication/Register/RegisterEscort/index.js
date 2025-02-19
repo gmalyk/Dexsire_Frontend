@@ -18,7 +18,8 @@ import {
     AppearanceTitle,
     UploadFileContainer,
     AppearanceText,
-    VerificationUploadContainer
+    VerificationUploadContainer,
+    AppearanceContainer
 } from './styled'
 
 import Button from "components/Form/Button";
@@ -328,12 +329,12 @@ export default function RegisterEscort() {
     const [ethnicity, setEthnicity] = useState(null)
     const [description, setDescription] = useState("")
     const [success, setSuccess] = useState(null)
-
+    
     const [preuser, setPreuser] = useState(null)
     const [video360, setVideo360] = useState(null); 
     const [verificationPhoto, setVerificationPhoto] = useState(null); 
     const [imagesReview, setImagesReview] = useState([]); 
-    
+
     const [services, setServices] = useState([]); 
     const [aboutme, setAboutme] = useState(""); 
     
@@ -604,28 +605,89 @@ export default function RegisterEscort() {
     const imagesUpload = useFileUpload();
     const verificationPhotoUpload = useFileUpload();
 
-    // Gestionnaires d'upload modifiés
-    const handleVideo360Upload = async (file) => {
-        // Créer un fichier local avec une URL blob
-        const localFile = await video360Upload.uploadSingleFile(file);
-        if (localFile) {
-            setVideo360(localFile);
-        }
+    const [uploadedFiles, setUploadedFiles] = useState({
+        video360: null,
+        photos: [],
+        frontId: null,
+        backId: null,
+        verification: null
+    });
+
+    const createFileObject = (file) => {
+        return {
+            id: Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            size: file.size,
+            url: URL.createObjectURL(file),
+            file: file
+        };
     };
 
-    const handleImagesUpload = async (files) => {
-        // Gérer plusieurs fichiers localement
-        const localFiles = await imagesUpload.uploadMultipleFiles(files);
-        if (localFiles?.length) {
-            setImagesReview(prev => [...prev, ...localFiles]);
-        }
+    const handleVideo360Upload = (file) => {
+        const fileObj = createFileObject(file);
+        setUploadedFiles(prev => ({
+            ...prev,
+            video360: fileObj
+        }));
+        setVideo360(fileObj.file);
     };
 
-    const handleVerificationPhotoUpload = async (file) => {
-        // Gérer un seul fichier localement
-        const localFile = await verificationPhotoUpload.uploadSingleFile(file);
-        if (localFile) {
-            setVerificationPhoto(localFile);
+    const handleImagesUpload = (files) => {
+        const newFiles = files.map(createFileObject);
+        setUploadedFiles(prev => ({
+            ...prev,
+            photos: [...prev.photos, ...newFiles]
+        }));
+        setImagesReview(prev => [...prev, ...newFiles.map(f => f.file)]);
+    };
+
+    const handleFrontIdUpload = (file) => {
+        const fileObj = createFileObject(file);
+        setUploadedFiles(prev => ({
+            ...prev,
+            frontId: fileObj
+        }));
+    };
+
+    const handleBackIdUpload = (file) => {
+        const fileObj = createFileObject(file);
+        setUploadedFiles(prev => ({
+            ...prev,
+            backId: fileObj
+        }));
+    };
+
+    const handleVerificationUpload = (file) => {
+        const fileObj = createFileObject(file);
+        setUploadedFiles(prev => ({
+            ...prev,
+            verification: fileObj
+        }));
+        setVerificationPhoto(fileObj.file);
+    };
+
+    const handleRemoveFile = (type, fileId) => {
+        if (type === 'photos') {
+            setUploadedFiles(prev => ({
+                ...prev,
+                photos: prev.photos.filter(f => f.id !== fileId)
+            }));
+            setImagesReview(prev => prev.filter(f => f.id !== fileId));
+        } else {
+            setUploadedFiles(prev => ({
+                ...prev,
+                [type]: null
+            }));
+            switch(type) {
+                case 'video360':
+                    setVideo360(null);
+                    break;
+                case 'verification':
+                    setVerificationPhoto(null);
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
@@ -700,29 +762,29 @@ export default function RegisterEscort() {
     }
 
     return (
-        <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
+            <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
             {success ? (
                 <Success {...success} />
             ) : (
                 <BodyContainer infoOption={infoOption}>
-                    <Background />
-                    <BodyContent>
-                        <Container>
-                            <FormTitle>{registerTitles?.[infoOption]?.title}</FormTitle>
-                            <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
-                            <FormSpacer small />
-                        </Container>
-                        <InfoData data={data} active={infoOption} />
+                            <Background />
+                            <BodyContent>
+                                <Container>
+                                    <FormTitle>{registerTitles?.[infoOption]?.title}</FormTitle>
+                                    <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
+                                    <FormSpacer small />
+                                </Container>
+                                <InfoData data={data} active={infoOption} />
                         
                         {infoOption === 'Personal data' && (
                             <RegisterForm items={formItems} action={action} />
                         )}
 
                         {infoOption === 'Privacy and Terms' && (
-                            <PrivacyAndTerms 
-                                t={t}
-                                onAccept={() => handleHeaderInfo('Profile')}
-                            />
+                                        <PrivacyAndTerms 
+                                            t={t}
+                                            onAccept={() => handleHeaderInfo('Profile')}
+                                        />
                         )}
 
                         {infoOption === 'Profile' && (
@@ -745,7 +807,7 @@ export default function RegisterEscort() {
                                     selectedCity={formProfile?.city}
                                     {...formProfile}
                                 />
-                                <ButtonContent width='631px'>
+                                            <ButtonContent width='631px'>
                                     <Button 
                                         outlineGradient 
                                         nospace 
@@ -755,94 +817,120 @@ export default function RegisterEscort() {
                                     >
                                         {t("advance")}
                                     </Button>
-                                </ButtonContent>
-                            </>
+                                            </ButtonContent>
+                                        </>
                         )}
 
                         {infoOption === 'Appearance' && (
-                            <>
-                                <Content>
-                                    <Title small maxwidth={289}>{t("now_its_time_to_report_your_appearance")}</Title>
-                                    <LocalUploadWrapper onChange={handleVideo360Upload}>
-                                        <Appearance 
-                                            uploadedFile={video360} 
-                                            setUploadedFile={handleVideo360Upload}
-                                        />
-                                    </LocalUploadWrapper>
-                                    <LocalUploadWrapper onChange={handleImagesUpload}>
-                                        <UploadAndPreview 
-                                            setUploadedFile={handleImagesUpload}
-                                            preview={imagesReview}
-                                        />
-                                    </LocalUploadWrapper>
-                                    <LocalUploadWrapper onChange={handleImagesUpload}>
-                                        <UploadID 
-                                            setUploadedFile={handleImagesUpload}
-                                            preview={imagesReview}
-                                        />
-                                    </LocalUploadWrapper>
+                                            <Content>
+                                <AppearanceContainer>
+                                    <AppearanceTitle>{t("upload_360_video")}</AppearanceTitle>
+                                    <UploadFile
+                                        accept="video/mp4,video/avi"
+                                        onChange={handleVideo360Upload}
+                                        files={uploadedFiles.video360 ? [uploadedFiles.video360] : []}
+                                        onRemove={() => handleRemoveFile('video360')}
+                                        dragText="drag_the_video_here_or_click_here"
+                                        supportedFiles="MP4, AVI"
+                                        maxFileSize="50mb"
+                                    />
+                                </AppearanceContainer>
 
-                                    <VerificationUploadContainer>
-                                        <AppearanceTitle>{t("verification_photo")}</AppearanceTitle>
-                                        <AppearanceText full>{t("send_a_photo_holding")}</AppearanceText>
-                                        <VerificationUpload>
-                                            <SampleContent>
-                                                <SampleTitle>{t("exemple")}</SampleTitle>
-                                                <SampleImage url={'/images/verification2.jpg'} />
-                                                <SampleTitle>{t("exemple")}</SampleTitle>
-                                            </SampleContent>
+                                <AppearanceContainer>
+                                    <AppearanceTitle>{t("send_photos")}</AppearanceTitle>
+                                    <UploadFile
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleImagesUpload}
+                                        files={uploadedFiles.photos}
+                                        onRemove={(fileId) => handleRemoveFile('photos', fileId)}
+                                        dragText="drag_the_photos_here_or_click_here"
+                                        supportedFiles="JPG, PNG"
+                                        maxFileSize="8mb. Minimum 4 photos."
+                                    />
+                                </AppearanceContainer>
 
-                                            <LocalUploadWrapper onChange={handleVerificationPhotoUpload}>
-                                                <UploadFile
-                                                    accept="image/*"
-                                                >
-                                                    <UploadFileContainer>
-                                                        {verificationPhoto ? (
-                                                            <SampleImage url={verificationPhoto.url} />
-                                                        ) : (
-                                                            <>
-                                                                <Container />
-                                                                <Icon icon="double-page" />
-                                                                <AppearanceText>
-                                                                    {t('drag_the_image_here_or_click_here')}
-                                                                </AppearanceText>
-                                                            </>
-                                                        )}
-                                                    </UploadFileContainer>
-                                                </UploadFile>
-                                            </LocalUploadWrapper>
-                                        </VerificationUpload>
-                                    </VerificationUploadContainer>
-                                    
-                                    <ButtonContent width='531px'>
-                                        <Button 
-                                            outlineGradient 
-                                            rightIcon={'chevron-right'} 
-                                            onClick={() => handleHeaderInfo('Services offered')} 
-                                            between
-                                        >
-                                            {t("advance")}
-                                        </Button>
-                                    </ButtonContent>
-                                </Content>
-                            </>
+                                <LocalUploadWrapper onChange={handleFrontIdUpload}>
+                                    <UploadID 
+                                        setUploadedFile={handleFrontIdUpload}
+                                        preview={imagesReview}
+                                    />
+                                </LocalUploadWrapper>
+
+                                <LocalUploadWrapper onChange={handleBackIdUpload}>
+                                    <UploadID 
+                                        setUploadedFile={handleBackIdUpload}
+                                        preview={imagesReview}
+                                    />
+                                </LocalUploadWrapper>
+
+                                <LocalUploadWrapper onChange={handleVerificationUpload}>
+                                    <UploadID 
+                                        setUploadedFile={handleVerificationUpload}
+                                        preview={imagesReview}
+                                    />
+                                </LocalUploadWrapper>
+
+                                                <VerificationUploadContainer>
+                                    <AppearanceTitle>{t("verification_photo")}</AppearanceTitle>
+                                    <AppearanceText full>{t("send_a_photo_holding")}</AppearanceText>
+                                                        <VerificationUpload>
+                                                            <SampleContent>
+                                            <SampleTitle>{t("exemple")}</SampleTitle>
+                                                                <SampleImage url={'/images/verification2.jpg'} />
+                                            <SampleTitle>{t("exemple")}</SampleTitle>
+                                                            </SampleContent>
+
+                                        <LocalUploadWrapper onChange={handleVerificationUpload}>
+                                                            <UploadFile
+                                                                accept="image/*" 
+                                                            >
+                                                                <UploadFileContainer>
+                                                    {verificationPhoto ? (
+                                                        <SampleImage url={verificationPhoto.url} />
+                                                    ) : (
+                                                        <>
+                                                                                <Container />
+                                                                                <Icon icon="double-page" />
+                                                            <AppearanceText>
+                                                                {t('drag_the_image_here_or_click_here')}
+                                                            </AppearanceText>
+                                                                            </>
+                                                    )}
+                                                                </UploadFileContainer>
+                                                            </UploadFile>
+                                        </LocalUploadWrapper>
+                                                        </VerificationUpload>
+                                                </VerificationUploadContainer>
+                                                
+                                                <ButtonContent width='531px'>
+                                    <Button 
+                                        outlineGradient 
+                                        rightIcon={'chevron-right'} 
+                                        onClick={() => handleHeaderInfo('Services offered')} 
+                                        between
+                                    >
+                                        {t("advance")}
+                                    </Button>
+                                                </ButtonContent>
+                                            </Content>
                         )}
 
                         {infoOption === 'Services offered' && (
-                            <>
-                                <ServicesOffered options={options} active={services} setActive={setServices} ethnicity={ethnicity} setEthnicity={setEthnicity} aboutme={aboutme} setAboutme={setAboutme} superForm={setForm} registering />
-                                <ButtonContent width='631px'>
-                                    <Button outlineGradient nospace rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Payment')} between >{ t("advance") }</Button>
-                                </ButtonContent>
-                            </>
+                                        <>
+                                            <ServicesOffered options={options} active={services} setActive={setServices} ethnicity={ethnicity} setEthnicity={setEthnicity} aboutme={aboutme} setAboutme={setAboutme} superForm={setForm} registering />
+                                            <ButtonContent width='631px'>
+                                                <Button outlineGradient nospace rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Payment')} between >{ t("advance") }</Button>
+                                            </ButtonContent>
+                                        </>
                         )}
 
                         {infoOption === 'Payment' && (
                             <Payment loading={loading} action={() => handleSuccess()} />
                         )}
-                    </BodyContent>
-                </BodyContainer>
+                            </BodyContent>
+                        </BodyContainer>
             )}
-        </ContainerUnauthenticated>
+            </ContainerUnauthenticated>
     )
 }

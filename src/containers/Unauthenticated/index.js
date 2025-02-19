@@ -16,7 +16,8 @@ import {
     AppLogo,
     Content,
     Touch,
-    LoginPage
+    LoginPage,
+    Container
 } from './styled'
 
 
@@ -50,7 +51,7 @@ export default function ContainerUnauthenticated({ children, background, scrollT
     useEffect(() => { init() }, [])
 
     return (
-        <>
+        <Container background={background}>
             <ThemedComponent>
                 <Content ref={contentRef}>
                     <LoginPage src={background} >
@@ -61,6 +62,6 @@ export default function ContainerUnauthenticated({ children, background, scrollT
                     </LoginPage>
                 </Content>
             </ThemedComponent>
-        </>
+        </Container>
     );
 }
