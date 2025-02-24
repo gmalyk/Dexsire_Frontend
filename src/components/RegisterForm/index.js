@@ -37,14 +37,23 @@ export default function RegisterForm({ items, action, loading }) {
     <>
       <FormContainer>
         <Title small>{ t("personal_data") }</Title>
-        <FormCore ref={formRef} formItems={items} />
-        <CheckContainer>
-          <Check checked={active} onChange={handleActive} />
-          <CheckLabel>
-            { t("i_agree_with_the_platform") } <CheckLink link onClick={() => setModal({ type: 'privacy' })} >{ t("privacy_policy") }</CheckLink> {t("and")} <CheckLink onClick={() => setModal({ type: 'terms' })}> { t("terms_of_service") }</CheckLink>.
-          </CheckLabel>
-        </CheckContainer>
-        <Button outlineGradient between loading={loading} rightIcon={'chevron-right'} onClick={next}>{ t("advance") }</Button>
+        <form 
+          autoComplete="off" 
+          onSubmit={e => e.preventDefault()}
+        >
+          <FormCore 
+            ref={formRef} 
+            formItems={items} 
+            autoComplete="off"
+          />
+          <CheckContainer>
+            <Check checked={active} onChange={handleActive} />
+            <CheckLabel>
+              { t("i_agree_with_the_platform") } <CheckLink link onClick={() => setModal({ type: 'privacy' })} >{ t("privacy_policy") }</CheckLink> {t("and")} <CheckLink onClick={() => setModal({ type: 'terms' })}> { t("terms_of_service") }</CheckLink>.
+            </CheckLabel>
+          </CheckContainer>
+          <Button outlineGradient between loading={loading} rightIcon={'chevron-right'} onClick={next}>{ t("advance") }</Button>
+        </form>
       </FormContainer>
     </>
   )

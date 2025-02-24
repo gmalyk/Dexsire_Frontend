@@ -48,6 +48,33 @@ export const MaterialInput = styled(Input)(({ theme, ...props }) => ({
   '&:focus': {
     fontSize: '16px',
   },
+
+  '&[type="password"]': {
+    '&::-webkit-credentials-auto-fill-button': {
+      display: 'none !important',
+      visibility: 'hidden !important',
+      position: 'absolute !important',
+      right: '0 !important'
+    },
+    '&::-webkit-contacts-auto-fill-button': {
+      display: 'none !important',
+      visibility: 'hidden !important'
+    },
+    '&::-webkit-strong-password-auto-fill-button': {
+      display: 'none !important',
+      visibility: 'hidden !important'
+    },
+    '-webkit-text-security': props.type === 'text' ? 'none' : 'disc',
+    'font-family': '-apple-system !important',
+    '-webkit-appearance': 'none',
+    'appearance': 'none'
+  },
+
+  '&:-webkit-autofill': {
+    '-webkit-box-shadow': '0 0 0 30px #000 inset !important',
+    '-webkit-text-fill-color': `${theme.palette.primary.contrastText} !important`,
+    'transition': 'background-color 5000s ease-in-out 0s'
+  }
 }));
 
 
@@ -113,6 +140,20 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
 
   '&:focus': {
     fontSize: '16px',
+  },
+
+  '&[type="password"]': {
+    '&::-webkit-credentials-auto-fill-button': {
+      display: 'none !important',
+    },
+    '&::-webkit-contacts-auto-fill-button': {
+      display: 'none !important',
+    },
+    '&::-webkit-strong-password-auto-fill-button': {
+      display: 'none !important',
+    },
+    '-webkit-text-security': props.type === 'text' ? 'none' : 'disc',
+    'font-family': '-apple-system !important',
   },
 }));
 

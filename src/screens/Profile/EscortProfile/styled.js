@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { Icon as IconBase } from 'ui/styled';
+import { Button } from 'components/Form/Button';
+
 
 export const BodyContainer = styled.div.attrs({
 })`
@@ -208,34 +210,64 @@ export const ActionButtons = styled.div`
     display: flex;
     gap: 16px;
     margin-top: 24px;
-    padding: 0 24px;
+    width: 100%;
+    align-items: center;
 
     @media (max-width: 768px) {
-        margin-top: 16px;
-        padding: 0 16px;
         gap: 12px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
+        flex-direction: row;
+    }
+`;
 
-        button {
-            height: 48px;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            color: white;
-            transition: all 0.2s ease;
+export const WhatsappButton = styled(Button)`
+    width: 48px;
+    height: 48px;
+    min-width: 48px !important;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    overflow: hidden;
 
-            &:hover {
-                background: rgba(255, 255, 255, 0.1);
-            }
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    img {
+        width: 16px;
+        height: 16px;
+    }
+
+    @media (max-width: 768px) {
+        width: 40px;
+        height: 40px;
+        min-width: 40px !important;
+        
+        img {
+            width: 14px;
+            height: 14px;
         }
+    }
+`;
+
+export const FollowButton = styled(Button)`
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+
+    @media (max-width: 768px) {
+        height: 40px;
     }
 `;
 
 export const RoundButton = styled.button`
     width: 48px;
-    min-width: 48px;
     height: 48px;
     padding: 12px;
     border-radius: 24px;
@@ -246,6 +278,7 @@ export const RoundButton = styled.button`
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0; /* Prevents button from shrinking */
 
     svg {
         width: 24px;

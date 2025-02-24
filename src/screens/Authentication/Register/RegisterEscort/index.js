@@ -355,13 +355,12 @@ export default function RegisterEscort() {
 
     const formItems = useMemo(() => {
         return [
-            
             {
                 ref: 'email',
                 placeholder: t('email'),
                 type: 'text',
                 full: true,
-                outline: true,
+                outline: true
             },
             {
                 ref: 'password',
@@ -408,7 +407,7 @@ export default function RegisterEscort() {
                     autoSave: "off",
                     role: "presentation"
                 }
-            },
+            }
         ]
     }, [t])
 
@@ -890,43 +889,43 @@ export default function RegisterEscort() {
                                     </UploadFile>
                                 </AppearanceContainer>
 
-                                <VerificationUploadContainer>
+                                                <VerificationUploadContainer>
                                     <AppearanceTitle>{t("verification_photo")}</AppearanceTitle>
                                     <AppearanceText full>{t("send_a_photo_holding")}</AppearanceText>
-                                    <VerificationUpload>
-                                        <SampleContent>
+                                                        <VerificationUpload>
+                                                            <SampleContent>
                                             <SampleTitle>{t("exemple")}</SampleTitle>
-                                            <SampleImage url={'/images/verification2.jpg'} />
+                                                                <SampleImage url={'/images/verification2.jpg'} />
                                             <SampleTitle>{t("exemple")}</SampleTitle>
-                                        </SampleContent>
+                                                            </SampleContent>
 
-                                        <UploadFile
-                                            accept="image/*"
+                                                            <UploadFile
+                                                                accept="image/*" 
                                             onChange={handleVerificationUpload}
                                             files={uploadedFiles.verification ? [uploadedFiles.verification] : []}
                                             onRemove={() => handleRemoveFile('verification')}
                                             dragText="drag_the_verification_photo_here_or_click_here"
                                             supportedFiles="JPG, PNG"
                                             maxFileSize="8mb"
-                                        >
-                                            <UploadFileContainer>
+                                                            >
+                                                                <UploadFileContainer>
                                                 {uploadedFiles.verification ? (
                                                     <SampleImage url={uploadedFiles.verification.url} />
                                                 ) : (
                                                     <>
-                                                        <Container />
-                                                        <Icon icon="double-page" />
+                                                                                <Container />
+                                                                                <Icon icon="double-page" />
                                                         <AppearanceText>
                                                             {t('drag_the_image_here_or_click_here')}
                                                         </AppearanceText>
-                                                    </>
+                                                                            </>
                                                 )}
-                                            </UploadFileContainer>
-                                        </UploadFile>
-                                    </VerificationUpload>
-                                </VerificationUploadContainer>
-
-                                <ButtonContent width='531px'>
+                                                                </UploadFileContainer>
+                                                            </UploadFile>
+                                                        </VerificationUpload>
+                                                </VerificationUploadContainer>
+                                                
+                                                <ButtonContent width='531px'>
                                     <Button 
                                         outlineGradient 
                                         rightIcon={'chevron-right'} 
@@ -935,8 +934,8 @@ export default function RegisterEscort() {
                                     >
                                         {t("advance")}
                                     </Button>
-                                </ButtonContent>
-                            </Content>
+                                                </ButtonContent>
+                                            </Content>
                         )}
 
                         {infoOption === 'Services offered' && (

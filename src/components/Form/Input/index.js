@@ -25,23 +25,37 @@ export const Input = (props) => {
     const [visible, setVisible] = useState(false)
 
     const handleClickShowPassword = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setVisible(!visible);
-    };
+        e.preventDefault()
+        setVisible(!visible)
+    }
 
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
+    const passwordProps = props.type === 'password' ? {
+        autoComplete: 'off',
+        autoCorrect: 'off',
+        autoCapitalize: 'off',
+        spellCheck: false,
+        'data-lpignore': true,
+        'data-form-type': 'other',
+        webkitautofill: 'off',
+        inputMode: 'text',
+        pattern: '.*',
+        role: 'presentation',
+        'aria-autocomplete': 'none',
+        'aria-hidden': 'true',
+        name: `password_${Math.random()}`,
+        id: `password_${Math.random()}`,
+    } : {};
 
     const GInput = props.outline ? MaterialInputOutline : MaterialInput;
 
     return (
         <ThemedComponent>
             <FormControl fullWidth variant={props.outline ? "outlined" : "outlined"}>
+                {!props.label ? null : <InputLabel>{props.label}</InputLabel>}
                 <GInput
                     {...props}
-                    type={(props.type === 'password' && visible) ? 'text' : props.type}
+                    {...passwordProps}
+                    type={visible ? 'text' : props.type}
                     value={props.value}
                     multiline={props.type === 'textarea'}
                     maxRows={2}
@@ -66,20 +80,9 @@ export const Input = (props) => {
                         props.type === 'password' && (
                             <InputAdornment position="end">
                                 <IconButton
-                                    aria-label="toggle password visibility"
                                     onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    edge="end"
                                 >
-                                    <Icon 
-                                        icon={visible ? "eye-off" : "eye"} 
-                                        style={{ 
-                                            color: '#fff',
-                                            position: 'relative',
-                                            zIndex: 9999,
-                                            pointerEvents: 'all'
-                                        }} 
-                                    />
+                                    {visible ? <VisibilityOff /> : <Visibility />}
                                 </IconButton>
                             </InputAdornment>
                         )

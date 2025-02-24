@@ -106,3 +106,9 @@ export const ContentFormHeader = styled.div`
         border-bottom: 1px solid ${p.theme.palette.colors.shadow};
     ` : ''}
 `;
+
+export const FormContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+`;

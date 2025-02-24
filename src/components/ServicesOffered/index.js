@@ -1,5 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { ButtonEditing, CheckContainer, FormContainer, InputContainer, NoteContainer, NoteText, ServiceHeaderContent, ServicesContainer } from './styled';
+import { 
+    ButtonEditing, 
+    CheckContainer, 
+    FormContainer, 
+    InputContainer, 
+    NoteContainer, 
+    NoteText, 
+    ServiceHeaderContent, 
+    ServicesContainer,
+    FormSection,
+    FormTitle,
+    FormRow
+} from './styled';
 import { FormSpacer, Icon, Title } from 'ui/styled';
 import Check from 'components/Form/Check';
 import Select from 'components/Form/Select';
@@ -7,9 +19,10 @@ import Input, { MaskedInput } from 'components/Form/Input';
 import { optionsBoobs, optionsCategory, optionsEyes, optionsHair, optionsLanguage, optionsMobility, optionsOrigin, optionsPayment, optionsSize, optionsWeight } from 'utils/options';
 import Rating from 'components/Form/Rating';
 import useI18n from 'hooks/useI18n';
+import Picker from 'components/Form/Picker';
 
 
-export default function ServicesOffered({ note, editing, noteEditing, options, active, setActive, ethnicity, setEthnicity, aboutme, setAboutme, superForm, sobs, saveNote, saveServices, registering, profile, subActive, setSubActive, superLang }) {
+export default function ServicesOffered({ note, editing, noteEditing, options, active, setActive, ethnicity, setEthnicity, aboutme, setAboutme, superForm, sobs, saveNote, saveServices, registering, profile, subActive, setSubActive, superLang, selectedRegion, selectedCity }) {
 
   const [isEditing, setIsEditing] = useState(false)
   const [isNoteEditing, setIsNoteEditing] = useState(false)
@@ -70,6 +83,20 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
 
   useEffect(() => { if(sobs){ setForm({ ...form, service_observations: sobs }) }; }, [sobs])
 
+  const generateHeightOptions = () => {
+    return Array.from({ length: 81 }, (_, i) => ({
+        value: `${140 + i}`,
+        label: `${140 + i} cm`
+    }));
+  };
+
+  const generateWeightOptions = () => {
+    return Array.from({ length: 111 }, (_, i) => ({
+        value: `${40 + i}`,
+        label: `${40 + i} kg`
+    }));
+  };
+
   return (
     <>
       <ServicesContainer>
@@ -90,12 +117,46 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
             
             <Select formed borderBackground placeholder={ t('Nationality') } options={optionsOrigin} onChange={e => changeForm(e, 'nationality') } value={formValue('nationality') } />
             
-            <Select formed borderBackground placeholder={ t('Height') } options={optionsSize} onChange={e => changeForm(e, 'height') } value={formValue('height') } />
-            <Select formed borderBackground placeholder={ t('Weight') } options={optionsWeight} onChange={e => changeForm(e, 'weight') } value={formValue('weight') } />
             <Select formed borderBackground placeholder={ t('Hair color') } options={optionsHair} onChange={e => changeForm(e, 'hair') } value={formValue('hair') } />
             <Select formed borderBackground placeholder={ t('Breasts') } options={optionsBoobs} onChange={e => changeForm(e, 'breasts') } value={formValue('breasts') } />
             <Select formed borderBackground placeholder={ t('Eye color') } options={optionsEyes} onChange={e => changeForm(e, 'eyes') } value={formValue('eyes') } />
 
+            <Picker
+                formed
+                borderBackground
+                name="height"
+                placeholder={t('Height')}
+                type="picker"
+                pickerType="height"
+                required
+                value={selectedRegion?.height}
+                onChange={(e) => superForm({ height: e.target.value })}
+                style={{
+                    height: '56px',
+                    borderRadius: '100px',
+                    background: 'transparent',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '0 32px'
+                }}
+            />
+            <Picker
+                formed
+                borderBackground
+                name="weight"
+                placeholder={t('Weight')}
+                type="picker"
+                pickerType="weight"
+                required
+                value={selectedRegion?.weight}
+                onChange={(e) => superForm({ weight: e.target.value })}
+                style={{
+                    height: '56px',
+                    borderRadius: '100px',
+                    background: 'transparent',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '0 32px'
+                }}
+            />
 
               <Title verysmall> { t("mobility") } </Title>
               <CheckContainer>

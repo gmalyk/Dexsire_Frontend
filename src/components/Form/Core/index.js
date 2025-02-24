@@ -6,6 +6,7 @@ import {
     FormSeparator,
     ContentFormHeader,
     ContentForm,
+    FormContainer
 } from "./styled";
 
 import Input, { CurrencyInput, MaskedInput } from "components/Form/Input";
@@ -15,6 +16,7 @@ import Button from "../Button";
 import { TextArea } from "../TextArea/styled";
 import InputTextArea from "../TextArea";
 import Rating from "../Rating";
+import Picker from 'components/Form/Picker';
 
 export default forwardRef(function FormCore({ formItems, register, disabled, title }, ref) {
 
@@ -63,7 +65,10 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
     }
 
     return (
-        <>
+        <FormContainer 
+            autoComplete="off" 
+            data-lpignore="true"
+        >
             <ContentForm active={!!title}>
                 <ContentFormHeader active={!!title}>{title}</ContentFormHeader>
                 <FormWrapper>
@@ -94,6 +99,10 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
                                                 <Button nospace onClick={item.action} outlineGradient={item.outilineGradient}>
                                                     {item.label}
                                                 </Button>
+                                            : item.type === 'picker' ?
+                                                <Picker {...item} />
+                                            : item.type === 'select' ?
+                                                <Select {...item} />
                                             :
                                                 <Input  
                                                     type={item.type} 
@@ -109,6 +118,7 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
                                                     data-form-type="other"
                                                     passwordrules={item.passwordrules}
                                                     webkitautofill={item.webkitautofill}
+                                                    aria-autocomplete="none"
                                                 />
                                     }
                                 </FormInput>
@@ -118,6 +128,6 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
                     }
                 </FormWrapper>
             </ContentForm>
-        </>
+        </FormContainer>
     );
 })

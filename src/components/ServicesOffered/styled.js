@@ -91,3 +91,24 @@ export const NoteContainer = styled.div.attrs({
         border-bottom: 1px solid ${p.theme.palette.borderBackground.main};
     `: ``};
 `;
+
+export const FormSection = styled.div`
+    margin: 24px 0;
+`;
+
+export const FormTitle = styled.h3`
+    font-size: 16px;
+    font-weight: 700;
+    color: ${p => p.theme.palette.colors.grey};
+    margin-bottom: 16px;
+`;
+
+export const FormRow = styled.div`
+    display: flex;
+    gap: 16px;
+    
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 12px;
+    }
+`;
