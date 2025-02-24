@@ -104,6 +104,11 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
                                                     onKeyDown={item.onKeyDown} onSubmitEditing={item.onSubmitEditing}
                                                     onBlur={() => typeof item?.onBlur === "function" ? item.onBlur(formValue(item.ref)) : null} 
                                                     outline={item.outline} 
+                                                    autoComplete={item.autocomplete}
+                                                    data-lpignore="true"
+                                                    data-form-type="other"
+                                                    passwordrules={item.passwordrules}
+                                                    webkitautofill={item.webkitautofill}
                                                 />
                                     }
                                 </FormInput>

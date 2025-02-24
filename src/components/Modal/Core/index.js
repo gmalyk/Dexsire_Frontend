@@ -48,6 +48,12 @@ export default function ModalCore() {
       if(isInactive){ exit() ;}
   }, [isInactive]);
 
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget && modal?.type !== 'search-advanced') {
+      setTracker(null);
+    }
+  };
+
   return (
     <>
       <ThemedComponent>

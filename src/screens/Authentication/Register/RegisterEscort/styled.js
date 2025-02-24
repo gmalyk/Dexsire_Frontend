@@ -114,29 +114,35 @@ export const Content = styled.div.attrs({
 
 
 
-export const VerificationUploadContainer = styled.div.attrs({
-})`
-    width: 80%;
+export const VerificationUploadContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+`;
+
+export const VerificationUpload = styled.div`
     display: flex;
     gap: 24px;
+    width: 100%;
+
+    @media (max-width: 768px) {
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+`;
+
+export const SampleContent = styled.div`
+    display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 48px 0;
-`;
+    gap: 8px;
+    min-width: 200px;
 
-export const VerificationUpload = styled.div.attrs({
-})`
-    width: 80%;
-    display: flex;
-    gap: 24px;
-`;
-
-export const SampleContent = styled.div.attrs({
-})`
-    max-width: 234px;
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
+    @media (max-width: 768px) {
+        width: 100%;
+        margin-top: 16px;
+    }
 `;
 
 export const SampleTitle = styled.div.attrs({

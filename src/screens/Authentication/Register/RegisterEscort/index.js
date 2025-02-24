@@ -822,7 +822,7 @@ export default function RegisterEscort() {
                         )}
 
                         {infoOption === 'Appearance' && (
-                                            <Content>
+                            <Content>
                                 <AppearanceContainer>
                                     <AppearanceTitle>{t("upload_360_video")}</AppearanceTitle>
                                     <UploadFile
@@ -850,60 +850,83 @@ export default function RegisterEscort() {
                                     />
                                 </AppearanceContainer>
 
-                                <LocalUploadWrapper onChange={handleFrontIdUpload}>
-                                    <UploadID 
-                                        setUploadedFile={handleFrontIdUpload}
-                                        preview={imagesReview}
+                                <AppearanceContainer>
+                                    <AppearanceTitle>{t("upload_id_front")}</AppearanceTitle>
+                                    <UploadFile
+                                        accept="image/*"
+                                        onChange={handleFrontIdUpload}
+                                        files={uploadedFiles.frontId ? [uploadedFiles.frontId] : []}
+                                        onRemove={() => handleRemoveFile('frontId')}
+                                        dragText="drag_the_id_front_here_or_click_here"
+                                        supportedFiles="JPG, PNG"
+                                        maxFileSize="8mb"
                                     />
-                                </LocalUploadWrapper>
+                                </AppearanceContainer>
 
-                                <LocalUploadWrapper onChange={handleBackIdUpload}>
-                                    <UploadID 
-                                        setUploadedFile={handleBackIdUpload}
-                                        preview={imagesReview}
-                                    />
-                                </LocalUploadWrapper>
+                                <AppearanceContainer>
+                                    <AppearanceTitle>{t("upload_id_back")}</AppearanceTitle>
+                                    <UploadFile
+                                        accept="image/*"
+                                        onChange={handleBackIdUpload}
+                                        files={uploadedFiles.backId ? [uploadedFiles.backId] : []}
+                                        onRemove={() => handleRemoveFile('backId')}
+                                        dragText="drag_the_id_back_here_or_click_here"
+                                        supportedFiles="JPG, PNG"
+                                        maxFileSize="8mb"
+                                    >
+                                        <UploadFileContainer>
+                                            {uploadedFiles.backId ? (
+                                                <SampleImage url={uploadedFiles.backId.url} />
+                                            ) : (
+                                                <>
+                                                    <Container />
+                                                    <Icon icon="double-page" />
+                                                    <AppearanceText>
+                                                        {t('drag_the_id_back_here_or_click_here')}
+                                                    </AppearanceText>
+                                                </>
+                                            )}
+                                        </UploadFileContainer>
+                                    </UploadFile>
+                                </AppearanceContainer>
 
-                                <LocalUploadWrapper onChange={handleVerificationUpload}>
-                                    <UploadID 
-                                        setUploadedFile={handleVerificationUpload}
-                                        preview={imagesReview}
-                                    />
-                                </LocalUploadWrapper>
-
-                                                <VerificationUploadContainer>
+                                <VerificationUploadContainer>
                                     <AppearanceTitle>{t("verification_photo")}</AppearanceTitle>
                                     <AppearanceText full>{t("send_a_photo_holding")}</AppearanceText>
-                                                        <VerificationUpload>
-                                                            <SampleContent>
+                                    <VerificationUpload>
+                                        <SampleContent>
                                             <SampleTitle>{t("exemple")}</SampleTitle>
-                                                                <SampleImage url={'/images/verification2.jpg'} />
+                                            <SampleImage url={'/images/verification2.jpg'} />
                                             <SampleTitle>{t("exemple")}</SampleTitle>
-                                                            </SampleContent>
+                                        </SampleContent>
 
-                                        <LocalUploadWrapper onChange={handleVerificationUpload}>
-                                                            <UploadFile
-                                                                accept="image/*" 
-                                                            >
-                                                                <UploadFileContainer>
-                                                    {verificationPhoto ? (
-                                                        <SampleImage url={verificationPhoto.url} />
-                                                    ) : (
-                                                        <>
-                                                                                <Container />
-                                                                                <Icon icon="double-page" />
-                                                            <AppearanceText>
-                                                                {t('drag_the_image_here_or_click_here')}
-                                                            </AppearanceText>
-                                                                            </>
-                                                    )}
-                                                                </UploadFileContainer>
-                                                            </UploadFile>
-                                        </LocalUploadWrapper>
-                                                        </VerificationUpload>
-                                                </VerificationUploadContainer>
-                                                
-                                                <ButtonContent width='531px'>
+                                        <UploadFile
+                                            accept="image/*"
+                                            onChange={handleVerificationUpload}
+                                            files={uploadedFiles.verification ? [uploadedFiles.verification] : []}
+                                            onRemove={() => handleRemoveFile('verification')}
+                                            dragText="drag_the_verification_photo_here_or_click_here"
+                                            supportedFiles="JPG, PNG"
+                                            maxFileSize="8mb"
+                                        >
+                                            <UploadFileContainer>
+                                                {uploadedFiles.verification ? (
+                                                    <SampleImage url={uploadedFiles.verification.url} />
+                                                ) : (
+                                                    <>
+                                                        <Container />
+                                                        <Icon icon="double-page" />
+                                                        <AppearanceText>
+                                                            {t('drag_the_image_here_or_click_here')}
+                                                        </AppearanceText>
+                                                    </>
+                                                )}
+                                            </UploadFileContainer>
+                                        </UploadFile>
+                                    </VerificationUpload>
+                                </VerificationUploadContainer>
+
+                                <ButtonContent width='531px'>
                                     <Button 
                                         outlineGradient 
                                         rightIcon={'chevron-right'} 
@@ -912,8 +935,8 @@ export default function RegisterEscort() {
                                     >
                                         {t("advance")}
                                     </Button>
-                                                </ButtonContent>
-                                            </Content>
+                                </ButtonContent>
+                            </Content>
                         )}
 
                         {infoOption === 'Services offered' && (

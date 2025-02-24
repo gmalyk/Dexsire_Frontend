@@ -25,3 +25,8 @@ export const SearchAdvancedForm = styled.div.attrs({
     width: 100%;
     max-width: 737px;
 `;
+
+export const Container = styled.div`
+    position: relative;
+    z-index: 1000;
+`;

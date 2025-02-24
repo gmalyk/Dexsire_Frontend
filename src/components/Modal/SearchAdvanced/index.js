@@ -114,16 +114,18 @@ export default function ModalSearchAdvanced() {
     setModal(null)
   }
 
+  const handleContainerClick = (e) => {
+    e.stopPropagation(); // Prevent click from reaching overlay
+  };
+
   return (
-    <>
-      <Wrapper background="/images/background3.jpeg" logo>
-        <SearchAdvancedContent>
-          <SearchAdvancedTitle>{ t("advancedsearch_title") }</SearchAdvancedTitle>
-          <SearchAdvancedForm>
-            <FormCore ref={formRef} register={filter} formItems={formItems} />
-          </SearchAdvancedForm>
-        </SearchAdvancedContent>
-      </Wrapper>
-    </>
+    <Wrapper background="/images/background3.jpeg" logo>
+      <SearchAdvancedContent onClick={handleContainerClick}>
+        <SearchAdvancedTitle>{ t("advancedsearch_title") }</SearchAdvancedTitle>
+        <SearchAdvancedForm>
+          <FormCore ref={formRef} register={filter} formItems={formItems} />
+        </SearchAdvancedForm>
+      </SearchAdvancedContent>
+    </Wrapper>
   )
 }
