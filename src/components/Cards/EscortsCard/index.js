@@ -10,11 +10,10 @@ import { CoreContext } from 'context/CoreContext';
 export default function EscortsCard({ emphasis, urls, name, location, verified, reload, profile, user }) {
 
   const history = useHistory(); 
-  const navigate = to => history.push(`/${ to }`); 
-  
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { setModal } = useContext(CoreContext);
   const cardRef = useRef();
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const [likeing, setLikeing] = useState(false)
   const [isLike, setIsLike] = useState(null)
@@ -51,11 +50,11 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
     }
   };
 
-  const openModel = (e) => { 
-    if(!e.target.closest('.cant-openmodel')){
-      setModal(null)
-      navigate(`profile/escort/${ profile?.id || "" }`) 
-    }
+  const handleClick = () => {
+    history.push({
+      pathname: `/profile/escort/${profile.id}`,
+      state: { profileData: profile }
+    });
   }
 
   const handleLike = async () => {
@@ -88,7 +87,7 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
     },
     {
       icon: "message",
-      action: () => navigate(`chat/${profile?.id}`)
+      action: () => history.push(`chat/${profile?.id}`)
     },
     {
       icon: "bell",
@@ -144,9 +143,20 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
     checkBell()
   }, [user, profile])
 
+  const handleArrowClick = (e, direction) => {
+    e.stopPropagation(); // Prevent card click event from firing
+    e.preventDefault(); // Prevent default behavior
+    
+    if (direction === 'next' && currentImageIndex < urls.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else if (direction === 'prev' && currentImageIndex > 0) {
+      setCurrentImageIndex(currentImageIndex - 1);
+    }
+  };
+
   return (
     <>
-      <CardBorderBackground emphasis={emphasis} onClick={openModel}>
+      <CardBorderBackground emphasis={emphasis} onClick={handleClick}>
         <CardContainer
           ref={cardRef}
           src={urls?.[currentImageIndex]}
@@ -173,11 +183,19 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
             </IconsContainer>
           </CardHeaderContent>
           <HalfContent className='cant-openmodel'>
-            <ButtonNextAndPrev onClick={prevImage}>
+            <ButtonNextAndPrev 
+              onClick={(e) => handleArrowClick(e, 'prev')}
+              position="left"
+              style={{ opacity: currentImageIndex === 0 ? 0.5 : 1 }}
+            >
               <Icon icon="arrow-left" nomargin />
             </ButtonNextAndPrev>
             <CardLogo />
-            <ButtonNextAndPrev onClick={nextImage}>
+            <ButtonNextAndPrev 
+              onClick={(e) => handleArrowClick(e, 'next')}
+              position="right"
+              style={{ opacity: currentImageIndex >= (urls?.length - 1) ? 0.5 : 1 }}
+            >
               <Icon icon="arrow-right" nomargin />
             </ButtonNextAndPrev>
           </HalfContent>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
     DashboardAnimation,
@@ -33,62 +33,72 @@ export default function DashboardHome() {
     const navigate = to => history.push(`/${to}`);
 
     const { t } = useI18n()
-    const { user } = useContext(CoreContext)
+    const { user, setModal } = useContext(CoreContext)
 
-    // Create a local profile object with the mock data
-    const mockProfile = {
-        id: 1,
-        name: "Amanda Borges",
-        age: 23,
-        location: {
-            city: "Florianópolis",
-            state: "SC"
+    // Mock profiles data
+    const mockProfiles = [
+        {
+            id: "escort-1",
+            name: "Amanda Borges",
+            age: 23,
+            location: {
+                city: "Florianópolis",
+                state: "SC"
+            },
+            description: "I'm Amanda, I would be very happy to meet you in person and share my attractive and irresistible private content 💋",
+            avatar: "/images/avatar.jpg",
+            images: [
+                "/images/escort3.png",
+                "/images/profile.png",
+            ],
+            stats: {
+                posts: 34,
+                videos: 10,
+                likes: 124,
+                comments: 26
+            },
+            emphasis: false,
+            verified: true,
+            services: ["Service 1", "Service 2"],
+            prices: [
+                { text: "1 hour - 300 CHF" },
+                { text: "2 hours - 500 CHF" }
+            ],
+            phone: "+41 123 456 789",
+            whatsapp: "+41123456789"
         },
-        description: "I'm Amanda, I would be very happy to meet you in person and share my attractive and irresistible private content 💋",
-        images: [
-            "/images/profile.png",
-            "/images/escort3.png",
-            "/images/escort.jpeg",
-            "/images/escort2.jpeg"
-        ],
-        services: ["Service 1", "Service 2"],
-        prices: [
-            { text: "1 hour - 300 CHF" },
-            { text: "2 hours - 500 CHF" }
-        ],
-        phone: "+41 123 456 789",
-        whatsapp: "+41123456789",
-        verified: true,
-        posts: 34,
-        videos: 10,
-        likes: 124,
-        comments: 26
-    }
-
-    const localProfile = {
-        name: mockProfile.name,
-        emphasis: false,
-        location: mockProfile.location,
-        urls: [
-            "/images/escort2.jpeg",
-            "/images/escort.jpeg"
-        ],
-        verified: mockProfile.verified,
-        profile: {
-            ...mockProfile,
-            id: mockProfile.id,
-            age: mockProfile.age,
-            posts: mockProfile.posts,
-            videos: mockProfile.videos,
-            likes: mockProfile.likes,
-            comments: mockProfile.comments,
-            whatsapp: mockProfile.whatsapp
+        {
+            id: "escort-2",
+            name: "Sophie Laurent",
+            age: 25,
+            location: {
+                city: "Geneva",
+                state: "GE"
+            },
+            description: "Luxury companion available for unforgettable moments. VIP experience guaranteed 💎",
+            avatar: "/images/escort2.jpg",
+            images: [
+                "/images/escort2.jpeg",
+                "/images/escort.png",
+            ],
+            stats: {
+                posts: 45,
+                videos: 15,
+                likes: 256,
+                comments: 38
+            },
+            emphasis: true,
+            verified: true,
+            premium: true,
+            services: ["Service 1", "Service 2", "Service 3"],
+            prices: [
+                { text: "1 hour - 400 CHF" },
+                { text: "2 hours - 700 CHF" }
+            ],
+            phone: "+41 987 654 321",
+            whatsapp: "+41987654321"
         }
-    }
-
-    // Add console.log to debug the data
-    console.log('User data:', user);
-    console.log('Local profile:', localProfile);
+    ];
 
     return (
         <>
@@ -117,11 +127,17 @@ export default function DashboardHome() {
                 </BodyContainer>
                 <Escorts />
                 <HomeContainer>
-                    <EscortsCard
-                        {...localProfile}
-                        user={user}
-                        reload={() => {}}
-                    />
+                    {mockProfiles.map((profile) => (
+                        <EscortsCard
+                            key={profile.id}
+                            emphasis={profile.emphasis}
+                            urls={profile.images}
+                            name={profile.name}
+                            location={profile.location}
+                            verified={profile.verified}
+                            profile={profile}
+                        />
+                    ))}
                 </HomeContainer>
                 <Footer />
             </ContainerAuthenticated>

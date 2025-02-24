@@ -36,13 +36,17 @@ import {
     RoundButton,
     WhatsappButton
 } from './styled'
+import { useLocation, useParams } from 'react-router-dom'
 
 export default function EscortProfile() {
   const { t } = useI18n()
   const [isEditing, setIsEditing] = useState(false)
-  
-  // Mock data for development
-  const mockProfile = {
+  const { id } = useParams()
+  const location = useLocation()
+  const profileData = location.state?.profileData
+
+  // Use profileData instead of mockProfile
+  const [currentProfile] = useState(profileData || {
     id: 1,
     name: "Amanda Borges",
     age: 23,
@@ -69,9 +73,7 @@ export default function EscortProfile() {
     videos: 10,
     likes: 124,
     comments: 26
-  }
-
-  const [currentProfile] = useState(mockProfile)
+  })
 
   // Simplified handlers without API calls
   const handleEdit = () => setIsEditing(true)
@@ -82,6 +84,10 @@ export default function EscortProfile() {
   const handlePhotoClick = (index) => {
     console.log(`Photo clicked: ${index}`)
   }
+
+  // Use the profile data to render the profile
+  console.log('Profile ID:', id)
+  console.log('Profile Data:', profileData)
 
   return (
     <ContainerAuthenticated free>
@@ -97,8 +103,8 @@ export default function EscortProfile() {
                         <ProfileAvatar src={currentProfile.images[0]} />
                         <ProfileInfo>
                             <ProfileName>
-                                <span>Amanda</span>
-                                <span>Borges</span>
+                                <span>{currentProfile.name.split(' ')[0]}</span>
+                                <span>{currentProfile.name.split(' ')[1]}</span>
                             </ProfileName>
                         </ProfileInfo>
                         <HeaderActions>
@@ -127,19 +133,19 @@ export default function EscortProfile() {
                 {/* Stats Section */}
                 <ProfileStats>
                     <StatItem>
-                        <StatValue>{currentProfile.posts}</StatValue>
+                        <StatValue>{currentProfile.stats?.posts || currentProfile.posts}</StatValue>
                         <StatLabel>posts</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.videos}</StatValue>
+                        <StatValue>{currentProfile.stats?.videos || currentProfile.videos}</StatValue>
                         <StatLabel>videos</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.likes}</StatValue>
+                        <StatValue>{currentProfile.stats?.likes || currentProfile.likes}</StatValue>
                         <StatLabel>likes</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.comments}</StatValue>
+                        <StatValue>{currentProfile.stats?.comments || currentProfile.comments}</StatValue>
                         <StatLabel>comments</StatLabel>
                     </StatItem>
                 </ProfileStats>

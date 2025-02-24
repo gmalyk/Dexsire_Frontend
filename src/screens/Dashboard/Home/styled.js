@@ -98,12 +98,23 @@ export const HomeText = styled.div.attrs({})`
 `;
 
 export const HomeContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // 3 cards per row on desktop
+    gap: 24px;
+    padding: 24px;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 24px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
+        grid-template-columns: repeat(2, 1fr); // 2 cards per row on tablet/mobile
+        gap: 16px;
         padding: 16px;
+    }
+
+    @media (max-width: 480px) {
+        grid-template-columns: repeat(2, 1fr); // Keep 2 cards per row on smaller mobile
+        gap: 12px;
+        padding: 12px;
     }
 `;

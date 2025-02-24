@@ -13,12 +13,6 @@ export const CardBorderBackground = styled.div.attrs({
   max-width: 380px;
   width: 100%;
   aspect-ratio: 380 / 580;
-  ${p => p.emphasis ? `
-    background:
-    linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.15) 100%),
-    linear-gradient(22deg, ${p.theme.palette.gradient.primary} 30%, 
-    ${p.theme.palette.gradient.secondary} 90%);
-  `: ``};
   position: relative;
   border-radius: 40px;
   align-items: flex-end;
@@ -26,6 +20,12 @@ export const CardBorderBackground = styled.div.attrs({
   display: flex;
   overflow: hidden;
   cursor: pointer;
+  padding: ${p => p.emphasis ? '6px' : '0'};
+  background: ${p => p.emphasis ? `linear-gradient(
+    22deg,
+    ${p.theme.palette.gradient.primary} 30%,
+    ${p.theme.palette.gradient.secondary} 90%
+  )` : 'none'};
 
   @media (max-width: 768px) {
     max-width: 100%;
@@ -36,22 +36,17 @@ export const CardBorderBackground = styled.div.attrs({
     aspect-ratio: 320 / 520;
   }
 `;
-
 export const CardContainer = styled.div.attrs({
 })`
   width: 100%;
   height: 100%;
-  ${p => p.emphasis ? `
-    max-width: 391px;
-    max-height: 580px;
-  `: ``};
   background: 
     linear-gradient(315deg, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.15) 70%),
     center / cover no-repeat url('${p => p.src}');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  border-radius: 40px;
+  border-radius: ${p => p.emphasis ? '38px' : '40px'};
   overflow: hidden;
   padding: 24px;
   display: flex;
@@ -187,6 +182,11 @@ export const ButtonNextAndPrev = styled.div.attrs({})`
   cursor: pointer;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(2px);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  ${props => props.position === 'left' ? 'left: 16px;' : 'right: 16px;'};
+  z-index: 2;
 
   @media (max-width: 768px) {
     width: 24px;

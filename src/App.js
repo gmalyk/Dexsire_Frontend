@@ -5,8 +5,9 @@ import CGUScreen from './screens/CGU';
 import RefundPage from './screens/Refund';
 import ProviderAgreementPage from './pages/ProviderAgreement';
 import LegalNoticePage from './pages/LegalNotice';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from './routes';
+import EscortProfile from 'screens/Profile/EscortProfile';
 
 const App = () => {
     const { modal } = useContext(CoreContext);
@@ -14,7 +15,7 @@ const App = () => {
     return (
         <>
             {modal && <Modal type={modal.type} />}
-            <Router>
+            <BrowserRouter>
                 <Switch>
                     <Route exact path="/cgu" component={CGUScreen} />
                     <Route exact path="/refund" component={RefundPage} />
@@ -28,8 +29,9 @@ const App = () => {
                             component={route.component}
                         />
                     ))}
+                    <Route path="/profile/escort/:id" component={EscortProfile} />
                 </Switch>
-            </Router>
+            </BrowserRouter>
         </>
     );
 };
