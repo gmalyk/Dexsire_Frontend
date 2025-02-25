@@ -159,16 +159,34 @@ export default function EscortProfile() {
                         outlineGradient
                         onClick={() => window.open(`https://wa.me/${currentProfile.whatsapp}`)}
                     >
-                        <img src="/images/whatsappLogo.png" alt="WhatsApp" />
+                        <img src="/icons/whatsapp.svg" alt="WhatsApp" />
                     </WhatsappButton>
                 </ActionButtons>
 
                 <NavigationBar>
-                    <Icon icon="camera" />
-                    <Icon icon="chat" />
-                    <Icon icon="video" />
-                    <Icon icon="star" />
-                    <Icon icon="share" />
+                    
+                    <Icon 
+                        icon="photos" 
+                        src="/icons/cam-white.svg" 
+                    />
+                    <Icon 
+                        icon="profile" 
+                        src="/icons/cabeca.svg" 
+                    />
+                    <Icon 
+                        icon="videos" 
+                        src="/icons/video.svg" 
+                    />
+                    
+                    <Icon 
+                        icon="star" 
+                        src="/icons/star-outline-white.svg"
+                    />
+                    <Icon 
+                        icon="hot" 
+                        src="/icons/pimenta.svg" 
+
+                    />
                 </NavigationBar>
 
                 {/* Photo Gallery Section */}

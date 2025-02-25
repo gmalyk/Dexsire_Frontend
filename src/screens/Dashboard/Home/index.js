@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 
 import {
     DashboardAnimation,
@@ -100,6 +100,16 @@ export default function DashboardHome() {
         }
     ];
 
+    // Sort profiles to show emphasized ones first
+    const sortedProfiles = useMemo(() => {
+        return [...mockProfiles].sort((a, b) => {
+            // Sort by emphasis (true comes before false)
+            if (a.emphasis && !b.emphasis) return -1;
+            if (!a.emphasis && b.emphasis) return 1;
+            return 0;
+        });
+    }, [mockProfiles]);
+
     return (
         <>
             <ContainerAuthenticated free>
@@ -127,7 +137,7 @@ export default function DashboardHome() {
                 </BodyContainer>
                 <Escorts />
                 <HomeContainer>
-                    {mockProfiles.map((profile) => (
+                    {sortedProfiles.map((profile) => (
                         <EscortsCard
                             key={profile.id}
                             emphasis={profile.emphasis}

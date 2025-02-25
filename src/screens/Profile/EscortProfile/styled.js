@@ -3,14 +3,19 @@ import { Icon as IconBase } from 'ui/styled';
 import { Button } from 'components/Form/Button';
 
 
-export const BodyContainer = styled.div.attrs({
-})`
+export const BodyContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
     background: ${p => p.theme.palette.colors.black};
     padding-bottom: 80px;
+    min-height: 100vh;
+
+    @media (max-width: 768px) {
+        background: transparent;
+        padding-top: 0;
+    }
 `;
 
 
@@ -38,6 +43,25 @@ export const Background = styled.div`
     position: absolute;
     top: 0;
     z-index: 0;
+
+    @media (max-width: 768px) {
+        position: fixed;
+        width: 100vw;
+        height: auto;
+        aspect-ratio: 9/16; /* Adjust this ratio to match your background image */
+        background: url('/images/bgprofile.png');
+        background-position: top center;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+        left: 0;
+        right: 0;
+        &:after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, #000000 100%);
+        }
+    }
 `;
 
 export const EditContainer = styled.div.attrs({})`
@@ -123,24 +147,22 @@ export const ProfileNameWrapper = styled.div`
     gap: 16px;
 `;
 
-export const ProfileName = styled.h1`
-    font-size: 24px;
-    font-weight: 700;
-    color: ${props => props.theme.palette.colors.white};
+export const ProfileName = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    span {
+        color: ${props => props.theme.palette.colors.white};
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 28px;
+    }
 
     @media (max-width: 768px) {
-        font-size: 20px;
-        display: flex;
-        flex-direction: column;
-        line-height: 1.2;
-        margin: 0;
-
         span {
-            display: block;
-            &:first-child {
-                margin-bottom: 2px;
-                margin-right: 0;
-            }
+            font-size: 20px;
+            line-height: 24px;
         }
     }
 `;
@@ -155,29 +177,42 @@ export const ProfileAvatarSection = styled.div`
 `;
 
 export const AgeDisplay = styled.div`
-    display: none;
-    
-    @media (max-width: 768px) {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        
-        label {
-            color: ${props => props.theme.palette.colors.orange};
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 
-        span {
-            color: ${props => props.theme.palette.colors.white};
-            font-size: 16px;
-            font-weight: 500;
-        }
+    label {
+        color: ${props => props.theme.palette.colors.orange};
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    span {
+        color: ${props => props.theme.palette.colors.white};
+        font-size: 16px;
+        font-weight: 500;
     }
 `;
 
-export const CityDisplay = styled(AgeDisplay)``;
+export const CityDisplay = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+        color: ${props => props.theme.palette.colors.orange};
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    span {
+        color: ${props => props.theme.palette.colors.white};
+        font-size: 16px;
+        font-weight: 500;
+    }
+`;
 
 export const ProfileStats = styled.div`
     display: flex;
@@ -209,14 +244,13 @@ export const StatItem = styled.div`
 export const ActionButtons = styled.div`
     display: flex;
     gap: 16px;
-    margin-top: 24px;
-    width: 100%;
     align-items: center;
+    margin: 24px 0;
+`;
 
-    @media (max-width: 768px) {
-        gap: 12px;
-        flex-direction: row;
-    }
+export const FollowButton = styled(Button)`
+    flex: 1;
+    height: 48px;
 `;
 
 export const WhatsappButton = styled(Button)`
@@ -237,32 +271,10 @@ export const WhatsappButton = styled(Button)`
         background: rgba(255, 255, 255, 0.1);
     }
 
-    img {
-        width: 16px;
-        height: 16px;
-    }
-
     @media (max-width: 768px) {
         width: 40px;
         height: 40px;
         min-width: 40px !important;
-        
-        img {
-            width: 14px;
-            height: 14px;
-        }
-    }
-`;
-
-export const FollowButton = styled(Button)`
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-
-    @media (max-width: 768px) {
-        height: 40px;
     }
 `;
 
@@ -431,24 +443,35 @@ export const StatLabel = styled.div`
     }
 `;
 
-export const Icon = styled(IconBase)`
+export const Icon = styled.div`
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-image: ${props => props.src ? `url(${props.src})` : 'none'};
+    background-size: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    transition: opacity 0.2s;
+    
+    /* Camera icon gets orange background, others get black with border */
+    background-color: ${props => props.icon === "photos" 
+        ? props.theme.palette.colors.orange 
+        : 'rgba(0, 0, 0, 0.3)'};
+    border: ${props => props.icon === "photos" 
+        ? 'none' 
+        : '1px solid rgba(255, 255, 255, 0.2)'};
+
+    &:hover {
+        opacity: 0.8;
+    }
+
     @media (max-width: 768px) {
         width: 40px;
         height: 40px;
-        padding: 8px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        color: ${props => props.theme.palette.colors.white};
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 1;
-        transition: background 0.2s;
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.2);
-            opacity: 1;
-        }
+        background-size: 20px;
     }
 `;
