@@ -1,5 +1,20 @@
 import styled from "styled-components";
 
+export const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 16px;
+`;
+
+export const Label = styled.label`
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 500;
+  color: ${props => props.theme.palette.colors.white};
+  margin-bottom: 8px;
+`;
+
 export const ServicesContainer = styled.div.attrs({
 })`
     display: flex;

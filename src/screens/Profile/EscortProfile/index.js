@@ -4,6 +4,8 @@ import { Background, BodyContainer, BodyContent, EditContainer } from './styled'
 import Footer from 'components/Footer'
 import Button from 'components/Form/Button'
 import useI18n from 'hooks/useI18n'
+import { Container } from 'reactstrap'
+import { Icon } from 'ui/styled'
 import {
     ProfileContainer,
     ProfileHeader,
@@ -23,10 +25,8 @@ import {
     GalleryGrid,
     GalleryItem,
     NavigationBar,
-    Icon,
-    LocationItem,
-    HeaderActions,
     ActionIcon,
+    HeaderActions,
     ProfileAvatarSection,
     AgeDisplay,
     CityDisplay,
@@ -34,13 +34,21 @@ import {
     ProfileTopRow,
     ProfileBottomRow,
     RoundButton,
-    WhatsappButton
+    WhatsappButton,
+    AppearanceContainer,
+    AppearanceTitleContainer,
+    AppearanceTitle,
+    AppearanceText,
+    UploadFileContainer,
 } from './styled'
 import { useLocation, useParams } from 'react-router-dom'
+import { parseStrapiImage } from 'utils'
 
 export default function EscortProfile() {
   const { t } = useI18n()
   const [isEditing, setIsEditing] = useState(false)
+  const [preview, setPreview] = useState(null)
+  const [uploadedFile, setUploadedFile] = useState(null)
   const { id } = useParams()
   const location = useLocation()
   const profileData = location.state?.profileData
@@ -88,6 +96,12 @@ export default function EscortProfile() {
   // Use the profile data to render the profile
   console.log('Profile ID:', id)
   console.log('Profile Data:', profileData)
+
+  // Add handler for file upload
+  const handleFileUpload = (file) => {
+    setUploadedFile(file)
+    setPreview(URL.createObjectURL(file))
+  }
 
   return (
     <ContainerAuthenticated free>
@@ -149,6 +163,9 @@ export default function EscortProfile() {
                         <StatLabel>comments</StatLabel>
                     </StatItem>
                 </ProfileStats>
+
+            
+                
 
                 {/* Action Buttons Section */}
                 <ActionButtons>

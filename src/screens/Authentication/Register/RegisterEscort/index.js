@@ -19,7 +19,8 @@ import {
     UploadFileContainer,
     AppearanceText,
     VerificationUploadContainer,
-    AppearanceContainer
+    AppearanceContainer,
+    AppearanceTitleContainer
 } from './styled'
 
 import Button from "components/Form/Button";
@@ -47,20 +48,71 @@ import { UpdateMe } from "services/me";
 import UploadFile from "components/Form/UploadFile";
 import useI18n from "hooks/useI18n";
 import PrivacyAndTerms from "components/PrivacyAndTerms";
+import {
+    AppearanceContainer as AppearanceContainerStyled,
+    AppearanceTitleContainer as AppearanceTitleContainerStyled,
+    AppearanceTitle as AppearanceTitleStyled,
+    AppearanceText as AppearanceTextStyled,
+} from 'components/Appearance/styled'
+
+const SERVICES_OPTIONS = [
+  "69",
+  "Anulingus (reçois)",
+  "Café Pipe",
+  "Couple",
+  "Doigté anal",
+  "Domination soft",
+  "Duo",
+  "Ejac Facial",
+  "Ejac en bouche",
+  "Facesitting",
+  "Fellation protégée",
+  "Femme fontaine",
+  "Fisting (donne)",
+  "French kiss",
+  "GFE",
+  "Groupe orgie",
+  "Lingerie",
+  "Masturbation",
+  "Service VIP",
+  "Sodomie (donne)",
+  "Soumise",
+  "Anulingus (donne)",
+  "Branlette seins",
+  "Champagne doré",
+  "Cunnilingus",
+  "Doigté vaginal",
+  "Double pénétration",
+  "Déjeuner/dîner",
+  "Ejac corps",
+  "Ejac multiple OK",
+  "Fellation nature",
+  "Fellation royale",
+  "Fessées acceptées",
+  "Fisting (reçois)",
+  "Fétichisme",
+  "Gorge profonde",
+  "Jeux de rôles",
+  "Massage érotique",
+  "Rapport sexuel",
+  "Sex tovs",
+  "Sodomie (reçois)",
+  "Striptease"
+].map(service => ({ id: service, title: service }));
 
 const DEFAULT_OPTIONS = {
-    services: [
-        { id: 1, title: 'Massage' },
-        { id: 2, title: 'Escort' },
-        { id: 3, title: 'Companionship' }
-    ],
+    services: SERVICES_OPTIONS,
     regions: [
-        { id: 1, title: 'Zürich' },
         { id: 2, title: 'Bern' },
+        { id: 6, title: 'Geneva' },
+        
+        
         { id: 3, title: 'Luzern' },
-        { id: 4, title: 'Uri' },
+        
         { id: 5, title: 'Schwyz' },
-        { id: 6, title: 'Geneva' }
+        { id: 4, title: 'Uri' },
+        { id: 1, title: 'Zürich' },
+        
     ],
     cities: [
         { id: 1, title: 'Zürich City', region: { data: { id: 1 } } },
@@ -319,30 +371,169 @@ export default function RegisterEscort() {
 
     const { setUser, reloadMe } = useContext(CoreContext)
 
+    // Initialize state from localStorage if available
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const [infoOption, setInfoOption] = useState('Personal data')
-    const [formProfile, setFormProfile] = useState({})
-    const [mobility, setMobility] = useState([])
-    const [payments, setPayments] = useState([])
-    const [languages, setLanguages] = useState({})
-    const [ethnicity, setEthnicity] = useState(null)
-    const [description, setDescription] = useState("")
+    const [infoOption, setInfoOption] = useState(() => {
+        return localStorage.getItem('escortRegistrationStep') || 'Personal data'
+    })
+    const [formProfile, setFormProfile] = useState(() => {
+        const savedProfile = localStorage.getItem('escortRegistrationProfile')
+        return savedProfile ? JSON.parse(savedProfile) : {}
+    })
+    const [mobility, setMobility] = useState(() => {
+        const savedMobility = localStorage.getItem('escortRegistrationMobility')
+        return savedMobility ? JSON.parse(savedMobility) : []
+    })
+    const [payments, setPayments] = useState(() => {
+        const savedPayments = localStorage.getItem('escortRegistrationPayments')
+        return savedPayments ? JSON.parse(savedPayments) : []
+    })
+    const [languages, setLanguages] = useState(() => {
+        const savedLanguages = localStorage.getItem('escortRegistrationLanguages')
+        return savedLanguages ? JSON.parse(savedLanguages) : {}
+    })
+    const [ethnicity, setEthnicity] = useState(() => {
+        return localStorage.getItem('escortRegistrationEthnicity') || null
+    })
+    const [description, setDescription] = useState(() => {
+        return localStorage.getItem('escortRegistrationDescription') || ""
+    })
     const [success, setSuccess] = useState(null)
     
-    const [preuser, setPreuser] = useState(null)
-    const [video360, setVideo360] = useState(null); 
-    const [verificationPhoto, setVerificationPhoto] = useState(null); 
-    const [imagesReview, setImagesReview] = useState([]); 
+    const [preuser, setPreuser] = useState(() => {
+        const savedPreuser = localStorage.getItem('escortRegistrationPreuser')
+        return savedPreuser ? JSON.parse(savedPreuser) : null
+    })
+    const [video360, setVideo360] = useState(() => {
+        const savedVideo = localStorage.getItem('escortRegistrationVideo360')
+        return savedVideo ? JSON.parse(savedVideo) : null
+    })
+    const [verificationPhoto, setVerificationPhoto] = useState(() => {
+        const savedPhoto = localStorage.getItem('escortRegistrationVerificationPhoto')
+        return savedPhoto ? JSON.parse(savedPhoto) : null
+    })
+    const [imagesReview, setImagesReview] = useState(() => {
+        const savedImages = localStorage.getItem('escortRegistrationImagesReview')
+        return savedImages ? JSON.parse(savedImages) : []
+    })
 
-    const [services, setServices] = useState([]); 
-    const [aboutme, setAboutme] = useState(""); 
+    const [services, setServices] = useState(() => {
+        const savedServices = localStorage.getItem('escortRegistrationServices')
+        return savedServices ? JSON.parse(savedServices) : []
+    })
+    const [aboutme, setAboutme] = useState(() => {
+        return localStorage.getItem('escortRegistrationAboutme') || ""
+    })
     
-    const [options, setOptions] = useState(DEFAULT_OPTIONS)
+    const [options, setOptions] = useState(() => {
+        // Sort regions alphabetically
+        const sortedRegions = [...DEFAULT_OPTIONS.regions].sort((a, b) => 
+            a.title.localeCompare(b.title)
+        );
+        
+        // Sort cities alphabetically
+        const sortedCities = [...DEFAULT_OPTIONS.cities].sort((a, b) => 
+            a.title.localeCompare(b.title)
+        );
+        
+        // Sort nationalities alphabetically
+        const sortedNationalities = [...DEFAULT_OPTIONS.nationalities].sort((a, b) => 
+            a.title.localeCompare(b.title)
+        );
+        
+        // Sort categories alphabetically
+        const sortedCategories = [...DEFAULT_OPTIONS.categories].sort((a, b) => 
+            a.title.localeCompare(b.title)
+        );
+        
+        return {
+            ...DEFAULT_OPTIONS,
+            regions: sortedRegions,
+            cities: sortedCities,
+            nationalities: sortedNationalities,
+            categories: sortedCategories
+        };
+    });
+    const [uploadedFiles, setUploadedFiles] = useState(() => {
+        const savedFiles = localStorage.getItem('escortRegistrationUploadedFiles')
+        if (savedFiles) {
+            const parsedFiles = JSON.parse(savedFiles)
+            // Ensure photos is an array
+            return {
+                ...parsedFiles,
+                photos: Array.isArray(parsedFiles.photos) ? parsedFiles.photos : []
+            }
+        }
+        return { photos: [] } // Initialize with empty photos array
+    })
 
     const contentRef = useRef(null);
+    const [form, setForm] = useState(() => {
+        const savedForm = localStorage.getItem('escortRegistrationForm')
+        return savedForm ? JSON.parse(savedForm) : {}
+    })
 
-    const [form, setForm] = useState({}) 
+    // Save state to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationStep', infoOption)
+    }, [infoOption])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationProfile', JSON.stringify(formProfile))
+    }, [formProfile])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationMobility', JSON.stringify(mobility))
+    }, [mobility])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationPayments', JSON.stringify(payments))
+    }, [payments])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationLanguages', JSON.stringify(languages))
+    }, [languages])
+
+    useEffect(() => {
+        if (ethnicity) localStorage.setItem('escortRegistrationEthnicity', ethnicity)
+    }, [ethnicity])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationDescription', description)
+    }, [description])
+
+    useEffect(() => {
+        if (preuser) localStorage.setItem('escortRegistrationPreuser', JSON.stringify(preuser))
+    }, [preuser])
+
+    useEffect(() => {
+        if (video360) localStorage.setItem('escortRegistrationVideo360', JSON.stringify(video360))
+    }, [video360])
+
+    useEffect(() => {
+        if (verificationPhoto) localStorage.setItem('escortRegistrationVerificationPhoto', JSON.stringify(verificationPhoto))
+    }, [verificationPhoto])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationImagesReview', JSON.stringify(imagesReview))
+    }, [imagesReview])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationServices', JSON.stringify(services))
+    }, [services])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationAboutme', aboutme)
+    }, [aboutme])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationForm', JSON.stringify(form))
+    }, [form])
+
+    useEffect(() => {
+        localStorage.setItem('escortRegistrationUploadedFiles', JSON.stringify(uploadedFiles))
+    }, [uploadedFiles])
 
     const data = [
         { title: t('Personal data') },
@@ -456,13 +647,177 @@ export default function RegisterEscort() {
         setEthnicity(value)
     }
 
-    const handleHeaderInfo = (info) => setInfoOption(info)
+    // Map steps to their previous steps for navigation
+    const stepNavigation = {
+        'Personal data': null, // First step has no previous step
+        'Privacy and Terms': 'Personal data',
+        'Profile': 'Privacy and Terms',
+        'Appearance': 'Profile',
+        'Services offered': 'Appearance',
+        'Payment': 'Services offered'
+    };
 
-    const action = async (payload) => {
-        if (!valid(payload, formItems)) { 
-            return; 
+    // Handle browser back button
+    useEffect(() => {
+        // Save current step to history state
+        const currentPath = history.location.pathname;
+        history.replace({
+            pathname: currentPath,
+            state: { currentStep: infoOption }
+        });
+
+        // Handle popstate (back/forward button)
+        const handlePopState = (event) => {
+            // Prevent default back behavior
+            event.preventDefault();
+            
+            // Get previous step
+            const prevStep = stepNavigation[infoOption];
+            
+            if (prevStep) {
+                // Go to previous step instead of previous page
+                setInfoOption(prevStep);
+                // Update history to maintain correct state
+                history.push({
+                    pathname: currentPath,
+                    state: { currentStep: prevStep }
+                });
+            } else {
+                // If we're at the first step, confirm before leaving
+                if (window.confirm(t('are_you_sure_you_want_to_leave'))) {
+                    // Allow navigation away from registration
+                    history.goBack();
+                } else {
+                    // Stay on current page
+                    history.push({
+                        pathname: currentPath,
+                        state: { currentStep: infoOption }
+                    });
+                }
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [infoOption, history]);
+
+    // Add a custom back handler for UI back buttons
+    const handleBack = () => {
+        const prevStep = stepNavigation[infoOption];
+        if (prevStep) {
+            setInfoOption(prevStep);
         }
-        handleHeaderInfo('Privacy and Terms');
+    };
+
+    // Update the validation function to bypass validation for the first three steps
+    const validateCurrentStep = () => {
+        switch(infoOption) {
+            case 'Personal data':
+                // Skip validation for the first step
+                return true;
+            
+            case 'Privacy and Terms':
+                // Skip validation for the second step
+                return true;
+            
+            case 'Profile':
+                // Skip validation for the third step
+                return true;
+            
+            case 'Appearance':
+                // Check if photos are uploaded (at least 1)
+                if (!uploadedFiles.photos || !Array.isArray(uploadedFiles.photos) || uploadedFiles.photos.length < 1) {
+                    toast.error(t('please_upload_at_least_one_photo'));
+                    return false;
+                }
+                
+                // Check if ID front is uploaded
+                if (!uploadedFiles.frontId) {
+                    toast.error(t('please_upload_id_front'));
+                    return false;
+                }
+                
+                // Check if ID back is uploaded
+                if (!uploadedFiles.backId) {
+                    toast.error(t('please_upload_id_back'));
+                    return false;
+                }
+                
+                // Check if verification photo is uploaded
+                if (!uploadedFiles.verification) {
+                    toast.error(t('please_upload_verification_photo'));
+                    return false;
+                }
+                
+                // All required files are uploaded, allow progression
+                return true;
+                
+            case 'Services offered':
+                // Check if at least one service is selected
+                if (services.length === 0) {
+                    toast.error(t('please_select_at_least_one_service'));
+                    return false;
+                }
+                if (!aboutme || aboutme.trim() === '') {
+                    toast.error(t('please_provide_about_me_text'));
+                    return false;
+                }
+                return true;
+                
+            case 'Payment':
+                // Check if payment is valid
+                if (loading) {
+                    toast.error(t('please_wait_for_payment_processing'));
+                    return false;
+                }
+                return true;
+                
+            default:
+                return true;
+        }
+    };
+
+    // Update the handleHeaderInfo function to include validation
+    const handleHeaderInfo = (option) => {
+        // Only validate when moving forward, not when going back
+        const currentStepIndex = Object.keys(stepNavigation).indexOf(infoOption);
+        const nextStepIndex = Object.keys(stepNavigation).indexOf(option);
+        
+        if (nextStepIndex > currentStepIndex) {
+            // Moving forward, validate current step
+            if (!validateCurrentStep()) {
+                return; // Don't proceed if validation fails
+            }
+        }
+        
+        // Add current state to history before changing
+        history.push({
+            pathname: history.location.pathname,
+            state: { currentStep: infoOption }
+        });
+        
+        // Update to new step
+        setInfoOption(option);
+    };
+
+    // Also update the action function to simply proceed without validation
+    const action = async (payload) => {
+        try {
+            // Update form state with payload
+            setForm(prev => ({
+                ...prev,
+                ...payload
+            }));
+            
+            // Proceed to next step without validation
+            handleHeaderInfo('Privacy and Terms');
+        } catch (err) {
+            console.error(err);
+            toast.error(t("error_occurred"));
+        }
     };
 
     const completeRegister = (user) => {
@@ -494,30 +849,33 @@ export default function RegisterEscort() {
         return true;
     };
 
-    const saveStep1 = () => handleHeaderInfo('Appearance')
+    // Also update the saveStep1 function to bypass validation
+    const saveStep1 = () => {
+        // Proceed to next step without validation
+        handleHeaderInfo('Appearance');
+    };
 
     const handleSuccess = () => {
-        setSuccess({
-            title: t("registration_completed_successfully"),
-            text: t("take_the_opportunity"),
-            icon: 'email-big',
-            buttons: [
-                {
-                    text: t("want_to_buy_later"),
-                    action: () => navigate('admin/escort'),
-                    rightIcon: 'chevron-white',
-                    color: 'borderBackground',
-                    between: true
-                },
-                {
-                    text: t("i_want_to_buy_credits_now"),
-                    action: () => navigate('purchase-of-credits'),
-                    outlineGradient: true,
-                    rightIcon: 'chevron-right',
-                    between: true,
-                }
-            ]
-        })
+        // Clear all localStorage items related to registration
+        localStorage.removeItem('escortRegistrationStep')
+        localStorage.removeItem('escortRegistrationProfile')
+        localStorage.removeItem('escortRegistrationMobility')
+        localStorage.removeItem('escortRegistrationPayments')
+        localStorage.removeItem('escortRegistrationLanguages')
+        localStorage.removeItem('escortRegistrationEthnicity')
+        localStorage.removeItem('escortRegistrationDescription')
+        localStorage.removeItem('escortRegistrationPreuser')
+        localStorage.removeItem('escortRegistrationVideo360')
+        localStorage.removeItem('escortRegistrationVerificationPhoto')
+        localStorage.removeItem('escortRegistrationImagesReview')
+        localStorage.removeItem('escortRegistrationServices')
+        localStorage.removeItem('escortRegistrationAboutme')
+        localStorage.removeItem('escortRegistrationForm')
+        localStorage.removeItem('escortRegistrationUploadedFiles')
+        
+        // Set success state and proceed with original success logic
+        setSuccess(true)
+        navigate('admin/escort')
     }
 
     const init = () => {
@@ -604,14 +962,6 @@ export default function RegisterEscort() {
     const imagesUpload = useFileUpload();
     const verificationPhotoUpload = useFileUpload();
 
-    const [uploadedFiles, setUploadedFiles] = useState({
-        video360: null,
-        photos: [],
-        frontId: null,
-        backId: null,
-        verification: null
-    });
-
     const createFileObject = (file) => {
         return {
             id: Math.random().toString(36).substr(2, 9),
@@ -632,12 +982,26 @@ export default function RegisterEscort() {
     };
 
     const handleImagesUpload = (files) => {
-        const newFiles = files.map(createFileObject);
-        setUploadedFiles(prev => ({
-            ...prev,
-            photos: [...prev.photos, ...newFiles]
-        }));
-        setImagesReview(prev => [...prev, ...newFiles.map(f => f.file)]);
+        if (!Array.isArray(files)) {
+            files = [files]; // Convert to array if it's a single file
+        }
+        
+        const fileObjects = files.map(file => createFileObject(file));
+        
+        setUploadedFiles(prev => {
+            // Initialize photos as an empty array if it doesn't exist
+            const prevPhotos = Array.isArray(prev.photos) ? prev.photos : [];
+            return {
+                ...prev,
+                photos: [...prevPhotos, ...fileObjects]
+            };
+        });
+        
+        // Update imagesReview state as well
+        setImagesReview(prev => {
+            const prevImages = Array.isArray(prev) ? prev : [];
+            return [...prevImages, ...fileObjects.map(f => f.file || f)];
+        });
     };
 
     const handleFrontIdUpload = (file) => {
@@ -666,27 +1030,21 @@ export default function RegisterEscort() {
     };
 
     const handleRemoveFile = (type, fileId) => {
-        if (type === 'photos') {
-            setUploadedFiles(prev => ({
-                ...prev,
-                photos: prev.photos.filter(f => f.id !== fileId)
-            }));
-            setImagesReview(prev => prev.filter(f => f.id !== fileId));
+        if (type === 'photos' && fileId) {
+            setUploadedFiles(prev => {
+                const updatedPhotos = Array.isArray(prev.photos) 
+                    ? prev.photos.filter(photo => photo.id !== fileId)
+                    : [];
+                return {
+                    ...prev,
+                    photos: updatedPhotos
+                };
+            });
         } else {
             setUploadedFiles(prev => ({
                 ...prev,
                 [type]: null
             }));
-            switch(type) {
-                case 'video360':
-                    setVideo360(null);
-                    break;
-                case 'verification':
-                    setVerificationPhoto(null);
-                    break;
-                default:
-                    break;
-            }
         }
     };
 
@@ -715,7 +1073,7 @@ export default function RegisterEscort() {
     }, [t])
 
     if (!initialized && loading) {
-        return (
+    return (
             <ContainerUnauthenticated>
                 <BodyContainer>
                     <Background />
@@ -773,7 +1131,7 @@ export default function RegisterEscort() {
                                     <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
                                     <FormSpacer small />
                                 </Container>
-                                <InfoData data={data} active={infoOption} />
+                                <InfoData data={data} active={infoOption} setActive={handleHeaderInfo} />
                         
                         {infoOption === 'Personal data' && (
                             <RegisterForm items={formItems} action={action} />
@@ -821,9 +1179,14 @@ export default function RegisterEscort() {
                         )}
 
                         {infoOption === 'Appearance' && (
-                            <Content>
-                                <AppearanceContainer>
-                                    <AppearanceTitle>{t("upload_360_video")}</AppearanceTitle>
+                                            <Content>
+                                <AppearanceContainerStyled>
+                                    <AppearanceTitleContainerStyled>
+                                        <AppearanceTitleStyled>{t("upload_360_video")}</AppearanceTitleStyled>
+                                        <AppearanceTextStyled>
+                                            <Icon icon="doubt" /> {t("instruction_on_how")}
+                                        </AppearanceTextStyled>
+                                    </AppearanceTitleContainerStyled>
                                     <UploadFile
                                         accept="video/mp4,video/avi"
                                         onChange={handleVideo360Upload}
@@ -833,10 +1196,10 @@ export default function RegisterEscort() {
                                         supportedFiles="MP4, AVI"
                                         maxFileSize="50mb"
                                     />
-                                </AppearanceContainer>
+                                </AppearanceContainerStyled>
 
-                                <AppearanceContainer>
-                                    <AppearanceTitle>{t("send_photos")}</AppearanceTitle>
+                                <AppearanceContainerStyled>
+                                    <AppearanceTitleStyled>{t("send_photos")}</AppearanceTitleStyled>
                                     <UploadFile
                                         accept="image/*"
                                         multiple
@@ -847,10 +1210,10 @@ export default function RegisterEscort() {
                                         supportedFiles="JPG, PNG"
                                         maxFileSize="8mb. Minimum 4 photos."
                                     />
-                                </AppearanceContainer>
+                                </AppearanceContainerStyled>
 
-                                <AppearanceContainer>
-                                    <AppearanceTitle>{t("upload_id_front")}</AppearanceTitle>
+                                <AppearanceContainerStyled>
+                                    <AppearanceTitleStyled>{t("upload_id_front")}</AppearanceTitleStyled>
                                     <UploadFile
                                         accept="image/*"
                                         onChange={handleFrontIdUpload}
@@ -860,10 +1223,10 @@ export default function RegisterEscort() {
                                         supportedFiles="JPG, PNG"
                                         maxFileSize="8mb"
                                     />
-                                </AppearanceContainer>
+                                </AppearanceContainerStyled>
 
-                                <AppearanceContainer>
-                                    <AppearanceTitle>{t("upload_id_back")}</AppearanceTitle>
+                                <AppearanceContainerStyled>
+                                    <AppearanceTitleStyled>{t("upload_id_back")}</AppearanceTitleStyled>
                                     <UploadFile
                                         accept="image/*"
                                         onChange={handleBackIdUpload}
@@ -880,18 +1243,18 @@ export default function RegisterEscort() {
                                                 <>
                                                     <Container />
                                                     <Icon icon="double-page" />
-                                                    <AppearanceText>
+                                                    <AppearanceTextStyled>
                                                         {t('drag_the_id_back_here_or_click_here')}
-                                                    </AppearanceText>
+                                                    </AppearanceTextStyled>
                                                 </>
                                             )}
                                         </UploadFileContainer>
                                     </UploadFile>
-                                </AppearanceContainer>
+                                </AppearanceContainerStyled>
 
                                                 <VerificationUploadContainer>
-                                    <AppearanceTitle>{t("verification_photo")}</AppearanceTitle>
-                                    <AppearanceText full>{t("send_a_photo_holding")}</AppearanceText>
+                                    <AppearanceTitleStyled>{t("verification_photo")}</AppearanceTitleStyled>
+                                    <AppearanceTextStyled full>{t("send_a_photo_holding")}</AppearanceTextStyled>
                                                         <VerificationUpload>
                                                             <SampleContent>
                                             <SampleTitle>{t("exemple")}</SampleTitle>
@@ -915,9 +1278,9 @@ export default function RegisterEscort() {
                                                     <>
                                                                                 <Container />
                                                                                 <Icon icon="double-page" />
-                                                        <AppearanceText>
+                                                        <AppearanceTextStyled>
                                                             {t('drag_the_image_here_or_click_here')}
-                                                        </AppearanceText>
+                                                        </AppearanceTextStyled>
                                                                             </>
                                                 )}
                                                                 </UploadFileContainer>
@@ -940,9 +1303,30 @@ export default function RegisterEscort() {
 
                         {infoOption === 'Services offered' && (
                                         <>
-                                            <ServicesOffered options={options} active={services} setActive={setServices} ethnicity={ethnicity} setEthnicity={setEthnicity} aboutme={aboutme} setAboutme={setAboutme} superForm={setForm} registering />
+                                            <ServicesOffered 
+                                                options={{
+                                                    ...options,
+                                                    services: SERVICES_OPTIONS
+                                                }} 
+                                                active={services} 
+                                                setActive={setServices} 
+                                                ethnicity={ethnicity} 
+                                                setEthnicity={setEthnicity} 
+                                                aboutme={aboutme} 
+                                                setAboutme={setAboutme} 
+                                                superForm={setForm} 
+                                                registering 
+                                            />
                                             <ButtonContent width='631px'>
-                                                <Button outlineGradient nospace rightIcon={'chevron-right'} onClick={() => handleHeaderInfo('Payment')} between >{ t("advance") }</Button>
+                                                <Button 
+                                                    outlineGradient 
+                                                    nospace 
+                                                    rightIcon={'chevron-right'} 
+                                                    onClick={() => handleHeaderInfo('Payment')} 
+                                                    between
+                                                >
+                                                    {t("advance")}
+                                                </Button>
                                             </ButtonContent>
                                         </>
                         )}

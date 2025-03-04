@@ -6,6 +6,51 @@ import { CoreContext } from 'context/CoreContext'
 import { optionsCategory } from 'utils/options'
 import useI18n from 'hooks/useI18n'
 
+const SERVICE_OPTIONS = [
+    { id: '69', title: '69' },
+    { id: 'anulingus_recois', title: 'Anulingus (reçois)' },
+    { id: 'cafe_pipe', title: 'Café Pipe' },
+    { id: 'couple', title: 'Couple' },
+    { id: 'doigte_anal', title: 'Doigté anal' },
+    { id: 'domination_soft', title: 'Domination soft' },
+    { id: 'duo', title: 'Duo' },
+    { id: 'ejac_facial', title: 'Ejac Facial' },
+    { id: 'ejac_en_bouche', title: 'Ejac en bouche' },
+    { id: 'facesitting', title: 'Facesitting' },
+    { id: 'fellation_protegee', title: 'Fellation protégée' },
+    { id: 'femme_fontaine', title: 'Femme fontaine' },
+    { id: 'fisting_donne', title: 'Fisting (donne)' },
+    { id: 'french_kiss', title: 'French kiss' },
+    { id: 'gfe', title: 'GFE' },
+    { id: 'groupe_orgie', title: 'Groupe orgie' },
+    { id: 'lingerie', title: 'Lingerie' },
+    { id: 'masturbation', title: 'Masturbation' },
+    { id: 'service_vip', title: 'Service VIP' },
+    { id: 'sodomie_donne', title: 'Sodomie (donne)' },
+    { id: 'soumise', title: 'Soumise' },
+    { id: 'anulingus_donne', title: 'Anulingus (donne)' },
+    { id: 'branlette_seins', title: 'Branlette seins' },
+    { id: 'champagne_dore', title: 'Champagne doré' },
+    { id: 'cunnilingus', title: 'Cunnilingus' },
+    { id: 'doigte_vaginal', title: 'Doigté vaginal' },
+    { id: 'double_penetration', title: 'Double pénétration' },
+    { id: 'dejeuner_diner', title: 'Déjeuner/dîner' },
+    { id: 'ejac_corps', title: 'Ejac corps' },
+    { id: 'ejac_multiple_ok', title: 'Ejac multiple OK' },
+    { id: 'fellation_nature', title: 'Fellation nature' },
+    { id: 'fellation_royale', title: 'Fellation royale' },
+    { id: 'fessees_acceptees', title: 'Fessées acceptées' },
+    { id: 'fisting_recois', title: 'Fisting (reçois)' },
+    { id: 'fetichisme', title: 'Fétichisme' },
+    { id: 'gorge_profonde', title: 'Gorge profonde' },
+    { id: 'jeux_de_roles', title: 'Jeux de rôles' },
+    { id: 'massage_erotique', title: 'Massage érotique' },
+    { id: 'rapport_sexuel', title: 'Rapport sexuel' },
+    { id: 'sex_tovs', title: 'Sex tovs' },
+    { id: 'sodomie_recois', title: 'Sodomie (reçois)' },
+    { id: 'striptease', title: 'Striptease' }
+];
+
 export default function HomeFilters() {
   const { setModal, regions, cities, services, filter, setFilter, escorts } = useContext(CoreContext)
   const { t } = useI18n()
@@ -16,23 +61,25 @@ export default function HomeFilters() {
   const formItems = useMemo(() => {
     const allRegionsOptions = [
         { id: 'all', title: t('All Cantons') },
-        { id: 'vaud', title: t('Vaud') },
-        { id: 'geneva', title: t('Geneva') },
-        { id: 'valais', title: t('Valais') },
-        { id: 'neuchatel', title: t('Neuchâtel') },
-        { id: 'fribourg', title: t('Fribourg') },
-        { id: 'aarau', title: t('Aarau') },
-        { id: 'basel', title: t('Basel') },
-        { id: 'zurich', title: t('Zurich') },
-        { id: 'solothurn', title: t('Solothurn') },
-        { id: 'luzern', title: t('Luzern') },
-        { id: 'graubunden', title: t('Graubunden') },
-        { id: 'berne', title: t('Berne') },
-        { id: 'thurgau', title: t('Thurgau') },
-        { id: 'stgallen', title: t('St. Gallen') },
-        { id: 'ticino', title: t('Ticino') },
-        { id: 'nidwald', title: t('Nidwald') },
-        { id: 'glaris', title: t('Glaris') }
+        ...[ // Rest of cantons sorted alphabetically
+            { id: 'aarau', title: t('Aarau') },
+            { id: 'basel', title: t('Basel') },
+            { id: 'berne', title: t('Berne') },
+            { id: 'fribourg', title: t('Fribourg') },
+            { id: 'geneva', title: t('Geneva') },
+            { id: 'glaris', title: t('Glaris') },
+            { id: 'graubunden', title: t('Graubunden') },
+            { id: 'luzern', title: t('Luzern') },
+            { id: 'neuchatel', title: t('Neuchâtel') },
+            { id: 'nidwald', title: t('Nidwald') },
+            { id: 'solothurn', title: t('Solothurn') },
+            { id: 'stgallen', title: t('St. Gallen') },
+            { id: 'thurgau', title: t('Thurgau') },
+            { id: 'ticino', title: t('Ticino') },
+            { id: 'valais', title: t('Valais') },
+            { id: 'vaud', title: t('Vaud') },
+            { id: 'zurich', title: t('Zurich') }
+        ].sort((a, b) => a.title.localeCompare(b.title))
     ];
 
     const citiesByRegion = {
@@ -261,6 +308,19 @@ export default function HomeFilters() {
         ]
     };
 
+    // Create a flat array of all cities with their region information
+    const allCities = Object.entries(citiesByRegion).flatMap(([region, cities]) => 
+        cities.map(city => ({
+            ...city,
+            region: region
+        }))
+    ).sort((a, b) => a.title.localeCompare(b.title));
+
+    // Get filtered cities based on selected region
+    const filteredCities = selectedRegion === 'all' 
+        ? allCities 
+        : allCities.filter(city => city.region === selectedRegion);
+
     return [
       {
         ref: 'region',
@@ -285,23 +345,50 @@ export default function HomeFilters() {
       {
         ref: 'city',
             placeholder: t('Select City'),
-            options: selectedRegion === 'all' ? [] : citiesByRegion[selectedRegion] || [],
+            options: selectedRegion === 'all' 
+                ? Object.values(citiesByRegion).flat() // Show all cities when "All Cantons" is selected
+                : citiesByRegion[selectedRegion] || [], // Show only cities for the selected canton
             customer: true,
-            disabled: selectedRegion === 'all',
             onChange: (value) => {
                 const form = formRef?.current?.getForm()
-                if (form && selectedRegion !== 'all') {
+                if (form) {
                     form.city = value
+                    
+                    // If a city is selected and we're showing all cities,
+                    // update the region to match the city's region
+                    if (value && selectedRegion === 'all') {
+                        // Find which region this city belongs to
+                        for (const [region, cities] of Object.entries(citiesByRegion)) {
+                            if (cities.some(city => city.id === value)) {
+                                form.region = region
+                                setSelectedRegion(region)
+                                break
+                            }
+                        }
+                    }
+                    
                     setChanged(!changed)
                 }
             }
       },
       {
-        ref: 'service',
-        placeholder: t('services_offered'),
-        options: services,
+        ref: 'services',
+        placeholder: t('Services'),
+        type: 'select',
+        options: SERVICE_OPTIONS,
+        isMulti: true,
         quarter: !filter,
         customer: !!filter,
+        onChange: (values) => {
+            setFilter(prev => ({
+                ...prev,
+                services: values ? values.map(v => v.id) : []
+            }));
+            setChanged(true);
+        },
+        value: filter && filter.services ? filter.services.map(id => 
+            SERVICE_OPTIONS.find(option => option.id === id)
+        ).filter(Boolean) : []
       },
       {
         ref: 'category',

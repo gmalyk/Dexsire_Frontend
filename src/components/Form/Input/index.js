@@ -21,7 +21,20 @@ import { ThemedComponent } from "ui/theme";
 import { Icon } from "ui/styled";
 
 
-export const Input = (props) => {
+export const Input = React.forwardRef(({ 
+    type, 
+    placeholder, 
+    value, 
+    onChange, 
+    name, 
+    error, 
+    disabled, 
+    outline, 
+    textarea, 
+    noHolder, 
+    spaced, 
+    ...props 
+}, ref) => {
     const [visible, setVisible] = useState(false)
 
     const handleClickShowPassword = (e) => {
@@ -29,45 +42,50 @@ export const Input = (props) => {
         setVisible(!visible)
     }
 
-    const passwordProps = props.type === 'password' ? {
-        autoComplete: 'off',
-        autoCorrect: 'off',
-        autoCapitalize: 'off',
-        spellCheck: false,
-        'data-lpignore': true,
-        'data-form-type': 'other',
-        webkitautofill: 'off',
-        inputMode: 'text',
-        pattern: '.*',
-        role: 'presentation',
-        'aria-autocomplete': 'none',
-        'aria-hidden': 'true',
-        name: `password_${Math.random()}`,
-        id: `password_${Math.random()}`,
+    const passwordProps = type === 'password' ? {
+        autoComplete: "new-password",
+        autoCorrect: "off",
+        autoCapitalize: "off",
+        spellCheck: "false",
+        "data-lpignore": "true",
+        "data-1p-ignore": "true",
+        "data-form-type": "other",
+        "data-private": "true",
+        "aria-hidden": "true",
+        "aria-autocomplete": "none",
+        name: `pwd_${Math.random().toString(36).substr(2, 9)}`,
+        "data-name": name,
+        style: {
+            WebkitTextSecurity: type === 'password' ? 'disc' : 'none',
+            fontFamily: '-apple-system !important',
+            WebkitAppearance: 'none',
+            appearance: 'none'
+        }
     } : {};
 
-    const GInput = props.outline ? MaterialInputOutline : MaterialInput;
+    const GInput = outline ? MaterialInputOutline : MaterialInput;
 
     return (
         <ThemedComponent>
-            <FormControl fullWidth variant={props.outline ? "outlined" : "outlined"}>
+            <FormControl fullWidth variant={outline ? "outlined" : "outlined"}>
                 {!props.label ? null : <InputLabel>{props.label}</InputLabel>}
                 <GInput
-                    {...props}
-                    {...passwordProps}
-                    type={visible ? 'text' : props.type}
-                    value={props.value}
-                    multiline={props.type === 'textarea'}
+                    ref={ref}
+                    type={visible ? 'text' : type}
+                    placeholder={noHolder ? placeholder : ''}
+                    value={value}
+                    onChange={onChange}
+                    name={name}
+                    disabled={disabled}
+                    outline={outline}
+                    error={error}
+                    multiline={type === 'textarea'}
                     maxRows={2}
-                    textarea={props.type === 'textarea'}
+                    textarea={type === 'textarea'}
                     disableUnderline
-                    placeholder={props.placeholder}
-                    onChange={props.onChange}
-                    noHolder={props.noHolder}
+                    {...passwordProps}
+                    {...props}
                     onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
-                    disabled={props.disabled}
-                    formed={props.formed}
-                    spaced={props.spaced}
                     startAdornment={
                         !props.startIcon ? null :
                             <InputAdornment position="start">
@@ -77,7 +95,7 @@ export const Input = (props) => {
                             </InputAdornment>
                     }
                     endAdornment={
-                        props.type === 'password' && (
+                        type === 'password' && (
                             <InputAdornment position="end">
                                 <IconButton
                                     onClick={handleClickShowPassword}
@@ -91,7 +109,7 @@ export const Input = (props) => {
             </FormControl>
         </ThemedComponent>
     );
-}
+});
 
 export const MaskedInput = (props) => (
     <InputMask mask={props.mask} value={props.value} disabled={false} placeholder={props.placeholder} noHolder={props.noHolder} outline={props.outline} onChange={props.onChange} maskChar="">

@@ -145,19 +145,36 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
   '&[type="password"]': {
     '&::-webkit-credentials-auto-fill-button': {
       display: 'none !important',
+      visibility: 'hidden !important',
+      pointerEvents: 'none !important',
+      position: 'absolute !important',
+      right: '0 !important'
     },
     '&::-webkit-contacts-auto-fill-button': {
       display: 'none !important',
+      visibility: 'hidden !important',
+      pointerEvents: 'none !important'
     },
     '&::-webkit-strong-password-auto-fill-button': {
       display: 'none !important',
+      visibility: 'hidden !important',
+      pointerEvents: 'none !important'
     },
     '-webkit-text-security': props.type === 'text' ? 'none' : 'disc',
     'font-family': '-apple-system !important',
+    '-webkit-appearance': 'none',
+    'appearance': 'none'
   },
 }));
 
 
 export const InputIcon = styledCmp.img.attrs({
 })`
+`;
+
+export const InputError = styledCmp.div`
+    color: ${props => props.theme.palette.error.main || '#f44336'};
+    font-size: 12px;
+    margin-top: 4px;
+    font-family: 'Inter', sans-serif;
 `;

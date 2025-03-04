@@ -10,7 +10,9 @@ import {
     ServicesContainer,
     FormSection,
     FormTitle,
-    FormRow
+    FormRow,
+    FormGroup,
+    Label
 } from './styled';
 import { FormSpacer, Icon, Title } from 'ui/styled';
 import Check from 'components/Form/Check';

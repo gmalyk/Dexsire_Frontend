@@ -373,8 +373,8 @@ export const ProfileContainer = styled.div`
 `;
 
 export const ProfileAvatar = styled.img`
-    width: 64px;
-    height: 64px;
+    width: 94px;
+    height: 94px;
     border-radius: 50%;
     object-fit: cover;
     position: relative;
@@ -474,4 +474,57 @@ export const Icon = styled.div`
         height: 40px;
         background-size: 20px;
     }
+`;
+
+export const AppearanceContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1075px;
+    padding: 0 24px;
+
+    @media (max-width: 768px) {
+        padding: 0 16px;
+    }
+`;
+
+export const AppearanceTitleContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+export const AppearanceTitle = styled.div`
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 19.36px;
+    text-align: left;
+    color: ${props => props.theme.palette.colors.white};
+`;
+
+export const AppearanceText = styled.div`
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: left;
+    color: ${props => props.theme.palette.colors.purple};
+    display: flex;
+    align-items: center;
+    gap: 8px;
+`;
+
+export const UploadFileContainer = styled.div`
+    width: 100%;
+    min-height: 284px;
+    border: 1px dashed ${props => props.theme.palette.colors.orange};
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 24px;
 `;
