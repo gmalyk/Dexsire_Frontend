@@ -53,7 +53,6 @@ export default function EscortProfile() {
   const location = useLocation()
   const profileData = location.state?.profileData
 
-  // Use profileData instead of mockProfile
   const [currentProfile] = useState(profileData || {
     id: 1,
     name: "Amanda Borges",
@@ -83,21 +82,17 @@ export default function EscortProfile() {
     comments: 26
   })
 
-  // Simplified handlers without API calls
   const handleEdit = () => setIsEditing(true)
   const handleSave = () => {
     setIsEditing(false)
-    // Could add console.log here for debugging
   }
   const handlePhotoClick = (index) => {
     console.log(`Photo clicked: ${index}`)
   }
 
-  // Use the profile data to render the profile
   console.log('Profile ID:', id)
   console.log('Profile Data:', profileData)
 
-  // Add handler for file upload
   const handleFileUpload = (file) => {
     setUploadedFile(file)
     setPreview(URL.createObjectURL(file))
@@ -111,7 +106,6 @@ export default function EscortProfile() {
           <>
             
             <ProfileContainer>
-                {/* Header Section */}
                 <ProfileHeader>
                     <ProfileTopRow>
                         <ProfileAvatar src={currentProfile.images[0]} />
@@ -128,7 +122,6 @@ export default function EscortProfile() {
                         </HeaderActions>
                     </ProfileTopRow>
                     
-                    {/* Age and Location Section */}
                     <ProfileBottomRow>
                         <AgeDisplay>
                             <label>Age</label>
@@ -141,10 +134,8 @@ export default function EscortProfile() {
                     </ProfileBottomRow>
                 </ProfileHeader>
 
-                {/* Description Section */}
                 <ProfileDescription>{currentProfile.description}</ProfileDescription>
 
-                {/* Stats Section */}
                 <ProfileStats>
                     <StatItem>
                         <StatValue>{currentProfile.stats?.posts || currentProfile.posts}</StatValue>
@@ -167,7 +158,6 @@ export default function EscortProfile() {
             
                 
 
-                {/* Action Buttons Section */}
                 <ActionButtons>
                     <FollowButton outlineGradient>
                         Follow
@@ -206,7 +196,6 @@ export default function EscortProfile() {
                     />
                 </NavigationBar>
 
-                {/* Photo Gallery Section */}
                 <PhotoGallery>
                     <GalleryTitle>Photo gallery</GalleryTitle>
                     <GalleryGrid>
@@ -218,7 +207,6 @@ export default function EscortProfile() {
                     </GalleryGrid>
                 </PhotoGallery>
 
-                {/* Bottom Navigation Section */}
                 
             </ProfileContainer>
           </>

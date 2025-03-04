@@ -186,7 +186,6 @@ const DEFAULT_OPTIONS = {
     }))
 }
 
-// Composant d'upload simplifié
 const SimpleUpload = ({ onChange, accept, children }) => {
     const handleChange = (event) => {
         const files = event.target.files;
@@ -209,7 +208,6 @@ const SimpleUpload = ({ onChange, accept, children }) => {
     );
 };
 
-// Remplacer l'ancien useFileUpload par cette version optimisée
 const useFileUpload = () => {
     const [files, setFiles] = useState([]);
     const [error, setError] = useState(null);
@@ -289,7 +287,6 @@ const useFileUpload = () => {
         setError(null);
     };
 
-    // Cleanup on unmount
     useEffect(() => {
         return () => {
             files.forEach(file => {
@@ -310,12 +307,10 @@ const useFileUpload = () => {
     };
 };
 
-// Add this wrapper component at the top of the file
 const LocalUploadWrapper = ({ children, onChange, skipApiCall }) => {
     const handleUpload = async (files) => {
         if (!files) return;
         
-        // If it's a single file
         if (!Array.isArray(files)) {
             const file = files;
             const localUrl = URL.createObjectURL(file);
@@ -331,7 +326,6 @@ const LocalUploadWrapper = ({ children, onChange, skipApiCall }) => {
             return;
         }
 
-        // If it's multiple files
         const localFiles = Array.from(files).map(file => {
             const localUrl = URL.createObjectURL(file);
             return {
@@ -346,13 +340,11 @@ const LocalUploadWrapper = ({ children, onChange, skipApiCall }) => {
         onChange(localFiles);
     };
 
-    // Clone the child component with modified props
     const modifiedChildren = React.Children.map(children, child => {
         if (React.isValidElement(child)) {
             return React.cloneElement(child, {
                 onChange: handleUpload,
                 skipApiCall: true,
-                // Override any API-related props to prevent API calls
                 uploadUrl: null,
                 postImage: handleUpload,
                 postVideo: handleUpload
@@ -371,7 +363,6 @@ export default function RegisterEscort() {
 
     const { setUser, reloadMe } = useContext(CoreContext)
 
-    // Initialize state from localStorage if available
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [infoOption, setInfoOption] = useState(() => {
@@ -427,22 +418,18 @@ export default function RegisterEscort() {
     })
     
     const [options, setOptions] = useState(() => {
-        // Sort regions alphabetically
         const sortedRegions = [...DEFAULT_OPTIONS.regions].sort((a, b) => 
             a.title.localeCompare(b.title)
         );
         
-        // Sort cities alphabetically
         const sortedCities = [...DEFAULT_OPTIONS.cities].sort((a, b) => 
             a.title.localeCompare(b.title)
         );
         
-        // Sort nationalities alphabetically
         const sortedNationalities = [...DEFAULT_OPTIONS.nationalities].sort((a, b) => 
             a.title.localeCompare(b.title)
         );
         
-        // Sort categories alphabetically
         const sortedCategories = [...DEFAULT_OPTIONS.categories].sort((a, b) => 
             a.title.localeCompare(b.title)
         );
@@ -459,13 +446,12 @@ export default function RegisterEscort() {
         const savedFiles = localStorage.getItem('escortRegistrationUploadedFiles')
         if (savedFiles) {
             const parsedFiles = JSON.parse(savedFiles)
-            // Ensure photos is an array
             return {
                 ...parsedFiles,
                 photos: Array.isArray(parsedFiles.photos) ? parsedFiles.photos : []
             }
         }
-        return { photos: [] } // Initialize with empty photos array
+        return { photos: [] } 
     })
 
     const contentRef = useRef(null);
@@ -474,7 +460,6 @@ export default function RegisterEscort() {
         return savedForm ? JSON.parse(savedForm) : {}
     })
 
-    // Save state to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('escortRegistrationStep', infoOption)
     }, [infoOption])
@@ -647,9 +632,8 @@ export default function RegisterEscort() {
         setEthnicity(value)
     }
 
-    // Map steps to their previous steps for navigation
     const stepNavigation = {
-        'Personal data': null, // First step has no previous step
+        'Personal data': null, 
         'Privacy and Terms': 'Personal data',
         'Profile': 'Privacy and Terms',
         'Appearance': 'Profile',
@@ -657,38 +641,29 @@ export default function RegisterEscort() {
         'Payment': 'Services offered'
     };
 
-    // Handle browser back button
+  
     useEffect(() => {
-        // Save current step to history state
         const currentPath = history.location.pathname;
         history.replace({
             pathname: currentPath,
             state: { currentStep: infoOption }
         });
 
-        // Handle popstate (back/forward button)
         const handlePopState = (event) => {
-            // Prevent default back behavior
             event.preventDefault();
             
-            // Get previous step
             const prevStep = stepNavigation[infoOption];
             
             if (prevStep) {
-                // Go to previous step instead of previous page
                 setInfoOption(prevStep);
-                // Update history to maintain correct state
                 history.push({
                     pathname: currentPath,
                     state: { currentStep: prevStep }
                 });
             } else {
-                // If we're at the first step, confirm before leaving
                 if (window.confirm(t('are_you_sure_you_want_to_leave'))) {
-                    // Allow navigation away from registration
                     history.goBack();
                 } else {
-                    // Stay on current page
                     history.push({
                         pathname: currentPath,
                         state: { currentStep: infoOption }
@@ -704,7 +679,6 @@ export default function RegisterEscort() {
         };
     }, [infoOption, history]);
 
-    // Add a custom back handler for UI back buttons
     const handleBack = () => {
         const prevStep = stepNavigation[infoOption];
         if (prevStep) {
@@ -712,51 +686,41 @@ export default function RegisterEscort() {
         }
     };
 
-    // Update the validation function to bypass validation for the first three steps
     const validateCurrentStep = () => {
         switch(infoOption) {
             case 'Personal data':
-                // Skip validation for the first step
                 return true;
             
             case 'Privacy and Terms':
-                // Skip validation for the second step
                 return true;
             
             case 'Profile':
-                // Skip validation for the third step
                 return true;
             
             case 'Appearance':
-                // Check if photos are uploaded (at least 1)
                 if (!uploadedFiles.photos || !Array.isArray(uploadedFiles.photos) || uploadedFiles.photos.length < 1) {
                     toast.error(t('please_upload_at_least_one_photo'));
                     return false;
                 }
                 
-                // Check if ID front is uploaded
                 if (!uploadedFiles.frontId) {
                     toast.error(t('please_upload_id_front'));
                     return false;
                 }
                 
-                // Check if ID back is uploaded
                 if (!uploadedFiles.backId) {
                     toast.error(t('please_upload_id_back'));
                     return false;
                 }
                 
-                // Check if verification photo is uploaded
                 if (!uploadedFiles.verification) {
                     toast.error(t('please_upload_verification_photo'));
                     return false;
                 }
                 
-                // All required files are uploaded, allow progression
                 return true;
                 
             case 'Services offered':
-                // Check if at least one service is selected
                 if (services.length === 0) {
                     toast.error(t('please_select_at_least_one_service'));
                     return false;
@@ -768,7 +732,6 @@ export default function RegisterEscort() {
                 return true;
                 
             case 'Payment':
-                // Check if payment is valid
                 if (loading) {
                     toast.error(t('please_wait_for_payment_processing'));
                     return false;
@@ -780,39 +743,31 @@ export default function RegisterEscort() {
         }
     };
 
-    // Update the handleHeaderInfo function to include validation
     const handleHeaderInfo = (option) => {
-        // Only validate when moving forward, not when going back
         const currentStepIndex = Object.keys(stepNavigation).indexOf(infoOption);
         const nextStepIndex = Object.keys(stepNavigation).indexOf(option);
         
         if (nextStepIndex > currentStepIndex) {
-            // Moving forward, validate current step
             if (!validateCurrentStep()) {
-                return; // Don't proceed if validation fails
+                return;
             }
         }
         
-        // Add current state to history before changing
         history.push({
             pathname: history.location.pathname,
             state: { currentStep: infoOption }
         });
         
-        // Update to new step
         setInfoOption(option);
     };
 
-    // Also update the action function to simply proceed without validation
     const action = async (payload) => {
         try {
-            // Update form state with payload
             setForm(prev => ({
                 ...prev,
                 ...payload
             }));
             
-            // Proceed to next step without validation
             handleHeaderInfo('Privacy and Terms');
         } catch (err) {
             console.error(err);
@@ -849,14 +804,11 @@ export default function RegisterEscort() {
         return true;
     };
 
-    // Also update the saveStep1 function to bypass validation
     const saveStep1 = () => {
-        // Proceed to next step without validation
         handleHeaderInfo('Appearance');
     };
 
     const handleSuccess = () => {
-        // Clear all localStorage items related to registration
         localStorage.removeItem('escortRegistrationStep')
         localStorage.removeItem('escortRegistrationProfile')
         localStorage.removeItem('escortRegistrationMobility')
@@ -873,7 +825,6 @@ export default function RegisterEscort() {
         localStorage.removeItem('escortRegistrationForm')
         localStorage.removeItem('escortRegistrationUploadedFiles')
         
-        // Set success state and proceed with original success logic
         setSuccess(true)
         navigate('admin/escort')
     }
@@ -957,7 +908,6 @@ export default function RegisterEscort() {
         setPayments(value)
     }
 
-    // Gestionnaires d'upload modifiés
     const video360Upload = useFileUpload();
     const imagesUpload = useFileUpload();
     const verificationPhotoUpload = useFileUpload();
@@ -983,13 +933,12 @@ export default function RegisterEscort() {
 
     const handleImagesUpload = (files) => {
         if (!Array.isArray(files)) {
-            files = [files]; // Convert to array if it's a single file
+            files = [files]; 
         }
         
         const fileObjects = files.map(file => createFileObject(file));
         
         setUploadedFiles(prev => {
-            // Initialize photos as an empty array if it doesn't exist
             const prevPhotos = Array.isArray(prev.photos) ? prev.photos : [];
             return {
                 ...prev,
@@ -997,7 +946,6 @@ export default function RegisterEscort() {
             };
         });
         
-        // Update imagesReview state as well
         setImagesReview(prev => {
             const prevImages = Array.isArray(prev) ? prev : [];
             return [...prevImages, ...fileObjects.map(f => f.file || f)];

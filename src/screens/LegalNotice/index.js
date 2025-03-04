@@ -14,7 +14,6 @@ export default function LegalNoticePage() {
                     "1.2. Siège social : [Adresse complète].\n\n" +
                     "1.3. Contact : [Email et téléphone]."
         },
-        // Add other sections
     ];
 
     return (

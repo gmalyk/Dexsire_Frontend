@@ -99,6 +99,13 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
     }));
   };
 
+  const ageOptions = useMemo(() => {
+    return Array.from({ length: 33 }, (_, i) => ({ 
+      id: i + 18, 
+      title: `${i + 18}` 
+    }));
+  }, []);
+
   return (
     <>
       <ServicesContainer>
@@ -110,8 +117,14 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
 
             <Select formed borderBackground placeholder={ t('Category') } options={optionsCategory} onChange={e => changeForm(e, 'category') } value={formValue('category') } />
             <Input spaced noHolder type='textarea' textarea outline placeholder={ t("Bio") } value={formValue('about_me') } onChange={e => changeForm(e.target.value, 'about_me') } />
-            {/* <Select formed borderBackground placeholder={ t('Age') } options={[]} onChange={e => changeForm(e.target.value, 'age') } value={formValue('age') } /> */}
-            <Input type='number' noHolder outline placeholder={ t("Age") } value={formValue('age') } onChange={e => changeForm(e.target.value, 'age') } />
+            <Select 
+              formed 
+              borderBackground 
+              placeholder={t('Age')} 
+              options={ageOptions} 
+              onChange={e => changeForm(e, 'age')} 
+              value={formValue('age')} 
+            />
             <MaskedInput mask={"+41 99 999 9999"} noHolder outline placeholder={ t("Phone") } value={formValue('phone') } onChange={e => changeForm(e.target.value, 'phone') } />
 
             <Select formed borderBackground placeholder={ t('Canton') } options={options?.regions || []} onChange={setEthnicity} value={ethnicity} />
