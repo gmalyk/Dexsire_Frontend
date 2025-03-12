@@ -57,7 +57,6 @@ export default function HomeFilters() {
   const [changed, setChanged] = useState(false)
   const [selectedRegion, setSelectedRegion] = useState('all')
   const formRef = useRef()
-  const dataFetched = useRef(false)
 
   const formItems = useMemo(() => {
     const allRegionsOptions = [

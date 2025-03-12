@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext } from 'react';
 import { CoreContext } from '../contexts/CoreContext';
 import Modal from '../components/Modal';
 import CGUScreen from './screens/CGU';
@@ -8,34 +8,9 @@ import LegalNoticePage from './pages/LegalNotice';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import routes from './routes';
 import EscortProfile from 'screens/Profile/EscortProfile';
-import { Read } from 'services/core';
 
 const App = () => {
-    const { modal, setContactUs } = useContext(CoreContext);
-    const contactUsFetched = useRef(false);
-
-    useEffect(() => {
-        // Skip the contact-us API call entirely
-        setContactUs({}); // Just set an empty object
-
-        // Or if you still need to fetch it but only once:
-        /*
-        if (!contactUsFetched.current) {
-            const fetchContactUs = async () => {
-                try {
-                    const result = await Read('contact-us');
-                    setContactUs(result?.data || {});
-                } catch (error) {
-                    console.error('Error fetching contact-us:', error);
-                    setContactUs({});
-                }
-            }
-            
-            fetchContactUs();
-            contactUsFetched.current = true;
-        }
-        */
-    }, []); // Empty dependency array to run only once
+    const { modal } = useContext(CoreContext);
 
     return (
         <>
