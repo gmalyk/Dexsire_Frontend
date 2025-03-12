@@ -308,7 +308,6 @@ export default function HomeFilters() {
         ]
     };
 
-    // Create a flat array of all cities with their region information
     const allCities = Object.entries(citiesByRegion).flatMap(([region, cities]) => 
         cities.map(city => ({
             ...city,
@@ -316,7 +315,6 @@ export default function HomeFilters() {
         }))
     ).sort((a, b) => a.title.localeCompare(b.title));
 
-    // Get filtered cities based on selected region
     const filteredCities = selectedRegion === 'all' 
         ? allCities 
         : allCities.filter(city => city.region === selectedRegion);
@@ -346,18 +344,16 @@ export default function HomeFilters() {
         ref: 'city',
             placeholder: t('Select City'),
             options: selectedRegion === 'all' 
-                ? Object.values(citiesByRegion).flat() // Show all cities when "All Cantons" is selected
-                : citiesByRegion[selectedRegion] || [], // Show only cities for the selected canton
+                ? Object.values(citiesByRegion).flat() 
+                : citiesByRegion[selectedRegion] || [], 
             customer: true,
             onChange: (value) => {
                 const form = formRef?.current?.getForm()
                 if (form) {
                     form.city = value
                     
-                    // If a city is selected and we're showing all cities,
-                    // update the region to match the city's region
+                
                     if (value && selectedRegion === 'all') {
-                        // Find which region this city belongs to
                         for (const [region, cities] of Object.entries(citiesByRegion)) {
                             if (cities.some(city => city.id === value)) {
                                 form.region = region
@@ -403,13 +399,10 @@ export default function HomeFilters() {
         label: t('clear_filter'),
         customer: !!filter,
             action: () => {
-                // Reset filter state
                 setFilter(null)
                 
-                // Reset region selection
                 setSelectedRegion('all')
                 
-                // Reset form values if getForm is available
                 const form = formRef?.current?.getForm()
                 if (form) {
                     form.region = 'all'
@@ -417,7 +410,6 @@ export default function HomeFilters() {
                     form.category = 'Escort'
                 }
                 
-                // Trigger re-render
                 setChanged(!changed)
             }
       },

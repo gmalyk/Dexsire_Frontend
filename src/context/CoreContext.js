@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect } from 'react'
+import React, { useState, createContext, useEffect, useRef } from 'react'
 import { ReadObject, SaveObject } from '../services/storage'
 import { ReadMe } from 'services/me'
 import { ReadOne } from 'services/core'
@@ -18,7 +18,7 @@ export const CoreState = ({ children }) => {
 	const [cities, setCities] = useState([])
 	const [regions, setRegions] = useState([])
 	const [services, setServices] = useState([])
-	const [contactUs, setContactUs] = useState(null)
+	const [contactUs, setContactUs] = useState({})
 	const [filter, setFilter] = useState(null)
 	
 	const [adminPages, setAdminPages] = useState([])
@@ -30,6 +30,8 @@ export const CoreState = ({ children }) => {
 
 	const [language, setLanguage] = useState(ReadObject('language') ? ReadObject('language') : optionsLanguage?.[0]?.id)
 	const [translation, setTranslation] = useState(ReadObject('translation') ? ReadObject('translation') : null)
+
+	const dataLoaded = useRef(false)
 
 	useEffect(() => {
 		if (modal) {
