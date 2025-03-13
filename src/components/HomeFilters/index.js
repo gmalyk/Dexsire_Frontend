@@ -57,7 +57,6 @@ export default function HomeFilters() {
   const [changed, setChanged] = useState(false)
   const [selectedRegion, setSelectedRegion] = useState('all')
   const formRef = useRef()
-  const dataFetched = useRef(false)
 
   const formItems = useMemo(() => {
     const allRegionsOptions = [
@@ -100,7 +99,7 @@ export default function HomeFilters() {
             { id: 'morges', title: 'Morges' },
             { id: 'moudon', title: 'Moudon' },
             { id: 'nyon', title: 'Nyon' },
-            { id: 'oron', title: 'Oron' }, 
+            { id: 'oron', title: 'Oron' },
             { id: 'payerne', title: 'Payerne' },
             { id: 'prilly', title: 'Prilly' },
             { id: 'renens', title: 'Renens' },
@@ -323,51 +322,50 @@ export default function HomeFilters() {
     return [
       {
         ref: 'region',
-        placeholder: t('All Cantons'),
-        options: allRegionsOptions,
+            placeholder: t('All Cantons'),
+            options: allRegionsOptions,
         customer: true,
-        defaultValue: 'all',
-        onChange: (value) => {
-            setSelectedRegion(value)
-            const form = formRef?.current?.getForm()
-            if (form) {
-                form.city = ''
-                if (value === 'all') {
-                    delete form.region
-                } else {
-                    form.region = value
+            defaultValue: 'all',
+            onChange: (value) => {
+                setSelectedRegion(value)
+                const form = formRef?.current?.getForm()
+                if (form) {
+                    form.city = ''
+                    if (value === 'all') {
+                        delete form.region
+                    } else {
+                        form.region = value
+                    }
+                    setChanged(!changed)
                 }
-                setChanged(!changed)
             }
-        }
       }, 
       {
         ref: 'city',
-        placeholder: t('Select City'),
-        options: selectedRegion === 'all' 
-            ? Object.values(citiesByRegion).flat().sort((a, b) => a.title.localeCompare(b.title)) 
-            : citiesByRegion[selectedRegion] || [], 
-        customer: true,
-        onChange: (value) => {
-            const form = formRef?.current?.getForm()
-            if (form) {
-                form.city = value
+            placeholder: t('Select City'),
+            options: selectedRegion === 'all' 
+                ? Object.values(citiesByRegion).flat() 
+                : citiesByRegion[selectedRegion] || [], 
+            customer: true,
+            onChange: (value) => {
+                const form = formRef?.current?.getForm()
+                if (form) {
+                    form.city = value
+                    
                 
-                // If "All Cantons" is selected but user picks a city,
-                // automatically select the corresponding canton
-                if (value && selectedRegion === 'all') {
-                    for (const [region, cities] of Object.entries(citiesByRegion)) {
-                        if (cities.some(city => city.id === value)) {
-                            form.region = region
-                            setSelectedRegion(region)
-                            break
+                    if (value && selectedRegion === 'all') {
+                        for (const [region, cities] of Object.entries(citiesByRegion)) {
+                            if (cities.some(city => city.id === value)) {
+                                form.region = region
+                                setSelectedRegion(region)
+                                break
+                            }
                         }
                     }
+                    
+                    setChanged(!changed)
                 }
-                
-                setChanged(!changed)
             }
-        }
       },
       {
         ref: 'services',
@@ -390,30 +388,30 @@ export default function HomeFilters() {
       },
       {
         ref: 'category',
-        placeholder: t('Escort'),
+            placeholder: t('Escort'),
         options: optionsCategory,
         customer: true,
-        defaultValue: 'Escort',
-        value: 'Escort'
+            defaultValue: 'Escort',
+            value: 'Escort'
       },
       !filter ? null : {
         button: true,
         label: t('clear_filter'),
         customer: !!filter,
-        action: () => {
-            setFilter(null)
-            
-            setSelectedRegion('all')
-            
-            const form = formRef?.current?.getForm()
-            if (form) {
-                form.region = 'all'
-                form.city = ''
-                form.category = 'Escort'
+            action: () => {
+                setFilter(null)
+                
+                setSelectedRegion('all')
+                
+                const form = formRef?.current?.getForm()
+                if (form) {
+                    form.region = 'all'
+                    form.city = ''
+                    form.category = 'Escort'
+                }
+                
+                setChanged(!changed)
             }
-            
-            setChanged(!changed)
-        }
       },
       {
         button: true,
