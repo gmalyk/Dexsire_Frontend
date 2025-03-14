@@ -236,7 +236,7 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
               </FormContainer>
               }
               {
-                !note ? null : <>
+                /* !note ? null : <>
                   <NoteContainer noteEditing={noteEditing}>
                     <NoteText>
                       <Input id={"note"} noHolder disabled={!isNoteEditing} outline placeholder={t("note")} type='textarea' textarea  value={formValue('service_observations') } onChange={e => changeForm(e.target.value, 'service_observations') } />
@@ -247,7 +247,7 @@ export default function ServicesOffered({ note, editing, noteEditing, options, a
                       </ButtonEditing>
                       : null}
                   </NoteContainer>
-                </>
+                </> */
               }
           </>
         }

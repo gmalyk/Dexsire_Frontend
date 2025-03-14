@@ -28,7 +28,7 @@ export default function AdminSideBar({ escort }) {
       { icon: 'video-orange', iconActive: 'video', label: t("admin_side_option4"), page: 'admin/escort/videos' },
       { icon: 'star-outline-orange', iconActive: 'star-outline-white', label: t("admin_side_option5"), page: 'admin/escort/ratings' },
       { icon: 'chili-orange', iconActive: 'chili', label: t("admin_side_option6"), page: 'admin/escort/services' },
-      { icon: 'megaphone', iconActive: 'megaphone-white', label: t("admin_side_option7"), page: 'admin/escort/adverts' },
+      //{ icon: 'megaphone', iconActive: 'megaphone-white', label: t("admin_side_option7"), page: 'admin/escort/adverts' },
       { icon: 'dolar-orange', iconActive: 'dolar-white', label: t("admin_side_option8"), page: 'admin/escort/additional-credits' },
       { icon: 'diamond', iconActive: 'diamond-white', label: t("admin_side_option9"), page: 'admin/escort/plans' },
       { icon: 'statistics', iconActive: 'statistics-white', label: t("admin_side_option10"), page: 'admin/escort/statistics' },

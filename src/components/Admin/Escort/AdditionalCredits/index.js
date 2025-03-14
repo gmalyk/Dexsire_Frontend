@@ -27,12 +27,19 @@ export default function AdditionalCredits() {
   ];
 
   const creditItems = useMemo(() => [
-    {
+    /* {
       title: t("admin_dashboard_credits_item1_title"),
       subtitle: t("admin_dashboard_credits_item1_subtitle"),
       type: 'button',
       buttonText: t("admin_dashboard_credits_item1_button"),
       infoFooter: t("admin_dashboard_credits_item1_footer"),
+    }, */
+    {
+      title: t("admin_dashboard_credits_item3_title"),
+      subtitle: t("admin_dashboard_credits_item3_subtitle"),
+      type: 'purchase',
+      options: creditInfo,
+      light: true,
     },
     {
       title: t("admin_dashboard_credits_item2_title"),
@@ -40,13 +47,6 @@ export default function AdditionalCredits() {
       type: 'list',
       list: creditDays,
       infoFooter: t("admin_dashboard_credits_item2_footer"),
-    },
-    {
-      title: t("admin_dashboard_credits_item3_title"),
-      subtitle: t("admin_dashboard_credits_item3_subtitle"),
-      type: 'purchase',
-      options: creditInfo,
-      light: true,
     },
   ], []);
 
