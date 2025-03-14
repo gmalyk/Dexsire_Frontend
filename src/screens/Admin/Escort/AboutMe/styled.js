@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 export const BodyContainer = styled.div.attrs({})`
-  margin-top: 130px;
-  margin-right: 40px;
-  min-height: 100%;
   width: 100%;
+  min-height: 100%;
+  padding-top: 120px;
+  margin-top: 90px;
   background: linear-gradient(to left, ${p => p.theme.palette.gradient.secondary} 0%, ${p => p.theme.palette.gradient.primary} 100%);
   padding-top: 1px;
   @media(max-width:767px){
@@ -25,6 +25,5 @@ export const BodyContent = styled.div.attrs({})`
 `;
 
 export const AdminContainer = styled.div.attrs({})`
-  justify-content: center;
  display: flex;
 `;

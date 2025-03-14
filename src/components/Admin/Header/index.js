@@ -1,5 +1,13 @@
 import React, { useContext, useState } from 'react'
-import { HeaderButton, HeaderButtonContainer, HeaderContainer, HeaderContent } from './styled'
+import { 
+  HeaderButton, 
+  HeaderButtonContainer, 
+  HeaderContainer, 
+  HeaderContent, 
+  HeaderTopSection,
+  TitleContainer,
+  GradientLine
+} from './styled'
 import { Icon, Title } from 'ui/styled'
 import Input from 'components/Form/Input'
 import Select from 'components/Form/Select'
@@ -20,22 +28,26 @@ export default function AdminHeader({ title }) {
   const formValue = ref => { return form?.[ref] ? form?.[ref] : ''; }
   const changeForm = (value, ref) => { setForm({ ...form, [ref]: value }); }
  
-
   return (
     <>
       <HeaderContainer>
-        {/* <Icon icon="logo" width={137} nomargin /> */}
-        <HeaderContent>
-          <Title small nomargin>{title}</Title>
+        <HeaderTopSection>
+          <Icon icon="logo" width={137} nomargin /> 
           <HeaderButtonContainer>
-            
-             <HeaderButton>
+            <HeaderButton>
               <Icon icon="notification" />
             </HeaderButton>
             <HeaderButton orange>
               <Icon icon="setting" />
-            </HeaderButton>
+            </HeaderButton> 
           </HeaderButtonContainer>
+        </HeaderTopSection>
+        
+        <HeaderContent>
+          <TitleContainer>
+            <Title  nomargin>{title}</Title>
+            <GradientLine />
+          </TitleContainer>
         </HeaderContent>
       </HeaderContainer>
     </>

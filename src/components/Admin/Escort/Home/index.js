@@ -14,6 +14,9 @@ import Button from 'components/Form/Button';
 import CustomerReviewCard from 'components/Cards/CustomerReview';
 import { reviewsArray } from 'utils/options';
 import CustomerReview from 'components/CustomerReview';
+import { parseStrapiImage } from 'utils';
+import AdvertsCard from 'components/Cards/AdvertsCard';
+
 
 import { CoreContext } from 'context/CoreContext';
 import { Read, ReadOne } from 'services/core';
@@ -26,15 +29,32 @@ export default function AdminHome() {
   const [activeReviewOption, setReviewOption] = useState(null);
   const [activeOption, setActiveOption] = useState(null);
 
+  const history = useHistory(); 
+  const navigate = to => history.push(`/${ to }`); 
+
   const { user, currentProfile, setCurrentProfile} = useContext(CoreContext)
 
   const { t } = useI18n()
 
   const [visits, setVisits] = useState([])
+  const handleAdClick = (id) => {
+    navigate('admin/escort/about-me')
+   // setAdId(id);
+ }
 
   const handleOptionClick = (value) => {
     setActiveOption(value);
   };
+  const escort = useMemo(() => ({
+    id: 1,
+    name: user?.name,
+    emphasis: true,
+    location: {
+      city: user?.model?.city?.title,
+      state: user?.model?.region?.title
+    },
+    urls: user?.model?.photos?.map(m => m?.url ? parseStrapiImage(m?.url) : null)?.filter(f => f)
+  }), [user]) 
 
   const dashboardData = useMemo(() => {
     // console.log("currentProfile", currentProfile)
@@ -61,7 +81,7 @@ export default function AdminHome() {
         icon: 'diamond',
         title: t("admin_dashboard_title4"),
         subtitle: t("admin_dashboard_subtitle4"),
-        // buttonText: 'Make new subscription',
+        buttonText: 'Make new subscription',
         white: true,
       },
     ];
@@ -103,15 +123,12 @@ export default function AdminHome() {
     return transformedData; 
   }, [visits])
 
-  const options = []
   
-  // const options = [
-  //   { value: 'Everytime' },
-  //   { value: '12 months' },
-  //   { value: '6 months' },
-  //   { value: '30 days' },
-  //   { value: '7 days' },
-  // ];
+  const options = [
+     { value: '6 months' },
+     { value: '30 days' },
+     { value: '7 days' },
+   ];
 
   const reviewOptions = [
     { value: '2 months' },
@@ -132,6 +149,8 @@ export default function AdminHome() {
   return (
     <>
       <HomeBodyContainer>
+        <AdvertsCard escort={escort} handleAdClick={handleAdClick} />
+
         <HomeHeaderContainer>
           {dashboardData?.map((item, index) => (
             <DashboardCard key={index} {...item} />

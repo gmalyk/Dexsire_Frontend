@@ -12,7 +12,9 @@ export const CardContainer = styled.div.attrs({})`
   
   @media(max-width: 767px) {
     width: 100%;
+    max-width: 100%;
     margin: 0;
+    box-sizing: border-box;
   }
 `;
 
@@ -34,8 +36,19 @@ export const Card = styled.div.attrs({})`
 
   ${p => p.full ? `
     width: 100%;
-    justify-content: center;
-    `: ``};
+  `: ``};
+
+  @media(max-width: 767px) {
+    width: 100%;
+    min-width: 100%;
+  }
+`;
+
+export const HeaderContainer = styled.div.attrs({})`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 export const Title = styled.div.attrs({})`

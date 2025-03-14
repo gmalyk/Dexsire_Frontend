@@ -2,35 +2,58 @@ import styled from "styled-components";
 
 export const HeaderContainer = styled.div.attrs({})`
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 32px 40px 40px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 40px 0 0;
   position: absolute;
   width: 100%;
   top: 0;
+  
   @media(max-width:767px){
-    padding: 32px 12px 40px 12px;
+    padding: 32px 12px 0 12px;
   }
+`;
+
+export const HeaderTopSection = styled.div.attrs({})`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 14px;
 `;
 
 export const HeaderContent = styled.div.attrs({})`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: calc(100% - 293px);  
+  flex-direction: column;
+  width: 100%;
   gap: 16px;
+  
   @media(max-width:767px){
-    width: auto;
-    flex:1;
+    width: 100%;
   }
 `;
 
+export const TitleContainer = styled.div.attrs({})`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-left: 16px;
+  
+  @media(max-width:767px){
+    padding-left: 0;
+  }
+`;
+
+export const GradientLine = styled.div.attrs({})`
+  width: 100%;
+  height: 2px;
+  margin-top: 8px;
+  background: linear-gradient(to right, ${p => p.theme.palette.gradient.primary} 0%, ${p => p.theme.palette.gradient.secondary} 100%);
+`;
 
 export const HeaderButtonContainer = styled.div.attrs({})`
   display: flex;
   gap: 18px;
-  width: 100%;
-  max-width: 568px;
 `;
 
 export const HeaderButton = styled.div.attrs({})`
