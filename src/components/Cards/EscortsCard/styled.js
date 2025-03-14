@@ -26,13 +26,15 @@ export const CardBorderBackground = styled.div.attrs({
     ${p.theme.palette.gradient.primary} 30%,
     ${p.theme.palette.gradient.secondary} 90%
   )` : 'none'};
+  margin: 0 auto;
 
   @media (max-width: 768px) {
-    max-width: 100%;
+    max-width: 340px;
     aspect-ratio: 340 / 540;
   }
 
   @media (max-width: 480px) {
+    max-width: 320px;
     aspect-ratio: 320 / 520;
   }
 `;
@@ -242,6 +244,7 @@ export const ButtonContainer = styled.div.attrs({})`
   gap: 8px;
   padding: 0;
   margin: 0;
+  justify-content: center;
 
   @media (max-width: 768px) {
     gap: 4px;
@@ -277,6 +280,8 @@ export const EndContent = styled.div.attrs({})`
   padding-bottom: 8px;
   position: relative;
   gap: 16px;
+  width: 100%;
+  text-align: center;
 
   & > * {
     margin: 0;
@@ -288,17 +293,12 @@ export const EndContent = styled.div.attrs({})`
   }
 
   @media (max-width: 768px) {
-    gap: 0;
+    gap: 8px;
     padding-bottom: 6px;
-    & ${CardTitle} + ${ButtonContainer} {
-      margin-top: -6px;
-    }
   }
 
   @media (max-width: 480px) {
+    gap: 6px;
     padding-bottom: 4px;
-    & ${CardTitle} + ${ButtonContainer} {
-      margin-top: -5px;
-    }
   }
 `;

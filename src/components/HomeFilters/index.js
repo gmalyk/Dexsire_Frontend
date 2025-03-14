@@ -6,7 +6,16 @@ import { CoreContext } from 'context/CoreContext'
 import { optionsCategory } from 'utils/options'
 import useI18n from 'hooks/useI18n'
 
-const SERVICE_OPTIONS = [
+
+
+export default function HomeFilters() {
+  const { setModal, regions, cities, services, filter, setFilter, escorts } = useContext(CoreContext)
+  const { t } = useI18n()
+  const [changed, setChanged] = useState(false)
+  const [selectedRegion, setSelectedRegion] = useState('all')
+  const formRef = useRef()
+
+  const SERVICE_OPTIONS = [
     { id: '69', title: '69' },
     { id: 'anulingus_recois', title: 'Anulingus (reçois)' },
     { id: 'cafe_pipe', title: 'Café Pipe' },
@@ -50,13 +59,6 @@ const SERVICE_OPTIONS = [
     { id: 'sodomie_recois', title: 'Sodomie (reçois)' },
     { id: 'striptease', title: 'Striptease' }
 ];
-
-export default function HomeFilters() {
-  const { setModal, regions, cities, services, filter, setFilter, escorts } = useContext(CoreContext)
-  const { t } = useI18n()
-  const [changed, setChanged] = useState(false)
-  const [selectedRegion, setSelectedRegion] = useState('all')
-  const formRef = useRef()
 
   const formItems = useMemo(() => {
     const allRegionsOptions = [
@@ -382,9 +384,11 @@ export default function HomeFilters() {
             }));
             setChanged(true);
         },
-        value: filter && filter.services ? filter.services.map(id => 
-            SERVICE_OPTIONS.find(option => option.id === id)
-        ).filter(Boolean) : []
+        value: filter && filter.services && Array.isArray(filter.services) 
+            ? filter.services.map(id => 
+                SERVICE_OPTIONS.find(option => option.id === id)
+            ).filter(Boolean) 
+            : []
       },
       {
         ref: 'category',

@@ -362,6 +362,49 @@ export default function RegisterEscort() {
     const { t } = useI18n()
 
     const { setUser, reloadMe } = useContext(CoreContext)
+    const saveProfile = async () => {
+
+        const payload = {
+            services: services?.map(m => m?.id),
+            region: ethnicity,
+            video360: video360?.id,
+            verification_image: verificationPhoto?.id,
+            videos: [video360?.id],
+            photos: imagesReview?.map(m => m?.id),
+            user: preuser?.user?.id,
+            about_me: formProfile?.about_me,
+            description: formProfile?.about_me,
+            service_observations: aboutme,
+
+            birthdate: getBirthdate(formProfile?.age),
+
+            telegram: formProfile?.phone,
+            whatsapp: formProfile?.phone,
+
+            ...form,
+            ...formProfile,
+
+            weight: parseInt(formProfile?.weight?.replace(' Kg', '')),
+            height: parseFloat(formProfile?.height?.replace('m', '.')),
+            
+            languages: Object.keys(languages).map(m => ({ language: m, level: languages?.[m] })),
+            payments: payments?.map(m => ({ title: m?.title })) ,
+            service_modes: mobility?.map(m => ({ title: m?.title })) 
+        }
+
+        // console.log('save payload', payload )
+
+        // return;
+        
+        setLoading(true)
+        const result = await Create("models", { data:payload })
+        setLoading(false)
+        if (result && !exposeStrapiError(result)) {
+            await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id })
+            await Create("welcome", { name:preuser?.user?.name, email:preuser?.user?.email })
+            handleSuccess()
+        }
+    }
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -809,24 +852,31 @@ export default function RegisterEscort() {
     };
 
     const handleSuccess = () => {
-        localStorage.removeItem('escortRegistrationStep')
-        localStorage.removeItem('escortRegistrationProfile')
-        localStorage.removeItem('escortRegistrationMobility')
-        localStorage.removeItem('escortRegistrationPayments')
-        localStorage.removeItem('escortRegistrationLanguages')
-        localStorage.removeItem('escortRegistrationEthnicity')
-        localStorage.removeItem('escortRegistrationDescription')
-        localStorage.removeItem('escortRegistrationPreuser')
-        localStorage.removeItem('escortRegistrationVideo360')
-        localStorage.removeItem('escortRegistrationVerificationPhoto')
-        localStorage.removeItem('escortRegistrationImagesReview')
-        localStorage.removeItem('escortRegistrationServices')
-        localStorage.removeItem('escortRegistrationAboutme')
-        localStorage.removeItem('escortRegistrationForm')
-        localStorage.removeItem('escortRegistrationUploadedFiles')
-        
-        setSuccess(true)
-        navigate('admin/escort')
+        if (preuser?.user) { setUser(preuser.user) }
+
+        setSuccess({
+            title: t("registration_completed_successfully"),
+            text: t("take_the_opportunity"),
+            icon: 'email-big',
+            buttons: [
+                {
+                    text: t("want_to_buy_later"),
+                    action: () => navigate('admin/escort'),
+                    // action: () => setSuccess(false),
+                    rightIcon: 'chevron-white',
+                    color: 'borderBackground',
+                    between: true
+                },
+                {
+                    text: t("i_want_to_buy_credits_now"),
+                    action: () => navigate('purchase-of-credits'),
+                    // action: () => setSuccess(false),
+                    outlineGradient: true,
+                    rightIcon: 'chevron-right',
+                    between: true,
+                },
+            ]
+        })
     }
 
     const init = () => {
@@ -1280,7 +1330,7 @@ export default function RegisterEscort() {
                         )}
 
                         {infoOption === 'Payment' && (
-                            <Payment loading={loading} action={() => handleSuccess()} />
+                            <Payment loading={loading} action={() => saveProfile()} />
                         )}
                             </BodyContent>
                         </BodyContainer>
