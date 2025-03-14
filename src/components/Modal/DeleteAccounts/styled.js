@@ -120,6 +120,8 @@ export const SubValue = styled.div.attrs({})`
 export const ButtonContent = styled.div.attrs({})`
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 16px;
     flex-wrap: wrap;
+    width: 100%;
 `;
