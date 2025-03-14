@@ -250,7 +250,13 @@ export const ActionButtons = styled.div`
 
 export const FollowButton = styled(Button)`
     flex: 1;
-    height: 48px;
+    background: ${props => props.color === 'white' ? 'white' : 'transparent'};
+    color: ${props => props.color === 'white' ? props.theme.palette.colors.black : props.theme.palette.colors.white};
+    border: ${props => props.color === 'white' ? 'none' : '1px solid rgba(255, 255, 255, 0.2)'};
+    
+    &:hover {
+        background: ${props => props.color === 'white' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.1)'};
+    }
 `;
 
 export const WhatsappButton = styled(Button)`
@@ -352,17 +358,17 @@ export const GalleryItem = styled.div`
 `;
 
 export const NavigationBar = styled.div`
-    display: none;
-
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    position: static;
+    background: transparent;
+    border-top: none;
+    gap: 16px;
+    
     @media (max-width: 768px) {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 24px;
-        position: static;
-        background: transparent;
-        border-top: none;
-        gap: 16px;
+        padding: 16px;
     }
 `;
 
@@ -527,4 +533,40 @@ export const UploadFileContainer = styled.div`
     align-items: center;
     cursor: pointer;
     padding: 24px;
+`;
+
+export const NavIcon = styled.div`
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-image: ${props => props.src ? `url(${props.src})` : 'none'};
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  /* Active state gets orange background, others get black with border */
+  background-color: ${props => props.active 
+      ? props.theme.palette.colors.orange 
+      : 'rgba(0, 0, 0, 0.3)'};
+  border: ${props => props.active 
+      ? 'none' 
+      : '1px solid rgba(255, 255, 255, 0.2)'};
+
+  &:hover {
+    opacity: 0.8;
+    background-color: ${props => props.active 
+      ? props.theme.palette.colors.orange 
+      : 'rgba(255, 255, 255, 0.1)'};
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    background-size: 20px;
+  }
 `;

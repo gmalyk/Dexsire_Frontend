@@ -25,7 +25,7 @@ import {
     GalleryGrid,
     GalleryItem,
     NavigationBar,
-    ActionIcon,
+    NavIcon,
     HeaderActions,
     ProfileAvatarSection,
     AgeDisplay,
@@ -52,6 +52,12 @@ export default function EscortProfile() {
   const { id } = useParams()
   const location = useLocation()
   const profileData = location.state?.profileData
+  
+  // Add state to track active navigation tab
+  const [activeTab, setActiveTab] = useState('photos')
+
+  // Add this state to track following status
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const [currentProfile] = useState(profileData || {
     id: 1,
@@ -98,6 +104,81 @@ export default function EscortProfile() {
     setPreview(URL.createObjectURL(file))
   }
 
+  // Handle tab click
+  const handleTabClick = (tabName) => {
+    setActiveTab(tabName)
+  }
+
+  // Add this function to handle follow/unfollow
+  const handleFollowToggle = () => {
+    setIsFollowing(!isFollowing);
+    // Here you would typically make an API call to update the follow status
+  };
+
+  // Add this after the handleTabClick function
+  const renderTabContent = () => {
+    switch(activeTab) {
+      case 'photos':
+        return (
+          <PhotoGallery>
+            <GalleryTitle>Photo gallery</GalleryTitle>
+            <GalleryGrid>
+              {currentProfile.images.slice(1).map((photo, index) => (
+                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
+                  <img src={photo} alt="" />
+                </GalleryItem>
+              ))}
+            </GalleryGrid>
+          </PhotoGallery>
+        );
+      case 'profile':
+        return (
+          <div>
+            <GalleryTitle>Profile information</GalleryTitle>
+            <ProfileDescription>
+            </ProfileDescription>
+          </div>
+        );
+      case 'videos':
+        return (
+          <div>
+            <GalleryTitle>Video gallery</GalleryTitle>
+            <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+            </div>
+          </div>
+        );
+      case 'star':
+        return (
+          <div>
+            <GalleryTitle>What some customers are saying:</GalleryTitle>
+            <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+            </div>
+          </div>
+        );
+      case 'hot':
+        return (
+          <div>
+            <GalleryTitle>Services that the escort offers:</GalleryTitle>
+            <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <PhotoGallery>
+            <GalleryTitle>Photo gallery</GalleryTitle>
+            <GalleryGrid>
+              {currentProfile.images.slice(1).map((photo, index) => (
+                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
+                  <img src={photo} alt="" />
+                </GalleryItem>
+              ))}
+            </GalleryGrid>
+          </PhotoGallery>
+        );
+    }
+  };
+
   return (
     <ContainerAuthenticated free>
       <BodyContainer>
@@ -116,9 +197,9 @@ export default function EscortProfile() {
                             </ProfileName>
                         </ProfileInfo>
                         <HeaderActions>
-                            <ActionIcon icon="heart" />
-                            <ActionIcon icon="message" />
-                            <ActionIcon icon="bell" />
+                            <NavIcon icon="heart" src="/icons/heart.svg" />
+                            <NavIcon icon="message" src="/icons/message.svg" />
+                            <NavIcon icon="bell" src="/icons/bell.svg" />
                         </HeaderActions>
                     </ProfileTopRow>
                     
@@ -159,8 +240,12 @@ export default function EscortProfile() {
                 
 
                 <ActionButtons>
-                    <FollowButton outlineGradient>
-                        Follow
+                    <FollowButton 
+                        outlineGradient={!isFollowing}
+                        color={isFollowing ? 'white' : undefined}
+                        onClick={handleFollowToggle}
+                    >
+                        {isFollowing ? 'Followed' : 'Follow'}
                     </FollowButton>
                     <WhatsappButton 
                         outlineGradient
@@ -171,41 +256,39 @@ export default function EscortProfile() {
                 </ActionButtons>
 
                 <NavigationBar>
-                    
-                    <Icon 
+                    <NavIcon 
                         icon="photos" 
-                        src="/icons/cam-white.svg" 
+                        src="/icons/cam-white.svg"
+                        active={activeTab === 'photos'}
+                        onClick={() => handleTabClick('photos')}
                     />
-                    <Icon 
+                    <NavIcon 
                         icon="profile" 
-                        src="/icons/cabeca.svg" 
+                        src="/icons/cabeca.svg"
+                        active={activeTab === 'profile'}
+                        onClick={() => handleTabClick('profile')}
                     />
-                    <Icon 
+                    <NavIcon 
                         icon="videos" 
-                        src="/icons/video.svg" 
+                        src="/icons/video.svg"
+                        active={activeTab === 'videos'}
+                        onClick={() => handleTabClick('videos')}
                     />
-                    
-                    <Icon 
+                    <NavIcon 
                         icon="star" 
                         src="/icons/star-outline-white.svg"
+                        active={activeTab === 'star'}
+                        onClick={() => handleTabClick('star')}
                     />
-                    <Icon 
+                    <NavIcon 
                         icon="hot" 
-                        src="/icons/pimenta.svg" 
-
+                        src="/icons/pimenta.svg"
+                        active={activeTab === 'hot'}
+                        onClick={() => handleTabClick('hot')}
                     />
                 </NavigationBar>
 
-                <PhotoGallery>
-                    <GalleryTitle>Photo gallery</GalleryTitle>
-                    <GalleryGrid>
-                        {currentProfile.images.slice(1).map((photo, index) => (
-                            <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                                <img src={photo} alt="" />
-                            </GalleryItem>
-                        ))}
-                    </GalleryGrid>
-                </PhotoGallery>
+                {renderTabContent()}
 
                 
             </ProfileContainer>
