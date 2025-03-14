@@ -15,7 +15,7 @@ export const CardBorderBackground = styled.div.attrs({
   aspect-ratio: 380 / 580;
   position: relative;
   border-radius: 40px;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   display: flex;
   overflow: hidden;
@@ -27,17 +27,44 @@ export const CardBorderBackground = styled.div.attrs({
     ${p.theme.palette.gradient.secondary} 90%
   )` : 'none'};
   margin: 0 auto;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 40px;
+    padding: ${p => p.emphasis ? '6px' : '0'};
+    background: ${p => p.emphasis ? `linear-gradient(
+      22deg,
+      ${p.theme.palette.gradient.primary} 30%,
+      ${p.theme.palette.gradient.secondary} 90%
+    )` : 'none'};
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
 
   @media (max-width: 768px) {
     max-width: 340px;
     aspect-ratio: 340 / 540;
     border-radius: 30px;
+    
+    &:before {
+      border-radius: 30px;
+    }
   }
 
   @media (max-width: 480px) {
     max-width: 100%;
     aspect-ratio: 320 / 520;
     border-radius: 24px;
+    
+    &:before {
+      border-radius: 24px;
+    }
   }
 `;
 
