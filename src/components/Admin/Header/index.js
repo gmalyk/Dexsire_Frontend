@@ -28,14 +28,13 @@ export default function AdminHeader({ title }) {
         <HeaderContent>
           <Title small nomargin>{title}</Title>
           <HeaderButtonContainer>
-            <Select placeholder={ t("what_are_you_looking_for") } options={adminPages} noHolder outline endIcon={'search'}
-              value={formValue('search')} onChange={link => navigate(link)} />
-            {/* <HeaderButton>
+            
+             <HeaderButton>
               <Icon icon="notification" />
             </HeaderButton>
             <HeaderButton orange>
               <Icon icon="setting" />
-            </HeaderButton> */}
+            </HeaderButton>
           </HeaderButtonContainer>
         </HeaderContent>
       </HeaderContainer>

@@ -25,5 +25,6 @@ export const BodyContent = styled.div.attrs({})`
 `;
 
 export const AdminContainer = styled.div.attrs({})`
+  justify-content: center;
  display: flex;
 `;

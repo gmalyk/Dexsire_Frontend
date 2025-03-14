@@ -1,5 +1,21 @@
 import styled from "styled-components";
 
+export const CardContainer = styled.div.attrs({})`
+  display: flex;
+  flex-direction: column;
+  width: 255px;
+  height: 130px;
+  border-radius: 16px;
+  padding: 24px;
+  background: ${p => p.white ? p.theme.palette.colors.white : p.theme.palette.colors.black};
+  border: ${p => p.white ? 'none' : '1px solid rgba(255, 255, 255, 0.2)'};
+  
+  @media(max-width: 767px) {
+    width: 100%;
+    margin: 0;
+  }
+`;
+
 export const Card = styled.div.attrs({})`
   border-radius: 20px;
   padding: 20px;

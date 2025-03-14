@@ -6,7 +6,9 @@ export const HomeHeaderContainer = styled.div.attrs({})`
   flex-wrap: wrap;
 
   @media(max-width: 767px){
-    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
   }
 `;
 
@@ -14,6 +16,11 @@ export const HomeBodyContainer = styled.div.attrs({})`
   display: flex;
   gap: 24px;
   flex-direction: column;
+  
+  @media(max-width: 767px){
+    width: 100%;
+    padding: 0;
+  }
 `;
 
 export const ReviewContainer = styled.div.attrs({

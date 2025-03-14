@@ -1,62 +1,38 @@
-import React, { useEffect } from "react";
-
+import React, { useContext, useEffect, useState } from 'react'
+import { Redirect } from 'react-router-dom'
+import { CoreContext } from 'context/CoreContext'
 import Header from 'components/Dashboard/Header'
+import AdminHeader from 'components/Admin/Header'
+import { Container, Content } from './styled'
+import { ThemedComponent } from 'ui/theme'
 
-import {
-    DashboardPage,
-    DashboardBody,
-    DashboardBodyContent,
-    Content
-} from "./styled";
-import { ReadObject } from "services/storage";
-import { useHistory } from "react-router-dom";
-import { ThemedComponent } from "ui/theme";
-import AdminHeader from "components/Admin/Header";
-import useAge from "hooks/useAge";
+export default function ContainerAuthenticated({ children, title, admin }) {
+  const { user } = useContext(CoreContext)
+  const [loading, setLoading] = useState(true)
 
-export default function ContainerAuthenticated({ children, free, admin, title }) {
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 500)
+  }, [])
 
-    const history = useHistory();
-    const navigate = to => history.push(`/${to}`);
+  if (loading) {
+    return null
+  }
 
-    const { askPermission } = useAge()
+  if (!user) {
+    return <Redirect to="/" />
+  }
 
-    const init = () => {
-        const authentication = ReadObject('authentication')
-        if (!authentication?.jwt) {
-            completeNext()
-        }
-    }
-
-    const completeNext = () => {
-        navigate('login')
-    }
-
-    useEffect(() => {
-        if (!free) { 
-            init() 
-            return () => {}
-        }
-        window.scrollTo(0, 0)
-        const timer = setTimeout(() => { askPermission() }, 1)
-        return () => { clearTimeout(timer) ;}
-    }, [])
-
-    return (
-        <>
-            <ThemedComponent>
-                <Content>
-                    <DashboardPage>
-                        { admin ? null : <Header /> }
-                        <DashboardBody >
-                            {!admin ? null : <AdminHeader title={title} />}
-                            <DashboardBodyContent>
-                                {children}
-                            </DashboardBodyContent>
-                        </DashboardBody>
-                    </DashboardPage>
-                </Content>
-            </ThemedComponent>
-        </>
-    );
+  return (
+    <ThemedComponent>
+      <Container admin={admin}>
+        <title>{title ? `${title} | ` : ''}Dexsire</title>
+        {admin ? <AdminHeader title={title} /> : <Header />}
+        <Content admin={admin}>
+          {children}
+        </Content>
+      </Container>
+    </ThemedComponent>
+  )
 }

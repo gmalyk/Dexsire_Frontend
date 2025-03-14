@@ -9,10 +9,7 @@ import { Read, ReadOne } from 'services/core';
 import { exposeStrapiError, normalizeStrapiList, normalizeStrapiRegister } from 'utils';
 import useI18n from 'hooks/useI18n';
 
-
-
 export default function AdminSideBar({ escort }) {
-
   const history = useHistory();
   const navigate = to => history.push(`/${to}`);
 
@@ -73,7 +70,6 @@ export default function AdminSideBar({ escort }) {
     }
   }, [])
 
-
   const [loading, setLoading] = useState(false)
 
   const init = async () => {
@@ -89,10 +85,8 @@ export default function AdminSideBar({ escort }) {
         const user = await ReadOne("users", normalResult?.user?.id)
         const normalUser = normalizeStrapiRegister(user)
         const nextResult = { ...normalResult, user: normalUser }
-        // console.log("model", nextResult)
         setCurrentProfile(nextResult)
       } 
-
 
       const rs = await Read("services")
       const rr = await Read("regions")
@@ -104,16 +98,11 @@ export default function AdminSideBar({ escort }) {
       const nrct = normalizeStrapiList(rct) 
       const nrc = normalizeStrapiRegister(rc) 
 
-      // console.log("static", nrs, nrr, nrc)
-
       if(nrs){ setServices(nrs) }
       if(nrr){ setRegions(nrr) }
       if(nrct){ setCities(nrct) }
       if(nrc){ setContactUs(nrc) }
-
     }
-
-
   }
 
   useEffect(() => { init() ;}, [user])
@@ -137,7 +126,9 @@ export default function AdminSideBar({ escort }) {
                 const activePage = window.location.pathname === `/${item?.page}`
                 return (
                   <MenuItem key={index} active={activePage} onClick={() => handleMenuItemClick(item)}>
-                    <Icon icon={activePage ? item?.iconActive : item?.icon} />
+                    <div>
+                      <Icon icon={activePage ? item?.iconActive : item?.icon} />
+                    </div>
                     <MenuItemLabel active={activePage}>
                       {item?.label}
                     </MenuItemLabel>
@@ -146,13 +137,15 @@ export default function AdminSideBar({ escort }) {
               })
             }
           </MenuItems>
-          <MenuItems>
+          <MenuItems isFooter>
             {
               footerItems?.map((item, index) => {
                 const activePage = window.location.pathname === `/${item?.page}`
                 return (
                   <MenuItem key={index} active={activePage} onClick={item?.action ? item?.action : () => handleMenuItemClick(item)}>
-                    <Icon icon={activePage ? item?.iconActive : item?.icon} />
+                    <div>
+                      <Icon icon={activePage ? item?.iconActive : item?.icon} />
+                    </div>
                     <MenuItemLabel active={activePage}>
                       {item?.label}
                     </MenuItemLabel>
