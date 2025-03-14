@@ -31,13 +31,16 @@ export const CardBorderBackground = styled.div.attrs({
   @media (max-width: 768px) {
     max-width: 340px;
     aspect-ratio: 340 / 540;
+    border-radius: 30px;
   }
 
   @media (max-width: 480px) {
-    max-width: 320px;
+    max-width: 100%;
     aspect-ratio: 320 / 520;
+    border-radius: 24px;
   }
 `;
+
 export const CardContainer = styled.div.attrs({
 })`
   width: 100%;
@@ -61,10 +64,12 @@ export const CardContainer = styled.div.attrs({
   @media (max-width: 768px) {
     padding: 16px;
     width: 100%;
+    border-radius: ${p => p.emphasis ? '28px' : '30px'};
   }
 
   @media (max-width: 480px) {
     padding: 12px;
+    border-radius: ${p => p.emphasis ? '22px' : '24px'};
   }
 `;
 
@@ -225,6 +230,7 @@ export const CardTitle = styled.div.attrs({
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: center;
   padding: 0;
   margin: 0;
 
