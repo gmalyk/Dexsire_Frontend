@@ -38,7 +38,7 @@
     "scripts": {
         "predeploy": "yarn build",
         "deploy": "gh-pages -d dist",
-        "start": "PORT=3001 react-scripts start",
+        "start": "PORT=3000 react-scripts start",
         "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
         "test": "npx cypress open-ct",
         "eject": "react-scripts eject",
