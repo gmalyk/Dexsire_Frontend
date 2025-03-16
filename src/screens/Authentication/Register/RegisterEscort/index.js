@@ -363,59 +363,24 @@ export default function RegisterEscort() {
 
     const { setUser, reloadMe } = useContext(CoreContext)
     const saveProfile = async () => {
-        // Log all file objects to debug
-        console.log('Debug file objects:', {
-            verificationPhoto,
-            video360,
-            imagesReview
-        });
-
-        // Check if we have the required files
+        // Simplify the file handling to match the working version
         if (!verificationPhoto || !video360 || !imagesReview?.length) {
             toast.error(t("missing_required_files"));
             return;
         }
 
-        // Extract valid file IDs, ensuring we're using the server-assigned IDs
-        // Make sure we're not using temporary IDs that start with 'temp-'
-        const validPhotos = imagesReview
-            ?.filter(photo => photo?.id && !photo.id.toString().startsWith('temp-'))
-            ?.map(photo => photo?.id) || [];
-        
-        const verificationId = verificationPhoto?.id && !verificationPhoto.id.toString().startsWith('temp-') 
-            ? verificationPhoto.id 
-            : null;
-            
-        const videoId = video360?.id && !video360.id.toString().startsWith('temp-') 
-            ? video360.id 
-            : null;
-
-        // Log the extracted IDs
-        console.log('Extracted file IDs:', {
-            verificationId,
-            videoId,
-            validPhotos
-        });
-        
-        // Check if we have enough valid photos
-        if (validPhotos.length < 4) {
+        if (imagesReview.length < 4) {
             toast.error(t("minimum_4_photos_required"));
-            return;
-        }
-
-        // Check if we have the required verification and video
-        if (!verificationId || !videoId) {
-            toast.error(t("verification_and_video_required"));
             return;
         }
 
         const payload = {
             services: services?.map(m => m?.id),
             region: ethnicity,
-            video360: videoId,
-            verification_image: verificationId,
-            videos: videoId ? [videoId] : [],
-            photos: validPhotos,
+            video360: video360?.id,
+            verification_image: verificationPhoto?.id,
+            videos: [video360?.id],
+            photos: imagesReview?.map(m => m?.id),
             user: preuser?.user?.id,
             about_me: formProfile?.about_me,
             description: formProfile?.about_me,
@@ -437,15 +402,15 @@ export default function RegisterEscort() {
             service_modes: mobility?.map(m => ({ title: m?.title })) 
         }
 
-        console.log('Final payload with file IDs:', payload);
-
+        console.log('Saving profile with payload:', payload);
+        
         setLoading(true);
         try {
             const result = await Create("models", { data: payload });
             setLoading(false);
             
             if (result && !exposeStrapiError(result)) {
-                await UpdateMe({ image: validPhotos[0] || null, model: result?.data?.id });
+                await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id });
                 await Create("welcome", { name: preuser?.user?.name, email: preuser?.user?.email });
                 handleSuccess();
             }
