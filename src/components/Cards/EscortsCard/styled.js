@@ -28,6 +28,7 @@ export const CardBorderBackground = styled.div.attrs({
   )` : 'none'};
   margin: 0 auto;
   
+  /* Modified pseudo-element to ensure border is visible on all sides */
   &:before {
     content: '';
     position: absolute;
@@ -45,8 +46,11 @@ export const CardBorderBackground = styled.div.attrs({
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+    /* Ensure top and bottom borders are visible */
+    z-index: 1;
   }
 
+  /* Add explicit border for mobile devices */
   @media (max-width: 768px) {
     max-width: 340px;
     aspect-ratio: 340 / 540;
@@ -54,6 +58,9 @@ export const CardBorderBackground = styled.div.attrs({
     
     &:before {
       border-radius: 30px;
+      /* Ensure the mask doesn't clip borders on iOS */
+      -webkit-mask-position: 0 0, 0 0;
+      -webkit-mask-size: 100% 100%, 100% 100%;
     }
   }
 
@@ -64,10 +71,12 @@ export const CardBorderBackground = styled.div.attrs({
     
     &:before {
       border-radius: 24px;
+      /* Additional fix for smaller screens */
+      -webkit-mask-position: 0 0, 0 0;
+      -webkit-mask-size: 100% 100%, 100% 100%;
     }
   }
 `;
-
 export const CardContainer = styled.div.attrs({
 })`
   width: 100%;
@@ -78,7 +87,7 @@ export const CardContainer = styled.div.attrs({
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  border-radius: ${p => p.emphasis ? '38px' : '40px'};
+  border-radius: ${p => p.emphasis ? '34px' : '36px'}; /* Adjusted to ensure gap between content and border */
   overflow: hidden;
   padding: 24px;
   display: flex;
@@ -91,12 +100,12 @@ export const CardContainer = styled.div.attrs({
   @media (max-width: 768px) {
     padding: 16px;
     width: 100%;
-    border-radius: ${p => p.emphasis ? '28px' : '30px'};
+    border-radius: ${p => p.emphasis ? '24px' : '26px'}; /* Adjusted for mobile */
   }
 
   @media (max-width: 480px) {
     padding: 12px;
-    border-radius: ${p => p.emphasis ? '22px' : '24px'};
+    border-radius: ${p => p.emphasis ? '18px' : '20px'}; /* Adjusted for smaller screens */
   }
 `;
 

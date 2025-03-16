@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState, useEffect } from 'react'
 import { FiltersContainer, FilterTitle, FormContainer } from './styled'
 import Button from 'components/Form/Button'
 import FormCore from '../../components/Form/Core'
@@ -6,14 +6,206 @@ import { CoreContext } from 'context/CoreContext'
 import { optionsCategory } from 'utils/options'
 import useI18n from 'hooks/useI18n'
 
-
+// Define the cantons and cities
+const CANTONS_AND_CITIES = {
+  all: { id: 'all', title: 'All Regions', cities: [] },
+  vaud: {
+    id: 'vaud',
+    title: 'Vaud',
+    cities: [
+      'Aigle', 'Aubonne', 'Bex', 'Bussigny', 'Chavannes-Renens', 'Clarens', 'Coppet',
+      'Corcelles-près-Payerne', 'Crissier', 'Gland', 'Lausanne', 'Montreux', 'Morges',
+      'Moudon', 'Nyon', 'Oron', 'Payerne', 'Prilly', 'Renens', 'Roche', 'Vevey',
+      'Villeneuve', 'Yverdon-les-bains'
+    ]
+  },
+  geneve: {
+    id: 'geneve',
+    title: 'Genève',
+    cities: [
+      'Genève', 'Carouge', 'Champel', 'Cité-Centre', 'Cornavin', 'Eaux-vives',
+      'Plainpalais', 'Plan-les-ouates', 'Servette', 'Thônex', 'Versoix'
+    ]
+  },
+  valais: {
+    id: 'valais',
+    title: 'Valais',
+    cities: [
+      'Aproz', 'Ardon', 'Brig', 'Collombey', 'Conthey', 'Crans-Montana', 'Gampel',
+      'Grône', 'Leuk', 'Martigny', 'Monthey', 'Naters', 'Nendaz', 'Raron', 'Riddes',
+      'Saillon', 'Saint-Léonard', 'Saint-Maurice', 'Saxon', 'Sierre', 'Sion',
+      'Turtmann', 'Verbier', 'Vétroz', 'Visp', 'Zermatt'
+    ]
+  },
+  neuchatel: {
+    id: 'neuchatel',
+    title: 'Neuchâtel',
+    cities: ['Cortaillod', 'La Chaux-de Fonds', 'Le Locle', 'Neuchâtel']
+  },
+  fribourg: {
+    id: 'fribourg',
+    title: 'Fribourg',
+    cities: [
+      'Bulle', 'Châtel-Saint-Denis', 'Düdingen', 'Estavayer-le-Lac',
+      'Fribourg', 'Marly', 'Romont'
+    ]
+  },
+  aarau: {
+    id: 'aarau',
+    title: 'Aarau',
+    cities: [
+      'Aarau', 'Baden', 'Bremgarten', 'Brugg', 'Frick', 'Klingnau', 'Künten',
+      'Lenzburg', 'Muri', 'Oftringen', 'Rheinfelden', 'Schinznach-Bad',
+      'Wettingen', 'Wohlen', 'Zofingen'
+    ]
+  },
+  basel: {
+    id: 'basel',
+    title: 'Basel',
+    cities: [
+      'Basel', 'Aesch', 'Allschwil', 'Binningen', 'Birsfelden', 'Liestal',
+      'Muttenz', 'Oberwil', 'Pratteln', 'Reinach'
+    ]
+  },
+  zurich: {
+    id: 'zurich',
+    title: 'Zürich',
+    cities: [
+      'Zürich', 'Adliswil', 'Bülach', 'Dällikon', 'Dietikon', 'Dübendorf',
+      'Embrach', 'Horgen', 'Kloten', 'Meilen', 'Opfikon', 'Regensdorf',
+      'Rümlang', 'Schlieren', 'Uster', 'Volketswil', 'Wallisellen',
+      'Wädenswil', 'Wetzikon', 'Winterthour'
+    ]
+  },
+  solothurn: {
+    id: 'solothurn',
+    title: 'Solothurn',
+    cities: [
+      'Solothurn', 'Balsthal', 'Bellach', 'Biberist', 'Derendingen',
+      'Grenchen', 'Langendorf', 'Olten', 'Trimbach', 'Zuchwil'
+    ]
+  },
+  luzern: {
+    id: 'luzern',
+    title: 'Luzern',
+    cities: [
+      'Luzern', 'Emmen', 'Gisikon', 'Hochdorf', 'Horw', 'Kriens',
+      'Meggen', 'Sarnen', 'Sursee', 'Willisau'
+    ]
+  },
+  graubunden: {
+    id: 'graubunden',
+    title: 'Graubünden',
+    cities: [
+      'Arosa', 'Chur', 'Davos', 'Flims', 'Laax', 'Landquart',
+      'Malans', 'Prättigau/Davos', 'Samedan', 'St. Moritz'
+    ]
+  },
+  berne: {
+    id: 'berne',
+    title: 'Berne',
+    cities: [
+      'Berne', 'Biel/Bienne', 'Burgdorf', 'Interlaken', 'Köniz',
+      'Langnau im Emmental', 'Ittigen', 'Muri bei Bern', 'Thun', 'Wichtrach'
+    ]
+  },
+  thurgau: {
+    id: 'thurgau',
+    title: 'Thurgau',
+    cities: ['Arbon', 'Frauenfeld', 'Kreuzlingen', 'Romanshorn', 'Weinfelden']
+  },
+  stgallen: {
+    id: 'stgallen',
+    title: 'St. Gallen',
+    cities: [
+      'St. Gallen', 'Altstätten', 'Buchs', 'Gossau', 'Lenzburg',
+      'Rorschach', 'Wittenbach', 'Wil'
+    ]
+  },
+  ticino: {
+    id: 'ticino',
+    title: 'Ticino',
+    cities: [
+      'Ascona', 'Bellinzone', 'Biasca', 'Chiasso', 'Giubiasco',
+      'Lugano', 'Locarno', 'Mendrisio', 'Riviera', 'Taverne'
+    ]
+  },
+  nidwald: {
+    id: 'nidwald',
+    title: 'Nidwald',
+    cities: ['Buochs', 'Ennetbürgen', 'Hergiswil', 'Stans', 'Wolfenschiessen']
+  },
+  glaris: {
+    id: 'glaris',
+    title: 'Glaris',
+    cities: ['Betschwanden', 'Glaris', 'Mitlödi', 'Näfels', 'Schwanden']
+  }
+};
 
 export default function HomeFilters() {
-  const { setModal, regions, cities, services, filter, setFilter, escorts } = useContext(CoreContext)
+  const { setModal, services, filter, setFilter } = useContext(CoreContext)
   const { t } = useI18n()
   const [changed, setChanged] = useState(false)
-  const [selectedRegion, setSelectedRegion] = useState('all')
+  const [selectedRegion, setSelectedRegion] = useState(filter?.region || 'all')
+  const [cityOptions, setCityOptions] = useState([])
   const formRef = useRef()
+
+  // Create region options for the dropdown
+  const REGION_OPTIONS = useMemo(() => {
+    const allOption = { id: 'all', title: t('All Regions'), value: 'all' }
+    
+    const regionOptions = Object.values(CANTONS_AND_CITIES)
+      .filter(canton => canton.id !== 'all')
+      .map(canton => ({
+        id: canton.id,
+        title: canton.title,
+        value: canton.id
+      }));
+    
+    return [allOption, ...regionOptions];
+  }, [t]);
+
+  // Update city options when region changes
+  useEffect(() => {
+    if (selectedRegion === 'all') {
+      // For "All Regions", we can either show all cities or an empty list
+      // Here we'll show all cities
+      const allCities = [];
+      Object.values(CANTONS_AND_CITIES).forEach(canton => {
+        if (canton.id !== 'all' && canton.cities) {
+          canton.cities.forEach(city => {
+            allCities.push({
+              id: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+              title: city,
+              value: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+              canton: canton.id
+            });
+          });
+        }
+      });
+      setCityOptions(allCities);
+    } else {
+      // Get cities for the selected canton
+      const canton = CANTONS_AND_CITIES[selectedRegion];
+      if (!canton || !canton.cities) {
+        setCityOptions([]);
+      } else {
+        const filteredCities = canton.cities.map(city => ({
+          id: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+          title: city,
+          value: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+          canton: canton.id
+        }));
+        setCityOptions(filteredCities);
+      }
+    }
+  }, [selectedRegion]);
+
+  // Debug logging
+  useEffect(() => {
+    console.log('Selected region:', selectedRegion);
+    console.log('City options:', cityOptions);
+  }, [selectedRegion, cityOptions]);
 
   const SERVICE_OPTIONS = [
     { id: '69', title: '69' },
@@ -58,316 +250,55 @@ export default function HomeFilters() {
     { id: 'sex_tovs', title: 'Sex tovs' },
     { id: 'sodomie_recois', title: 'Sodomie (reçois)' },
     { id: 'striptease', title: 'Striptease' }
-];
+  ];
 
   const formItems = useMemo(() => {
-    const allRegionsOptions = [
-        { id: 'all', title: t('All Cantons') },
-        ...[ // Rest of cantons sorted alphabetically
-            { id: 'aarau', title: t('Aarau') },
-            { id: 'basel', title: t('Basel') },
-            { id: 'berne', title: t('Berne') },
-            { id: 'fribourg', title: t('Fribourg') },
-            { id: 'geneva', title: t('Geneva') },
-            { id: 'glaris', title: t('Glaris') },
-            { id: 'graubunden', title: t('Graubunden') },
-            { id: 'luzern', title: t('Luzern') },
-            { id: 'neuchatel', title: t('Neuchâtel') },
-            { id: 'nidwald', title: t('Nidwald') },
-            { id: 'solothurn', title: t('Solothurn') },
-            { id: 'stgallen', title: t('St. Gallen') },
-            { id: 'thurgau', title: t('Thurgau') },
-            { id: 'ticino', title: t('Ticino') },
-            { id: 'valais', title: t('Valais') },
-            { id: 'vaud', title: t('Vaud') },
-            { id: 'zurich', title: t('Zurich') }
-        ].sort((a, b) => a.title.localeCompare(b.title))
-    ];
-
-    const citiesByRegion = {
-        vaud: [
-            { id: 'aigle', title: 'Aigle' },
-            { id: 'aubonne', title: 'Aubonne' },
-            { id: 'bex', title: 'Bex' },
-            { id: 'bussigny', title: 'Bussigny' },
-            { id: 'chavannes', title: 'Chavannes-Renens' },
-            { id: 'clarens', title: 'Clarens' },
-            { id: 'coppet', title: 'Coppet' },
-            { id: 'corcelles', title: 'Corcelles-près-Payerne' },
-            { id: 'crissier', title: 'Crissier' },
-            { id: 'gland', title: 'Gland' },
-            { id: 'lausanne', title: 'Lausanne' },
-            { id: 'montreux', title: 'Montreux' },
-            { id: 'morges', title: 'Morges' },
-            { id: 'moudon', title: 'Moudon' },
-            { id: 'nyon', title: 'Nyon' },
-            { id: 'oron', title: 'Oron' },
-            { id: 'payerne', title: 'Payerne' },
-            { id: 'prilly', title: 'Prilly' },
-            { id: 'renens', title: 'Renens' },
-            { id: 'roche', title: 'Roche' },
-            { id: 'vevey', title: 'Vevey' },
-            { id: 'villeneuve', title: 'Villeneuve' },
-            { id: 'yverdon', title: 'Yverdon-les-bains' }
-        ],
-        geneva: [
-            { id: 'geneve', title: 'Genève' },
-            { id: 'carouge', title: 'Carouge' },
-            { id: 'champel', title: 'Champel' },
-            { id: 'cite', title: 'Cité-Centre' },
-            { id: 'cornavin', title: 'Cornavin' },
-            { id: 'eauxvives', title: 'Eaux-vives' },
-            { id: 'plainpalais', title: 'Plainpalais' },
-            { id: 'planlesouates', title: 'Plan-les-ouates' },
-            { id: 'servette', title: 'Servette' },
-            { id: 'thonex', title: 'Thônex' },
-            { id: 'versoix', title: 'Versoix' }
-        ],
-        valais: [
-            { id: 'aproz', title: 'Aproz' },
-            { id: 'ardon', title: 'Ardon' },
-            { id: 'brig', title: 'Brig' },
-            { id: 'collombey', title: 'Collombey' },
-            { id: 'conthey', title: 'Conthey' },
-            { id: 'cransmontana', title: 'Crans-Montana' },
-            { id: 'gampel', title: 'Gampel' },
-            { id: 'grone', title: 'Grône' },
-            { id: 'leuk', title: 'Leuk' },
-            { id: 'martigny', title: 'Martigny' },
-            { id: 'monthey', title: 'Monthey' },
-            { id: 'naters', title: 'Naters' },
-            { id: 'nendaz', title: 'Nendaz' },
-            { id: 'raron', title: 'Raron' },
-            { id: 'riddes', title: 'Riddes' },
-            { id: 'saillon', title: 'Saillon' },
-            { id: 'saintleonard', title: 'Saint-Léonard' },
-            { id: 'saintmaurice', title: 'Saint-Maurice' },
-            { id: 'saxon', title: 'Saxon' },
-            { id: 'sierre', title: 'Sierre' },
-            { id: 'sion', title: 'Sion' },
-            { id: 'turtmann', title: 'Turtmann' },
-            { id: 'verbier', title: 'Verbier' },
-            { id: 'vetroz', title: 'Vétroz' },
-            { id: 'visp', title: 'Visp' },
-            { id: 'zermatt', title: 'Zermatt' }
-        ],
-        neuchatel: [
-            { id: 'cortaillod', title: 'Cortaillod' },
-            { id: 'chaux', title: 'La Chaux-de Fonds' },
-            { id: 'locle', title: 'Le Locle' },
-            { id: 'neuchatel', title: 'Neuchâtel' }
-        ],
-        fribourg: [
-            { id: 'bulle', title: 'Bulle' },
-            { id: 'chatel', title: 'Châtel-Saint-Denis' },
-            { id: 'dudingen', title: 'Düdingen' },
-            { id: 'estavayer', title: 'Estavayer-le-Lac' },
-            { id: 'fribourg', title: 'Fribourg' },
-            { id: 'marly', title: 'Marly' },
-            { id: 'romont', title: 'Romont' }
-        ],
-        aarau: [
-            { id: 'aarau', title: 'Aarau' },
-            { id: 'baden', title: 'Baden' },
-            { id: 'bremgarten', title: 'Bremgarten' },
-            { id: 'brugg', title: 'Brugg' },
-            { id: 'frick', title: 'Frick' },
-            { id: 'klingnau', title: 'Klingnau' },
-            { id: 'kunten', title: 'Künten' },
-            { id: 'lenzburg', title: 'Lenzburg' },
-            { id: 'muri', title: 'Muri' },
-            { id: 'oftringen', title: 'Oftringen' },
-            { id: 'rheinfelden', title: 'Rheinfelden' },
-            { id: 'schinznach', title: 'Schinznach-Bad' },
-            { id: 'wettingen', title: 'Wettingen' },
-            { id: 'wohlen', title: 'Wohlen' },
-            { id: 'zofingen', title: 'Zofingen' }
-        ],
-        basel: [
-            { id: 'basel', title: 'Basel' },
-            { id: 'aesch', title: 'Aesch' },
-            { id: 'allschwil', title: 'Allschwil' },
-            { id: 'binningen', title: 'Binningen' },
-            { id: 'birsfelden', title: 'Birsfelden' },
-            { id: 'liestal', title: 'Liestal' },
-            { id: 'muttenz', title: 'Muttenz' },
-            { id: 'oberwil', title: 'Oberwil' },
-            { id: 'pratteln', title: 'Pratteln' },
-            { id: 'reinach', title: 'Reinach' }
-        ],
-        zurich: [
-            { id: 'zurich', title: 'Zürich' },
-            { id: 'adliswil', title: 'Adliswil' },
-            { id: 'bulach', title: 'Bülach' },
-            { id: 'dallikon', title: 'Dällikon' },
-            { id: 'dietikon', title: 'Dietikon' },
-            { id: 'dubendorf', title: 'Dübendorf' },
-            { id: 'embrach', title: 'Embrach' },
-            { id: 'horgen', title: 'Horgen' },
-            { id: 'kloten', title: 'Kloten' },
-            { id: 'meilen', title: 'Meilen' },
-            { id: 'opfikon', title: 'Opfikon' },
-            { id: 'regensdorf', title: 'Regensdorf' },
-            { id: 'rumlang', title: 'Rümlang' },
-            { id: 'schlieren', title: 'Schlieren' },
-            { id: 'uster', title: 'Uster' },
-            { id: 'volketswil', title: 'Volketswil' },
-            { id: 'wallisellen', title: 'Wallisellen' },
-            { id: 'wadenswil', title: 'Wädenswil' },
-            { id: 'wetzikon', title: 'Wetzikon' },
-            { id: 'winterthour', title: 'Winterthour' }
-        ],
-        solothurn: [
-            { id: 'solothurn', title: 'Solothurn' },
-            { id: 'balsthal', title: 'Balsthal' },
-            { id: 'bellach', title: 'Bellach' },
-            { id: 'biberist', title: 'Biberist' },
-            { id: 'derendingen', title: 'Derendingen' },
-            { id: 'grenchen', title: 'Grenchen' },
-            { id: 'langendorf', title: 'Langendorf' },
-            { id: 'olten', title: 'Olten' },
-            { id: 'trimbach', title: 'Trimbach' },
-            { id: 'zuchwil', title: 'Zuchwil' }
-        ],
-        luzern: [
-            { id: 'luzern', title: 'Luzern' },
-            { id: 'emmen', title: 'Emmen' },
-            { id: 'gisikon', title: 'Gisikon' },
-            { id: 'hochdorf', title: 'Hochdorf' },
-            { id: 'horw', title: 'Horw' },
-            { id: 'kriens', title: 'Kriens' },
-            { id: 'meggen', title: 'Meggen' },
-            { id: 'sarnen', title: 'Sarnen' },
-            { id: 'sursee', title: 'Sursee' },
-            { id: 'willisau', title: 'Willisau' }
-        ],
-        graubunden: [
-            { id: 'arosa', title: 'Arosa' },
-            { id: 'chur', title: 'Chur' },
-            { id: 'davos', title: 'Davos' },
-            { id: 'flims', title: 'Flims' },
-            { id: 'laax', title: 'Laax' },
-            { id: 'landquart', title: 'Landquart' },
-            { id: 'malans', title: 'Malans' },
-            { id: 'prattigau', title: 'Prättigau/Davos' },
-            { id: 'samedan', title: 'Samedan' },
-            { id: 'stmoritz', title: 'St. Moritz' }
-        ],
-        berne: [
-            { id: 'berne', title: 'Berne' },
-            { id: 'biel', title: 'Biel/Bienne' },
-            { id: 'burgdorf', title: 'Burgdorf' },
-            { id: 'interlaken', title: 'Interlaken' },
-            { id: 'koniz', title: 'Köniz' },
-            { id: 'langnau', title: 'Langnau im Emmental' },
-            { id: 'ittigen', title: 'Ittigen' },
-            { id: 'muri', title: 'Muri bei Bern' },
-            { id: 'thun', title: 'Thun' },
-            { id: 'wichtrach', title: 'Wichtrach' }
-        ],
-        thurgau: [
-            { id: 'arbon', title: 'Arbon' },
-            { id: 'frauenfeld', title: 'Frauenfeld' },
-            { id: 'kreuzlingen', title: 'Kreuzlingen' },
-            { id: 'romanshorn', title: 'Romanshorn' },
-            { id: 'weinfelden', title: 'Weinfelden' }
-        ],
-        stgallen: [
-            { id: 'stgallen', title: 'St. Gallen' },
-            { id: 'altstatten', title: 'Altstätten' },
-            { id: 'buchs', title: 'Buchs' },
-            { id: 'gossau', title: 'Gossau' },
-            { id: 'lenzburg', title: 'Lenzburg' },
-            { id: 'rorschach', title: 'Rorschach' },
-            { id: 'wittenbach', title: 'Wittenbach' },
-            { id: 'wil', title: 'Wil' }
-        ],
-        ticino: [
-            { id: 'ascona', title: 'Ascona' },
-            { id: 'bellinzone', title: 'Bellinzone' },
-            { id: 'biasca', title: 'Biasca' },
-            { id: 'chiasso', title: 'Chiasso' },
-            { id: 'giubiasco', title: 'Giubiasco' },
-            { id: 'lugano', title: 'Lugano' },
-            { id: 'locarno', title: 'Locarno' },
-            { id: 'mendrisio', title: 'Mendrisio' },
-            { id: 'riviera', title: 'Riviera' },
-            { id: 'taverne', title: 'Taverne' }
-        ],
-        nidwald: [
-            { id: 'buochs', title: 'Buochs' },
-            { id: 'ennetburgen', title: 'Ennetbürgen' },
-            { id: 'hergiswil', title: 'Hergiswil' },
-            { id: 'stans', title: 'Stans' },
-            { id: 'wolfenschiessen', title: 'Wolfenschiessen' }
-        ],
-        glaris: [
-            { id: 'betschwanden', title: 'Betschwanden' },
-            { id: 'glaris', title: 'Glaris' },
-            { id: 'mitlodi', title: 'Mitlödi' },
-            { id: 'nafels', title: 'Näfels' },
-            { id: 'schwanden', title: 'Schwanden' }
-        ]
-    };
-
-    const allCities = Object.entries(citiesByRegion).flatMap(([region, cities]) => 
-        cities.map(city => ({
-            ...city,
-            region: region
-        }))
-    ).sort((a, b) => a.title.localeCompare(b.title));
-
-    const filteredCities = selectedRegion === 'all' 
-        ? allCities 
-        : allCities.filter(city => city.region === selectedRegion);
-
     return [
       {
         ref: 'region',
-            placeholder: t('All Cantons'),
-            options: allRegionsOptions,
+        placeholder: t('Select Region'),
+        options: REGION_OPTIONS,
         customer: true,
-            defaultValue: 'all',
-            onChange: (value) => {
-                setSelectedRegion(value)
-                const form = formRef?.current?.getForm()
-                if (form) {
-                    form.city = ''
-                    if (value === 'all') {
-                        delete form.region
-                    } else {
-                        form.region = value
-                    }
-                    setChanged(!changed)
-                }
-            }
-      }, 
+        defaultValue: selectedRegion,
+        value: selectedRegion,
+        onChange: (value) => {
+          console.log('Region changed to:', value);
+          setSelectedRegion(value);
+          
+          const form = formRef?.current?.getForm();
+          if (form) {
+            form.region = value;
+            // Clear city when region changes
+            form.city = '';
+            setChanged(!changed);
+          }
+        }
+      },
       {
         ref: 'city',
-            placeholder: t('Select City'),
-            options: selectedRegion === 'all' 
-                ? Object.values(citiesByRegion).flat() 
-                : citiesByRegion[selectedRegion] || [], 
-            customer: true,
-            onChange: (value) => {
-                const form = formRef?.current?.getForm()
-                if (form) {
-                    form.city = value
-                    
-                
-                    if (value && selectedRegion === 'all') {
-                        for (const [region, cities] of Object.entries(citiesByRegion)) {
-                            if (cities.some(city => city.id === value)) {
-                                form.region = region
-                                setSelectedRegion(region)
-                                break
-                            }
-                        }
-                    }
-                    
-                    setChanged(!changed)
-                }
+        placeholder: t('Select City'),
+        options: cityOptions,
+        customer: true,
+        onChange: (value) => {
+          console.log('City changed to:', value);
+          const form = formRef?.current?.getForm();
+          if (form) {
+            form.city = value;
+            
+            // If a city is selected and region is 'all', update the region
+            if (value && selectedRegion === 'all') {
+              // Extract canton from city value (format: city-canton)
+              const cantonFromCity = value.split('-').pop();
+              if (cantonFromCity && CANTONS_AND_CITIES[cantonFromCity]) {
+                console.log('Setting region to:', cantonFromCity, 'based on city:', value);
+                form.region = cantonFromCity;
+                setSelectedRegion(cantonFromCity);
+              }
             }
+            
+            setChanged(!changed);
+          }
+        }
       },
       {
         ref: 'services',
@@ -378,44 +309,44 @@ export default function HomeFilters() {
         quarter: !filter,
         customer: !!filter,
         onChange: (values) => {
-            setFilter(prev => ({
-                ...prev,
-                services: values ? values.map(v => v.id) : []
-            }));
-            setChanged(true);
+          setFilter(prev => ({
+            ...prev,
+            services: values ? values.map(v => v.id) : []
+          }));
+          setChanged(true);
         },
         value: filter && filter.services && Array.isArray(filter.services) 
-            ? filter.services.map(id => 
-                SERVICE_OPTIONS.find(option => option.id === id)
-            ).filter(Boolean) 
-            : []
+          ? filter.services.map(id => 
+            SERVICE_OPTIONS.find(option => option.id === id)
+          ).filter(Boolean) 
+          : []
       },
       {
         ref: 'category',
-            placeholder: t('Escort'),
+        placeholder: t('Escort'),
         options: optionsCategory,
         customer: true,
-            defaultValue: 'Escort',
-            value: 'Escort'
+        defaultValue: 'Escort',
+        value: 'Escort'
       },
       !filter ? null : {
         button: true,
         label: t('clear_filter'),
         customer: !!filter,
-            action: () => {
-                setFilter(null)
-                
-                setSelectedRegion('all')
-                
-                const form = formRef?.current?.getForm()
-                if (form) {
-                    form.region = 'all'
-                    form.city = ''
-                    form.category = 'Escort'
-                }
-                
-                setChanged(!changed)
-            }
+        action: () => {
+          setFilter(null);
+          
+          setSelectedRegion('all');
+          
+          const form = formRef?.current?.getForm();
+          if (form) {
+            form.region = 'all';
+            form.city = '';
+            form.category = 'Escort';
+          }
+          
+          setChanged(!changed);
+        }
       },
       {
         button: true,
@@ -424,31 +355,31 @@ export default function HomeFilters() {
         customer: !!filter,
         action: () => save(),
       },
-    ].filter(f => f)
-}, [regions, services, escorts, cities, filter, changed, selectedRegion, t])
+    ].filter(f => f);
+  }, [t, REGION_OPTIONS, selectedRegion, cityOptions, changed, filter, SERVICE_OPTIONS, setFilter]);
 
   const save = () => {
-    const form = formRef?.current?.getForm()
+    const form = formRef?.current?.getForm();
     if (form && form.region === 'all') {
-        const { region, ...restForm } = form
-        setFilter(restForm)
+      const { region, ...restForm } = form;
+      setFilter(restForm);
     } else {
-    setFilter({ ...form })
+      setFilter({ ...form });
     }
-    window.scrollTo(0, 720)
-  }
+    window.scrollTo(0, 720);
+  };
 
   return (
-      <FiltersContainer>
-        <FilterTitle>
-            {t('find_the_ideal_model')}
-        </FilterTitle>
-        <FormContainer>
-          <FormCore ref={formRef} register={filter} formItems={formItems} />
-          <Button outlineGradient nospace onClick={() => setModal({ type: 'searchadvanced' })}>
-                <strong>{t('advanced_search')}</strong>
-          </Button>
-        </FormContainer>
-      </FiltersContainer>
-  )
+    <FiltersContainer>
+      <FilterTitle>
+        {t('find_the_ideal_model')}
+      </FilterTitle>
+      <FormContainer>
+        <FormCore ref={formRef} register={filter} formItems={formItems} />
+        <Button outlineGradient nospace onClick={() => setModal({ type: 'searchadvanced' })}>
+          <strong>{t('advanced_search')}</strong>
+        </Button>
+      </FormContainer>
+    </FiltersContainer>
+  );
 }
