@@ -54,6 +54,7 @@ import {
     AppearanceTitle as AppearanceTitleStyled,
     AppearanceText as AppearanceTextStyled,
 } from 'components/Appearance/styled'
+import { uploadFileToServer, uploadFilesToServer } from 'utils/fileUpload';
 
 const SERVICES_OPTIONS = [
   "69",
@@ -363,7 +364,6 @@ export default function RegisterEscort() {
 
     const { setUser, reloadMe } = useContext(CoreContext)
     const saveProfile = async () => {
-        // Simplify the file handling to match the working version
         if (!verificationPhoto || !video360 || !imagesReview?.length) {
             toast.error(t("missing_required_files"));
             return;
@@ -373,47 +373,61 @@ export default function RegisterEscort() {
             toast.error(t("minimum_4_photos_required"));
             return;
         }
-
-        const payload = {
-            services: services?.map(m => m?.id),
-            region: ethnicity,
-            video360: video360?.id,
-            verification_image: verificationPhoto?.id,
-            videos: [video360?.id],
-            photos: imagesReview?.map(m => m?.id),
-            user: preuser?.user?.id,
-            about_me: formProfile?.about_me,
-            description: formProfile?.about_me,
-            service_observations: aboutme,
-
-            birthdate: getBirthdate(formProfile?.age),
-
-            telegram: formProfile?.phone,
-            whatsapp: formProfile?.phone,
-
-            ...form,
-            ...formProfile,
-
-            weight: parseInt(formProfile?.weight?.replace(' Kg', '')),
-            height: parseFloat(formProfile?.height?.replace('m', '.')),
-            
-            languages: Object.keys(languages).map(m => ({ language: m, level: languages?.[m] })),
-            payments: payments?.map(m => ({ title: m?.title })) ,
-            service_modes: mobility?.map(m => ({ title: m?.title })) 
-        }
-
-        console.log('Saving profile with payload:', payload);
         
-        setLoading(true);
         try {
+            setLoading(true);
+            
+            console.log('Ensuring all files are uploaded before saving profile...');
+            
+            const uploadedVerification = await uploadFileToServer(verificationPhoto);
+            const uploadedVideo = await uploadFileToServer(video360);
+            const uploadedPhotos = await uploadFilesToServer(imagesReview);
+            
+            console.log('All files uploaded successfully:', {
+                verification: uploadedVerification,
+                video: uploadedVideo,
+                photos: uploadedPhotos
+            });
+            
+            const payload = {
+                services: services?.map(m => m?.id),
+                region: ethnicity,
+                video360: uploadedVideo.id,
+                verification_image: uploadedVerification.id,
+                videos: [uploadedVideo.id],
+                photos: uploadedPhotos.map(photo => photo.id),
+                user: preuser?.user?.id,
+                about_me: formProfile?.about_me,
+                description: formProfile?.about_me,
+                service_observations: aboutme,
+
+                birthdate: getBirthdate(formProfile?.age),
+
+                telegram: formProfile?.phone,
+                whatsapp: formProfile?.phone,
+
+                ...form,
+                ...formProfile,
+
+                weight: parseInt(formProfile?.weight?.replace(' Kg', '')),
+                height: parseFloat(formProfile?.height?.replace('m', '.')),
+                
+                languages: Object.keys(languages).map(m => ({ language: m, level: languages?.[m] })),
+                payments: payments?.map(m => ({ title: m?.title })),
+                service_modes: mobility?.map(m => ({ title: m?.title }))
+            };
+
+            console.log('Saving profile with payload:', payload);
+            
             const result = await Create("models", { data: payload });
-            setLoading(false);
             
             if (result && !exposeStrapiError(result)) {
-                await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id });
+                await UpdateMe({ image: uploadedPhotos[0]?.id, model: result?.data?.id });
                 await Create("welcome", { name: preuser?.user?.name, email: preuser?.user?.email });
                 handleSuccess();
             }
+            
+            setLoading(false);
         } catch (error) {
             setLoading(false);
             console.error('Error creating profile:', error);
@@ -990,50 +1004,70 @@ export default function RegisterEscort() {
         toast.error(t('file_upload_failed'));
     };
 
-    const handleImagesUpload = (files) => {
+    const handleImagesUpload = async (files) => {
         if (!files || (Array.isArray(files) && files.length === 0)) {
-            handleFileUploadError(new Error('No files received from upload'));
+            toast.error(t("no_files_received"));
             return;
         }
         
-        console.log('Received uploaded files:', files);
-        
-        // If we're receiving an array of files (multiple upload)
-        if (Array.isArray(files)) {
+        try {
+            setLoading(true);
+            console.log('Received files for upload:', files);
+            
+            let uploadedFiles = [];
+            
+            if (Array.isArray(files)) {
+                uploadedFiles = await uploadFilesToServer(files);
+            } else {
+                const uploadedFile = await uploadFileToServer(files);
+                uploadedFiles = [uploadedFile];
+            }
+            
+            console.log('Successfully uploaded files:', uploadedFiles);
+            
             setUploadedFiles(prev => ({
                 ...prev,
-                photos: [...(prev.photos || []), ...files]
+                photos: [...(prev.photos || []), ...uploadedFiles]
             }));
             
             setImagesReview(prev => {
                 const prevArray = Array.isArray(prev) ? prev : [];
-                return [...prevArray, ...files];
+                return [...prevArray, ...uploadedFiles];
             });
-        } else {
-            // Single file upload
-            setUploadedFiles(prev => ({
-                ...prev,
-                photos: [...(prev.photos || []), files]
-            }));
             
-            setImagesReview(prev => {
-                const prevArray = Array.isArray(prev) ? prev : [];
-                return [...prevArray, files];
-            });
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            console.error('Error uploading images:', error);
+            toast.error(t("error_uploading_files"));
         }
-        
-        // Log the current state after update
-        console.log('Current photos after update:', 
-            Array.isArray(files) ? files.length : 1, 
-            'new files added');
     };
 
-    const handleVideo360Upload = (file) => {
-        setUploadedFiles(prev => ({
-            ...prev,
-            video360: file
-        }));
-        setVideo360(file);
+    const handleVideo360Upload = async (file) => {
+        if (!file) {
+            toast.error(t("no_file_received"));
+            return;
+        }
+        
+        try {
+            setLoading(true);
+            console.log('Received video for upload:', file);
+            
+            const uploadedFile = await uploadFileToServer(file);
+            console.log('Successfully uploaded video:', uploadedFile);
+            
+            setUploadedFiles(prev => ({
+                ...prev,
+                video360: uploadedFile
+            }));
+            
+            setVideo360(uploadedFile);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            console.error('Error uploading video:', error);
+            toast.error(t("error_uploading_video"));
+        }
     };
 
     const handleFrontIdUpload = (file) => {
@@ -1050,12 +1084,31 @@ export default function RegisterEscort() {
         }));
     };
 
-    const handleVerificationUpload = (file) => {
-        setUploadedFiles(prev => ({
-            ...prev,
-            verification: file
-        }));
-        setVerificationPhoto(file);
+    const handleVerificationUpload = async (file) => {
+        if (!file) {
+            toast.error(t("no_file_received"));
+            return;
+        }
+        
+        try {
+            setLoading(true);
+            console.log('Received verification photo for upload:', file);
+            
+            const uploadedFile = await uploadFileToServer(file);
+            console.log('Successfully uploaded verification photo:', uploadedFile);
+            
+            setUploadedFiles(prev => ({
+                ...prev,
+                verification: uploadedFile
+            }));
+            
+            setVerificationPhoto(uploadedFile);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            console.error('Error uploading verification photo:', error);
+            toast.error(t("error_uploading_verification"));
+        }
     };
 
     const handleRemoveFile = (type, fileId) => {

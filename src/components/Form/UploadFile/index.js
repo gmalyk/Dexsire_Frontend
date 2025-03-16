@@ -63,7 +63,8 @@ export default function UploadFile({
                     name: file.name,
                     size: file.size,
                     url: URL.createObjectURL(file),
-                    uploading: true
+                    uploading: true,
+                    originalFile: file // Store the original file for later upload
                 }));
                 
                 // Show local previews immediately
@@ -111,50 +112,56 @@ export default function UploadFile({
                     onChange(successfulUploads);
                 }
             } else {
+                // Single file upload
                 const file = files[0];
-                if (!validate || validate(file)) {
-                    // Create local preview immediately
-                    const tempId = `temp-${Math.random().toString(36).substr(2, 9)}`;
-                    const localPreview = {
-                        id: tempId,
-                        name: file.name,
-                        size: file.size,
-                        url: URL.createObjectURL(file),
-                        uploading: true
-                    };
-                    
-                    // Show local preview immediately
-                    onChange(localPreview);
-                    
-                    // Then start the actual upload
+                
+                if (validate && !validate(file)) {
+                    return;
+                }
+                
+                // Create local preview immediately for better UX
+                const tempId = `temp-${Math.random().toString(36).substr(2, 9)}`;
+                const localPreview = {
+                    id: tempId,
+                    name: file.name,
+                    size: file.size,
+                    url: URL.createObjectURL(file),
+                    uploading: true,
+                    originalFile: file // Store the original file for later upload
+                };
+                
+                // Show local preview immediately
+                onChange(localPreview);
+                
+                // Then start the actual upload
+                simulateUpload(tempId);
+                
+                try {
                     const formData = new FormData();
                     formData.append('files', file);
                     
-                    simulateUpload(tempId);
+                    const response = await Upload(formData);
+                    console.log('Upload response for single file:', file.name, response);
                     
-                    try {
-                        const response = await Upload(formData);
-                        console.log('Upload response for single file:', file.name, response);
+                    if (response && response.length > 0) {
+                        // Get the full URL including domain
+                        const fileUrl = response[0].url.startsWith('http') 
+                            ? response[0].url 
+                            : `${process.env.REACT_APP_API_URL}${response[0].url}`;
+                            
+                        const uploadedFile = {
+                            ...response[0],
+                            id: response[0].id,
+                            name: file.name,
+                            size: file.size,
+                            url: fileUrl,
+                            uploading: false
+                        };
                         
-                        if (response && response.length > 0) {
-                            // Get the full URL including domain
-                            const fileUrl = response[0].url.startsWith('http') 
-                                ? response[0].url 
-                                : `${process.env.REACT_APP_API_URL}${response[0].url}`;
-                                
-                            const uploadedFile = {
-                                ...response[0],
-                                id: response[0].id,
-                                name: file.name,
-                                size: file.size,
-                                url: fileUrl,
-                                uploading: false
-                            };
-                            onChange(uploadedFile);
-                        }
-                    } catch (err) {
-                        console.error('Error uploading single file:', file.name, err);
+                        onChange(uploadedFile);
                     }
+                } catch (err) {
+                    console.error('Error uploading single file:', file.name, err);
                 }
             }
         } catch (error) {

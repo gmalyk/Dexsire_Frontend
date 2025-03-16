@@ -148,6 +148,11 @@ export default function HomeFilters() {
   const [changed, setChanged] = useState(false)
   const [selectedRegion, setSelectedRegion] = useState(filter?.region || 'all')
   const [cityOptions, setCityOptions] = useState([])
+  const [selectedServices, setSelectedServices] = useState(
+    filter?.services?.length 
+      ? filter.services.map(id => SERVICE_OPTIONS.find(option => option.id === id)).filter(Boolean)
+      : []
+  )
   const formRef = useRef()
 
   // Create region options for the dropdown
@@ -252,6 +257,17 @@ export default function HomeFilters() {
     { id: 'striptease', title: 'Striptease' }
   ];
 
+  // Update selectedServices when filter changes
+  useEffect(() => {
+    if (filter && filter.services && Array.isArray(filter.services)) {
+      setSelectedServices(
+        filter.services.map(id => SERVICE_OPTIONS.find(option => option.id === id)).filter(Boolean)
+      );
+    } else {
+      setSelectedServices([]);
+    }
+  }, [filter]);
+
   const formItems = useMemo(() => {
     return [
       {
@@ -309,17 +325,14 @@ export default function HomeFilters() {
         quarter: !filter,
         customer: !!filter,
         onChange: (values) => {
+          setSelectedServices(values || []);
           setFilter(prev => ({
             ...prev,
             services: values ? values.map(v => v.id) : []
           }));
           setChanged(true);
         },
-        value: filter && filter.services && Array.isArray(filter.services) 
-          ? filter.services.map(id => 
-            SERVICE_OPTIONS.find(option => option.id === id)
-          ).filter(Boolean) 
-          : []
+        value: selectedServices
       },
       {
         ref: 'category',
@@ -334,17 +347,25 @@ export default function HomeFilters() {
         label: t('clear_filter'),
         customer: !!filter,
         action: () => {
+          // Reset the filter state completely
           setFilter(null);
           
+          // Reset the region selection
           setSelectedRegion('all');
           
+          // Reset selected services
+          setSelectedServices([]);
+          
+          // Reset the form values
           const form = formRef?.current?.getForm();
           if (form) {
             form.region = 'all';
             form.city = '';
             form.category = 'Escort';
+            form.services = []; // Clear services in the form
           }
           
+          // Force re-render to update the UI
           setChanged(!changed);
         }
       },
@@ -356,7 +377,7 @@ export default function HomeFilters() {
         action: () => save(),
       },
     ].filter(f => f);
-  }, [t, REGION_OPTIONS, selectedRegion, cityOptions, changed, filter, SERVICE_OPTIONS, setFilter]);
+  }, [t, REGION_OPTIONS, selectedRegion, cityOptions, changed, filter, SERVICE_OPTIONS, setFilter, selectedServices]);
 
   const save = () => {
     const form = formRef?.current?.getForm();
