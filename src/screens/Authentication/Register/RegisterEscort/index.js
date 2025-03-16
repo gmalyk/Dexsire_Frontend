@@ -363,14 +363,25 @@ export default function RegisterEscort() {
 
     const { setUser, reloadMe } = useContext(CoreContext)
     const saveProfile = async () => {
+        if (!verificationPhoto?.id || !video360?.id || !imagesReview?.length) {
+            toast.error(t("missing_required_files"));
+            return;
+        }
+
+        const validPhotos = imagesReview?.filter(photo => photo?.id)?.map(photo => photo?.id) || [];
+        
+        if (validPhotos.length < 4) {
+            toast.error(t("minimum_4_photos_required"));
+            return;
+        }
 
         const payload = {
             services: services?.map(m => m?.id),
             region: ethnicity,
-            video360: video360?.id,
-            verification_image: verificationPhoto?.id,
-            videos: [video360?.id],
-            photos: imagesReview?.map(m => m?.id),
+            video360: video360?.id || null,
+            verification_image: verificationPhoto?.id || null,
+            videos: video360?.id ? [video360?.id] : [],
+            photos: validPhotos,
             user: preuser?.user?.id,
             about_me: formProfile?.about_me,
             description: formProfile?.about_me,
@@ -392,15 +403,17 @@ export default function RegisterEscort() {
             service_modes: mobility?.map(m => ({ title: m?.title })) 
         }
 
-        // console.log('save payload', payload )
+        console.log('Saving profile with files:', {
+            verification: verificationPhoto?.id,
+            video360: video360?.id,
+            photos: validPhotos
+        });
 
-        // return;
-        
         setLoading(true)
         const result = await Create("models", { data:payload })
         setLoading(false)
         if (result && !exposeStrapiError(result)) {
-            await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id })
+            await UpdateMe({ image: validPhotos[0] || null, model: result?.data?.id })
             await Create("welcome", { name:preuser?.user?.name, email:preuser?.user?.email })
             handleSuccess()
         }
@@ -862,7 +875,6 @@ export default function RegisterEscort() {
                 {
                     text: t("want_to_buy_later"),
                     action: () => navigate('admin/escort'),
-                    // action: () => setSuccess(false),
                     rightIcon: 'chevron-white',
                     color: 'borderBackground',
                     between: true
@@ -870,7 +882,6 @@ export default function RegisterEscort() {
                 {
                     text: t("i_want_to_buy_credits_now"),
                     action: () => navigate('purchase-of-credits'),
-                    // action: () => setSuccess(false),
                     outlineGradient: true,
                     rightIcon: 'chevron-right',
                     between: true,
@@ -972,59 +983,77 @@ export default function RegisterEscort() {
         };
     };
 
-    const handleVideo360Upload = (file) => {
-        const fileObj = createFileObject(file);
-        setUploadedFiles(prev => ({
-            ...prev,
-            video360: fileObj
-        }));
-        setVideo360(fileObj.file);
+    const handleFileUploadError = (error) => {
+        console.error('File upload error:', error);
+        toast.error(t('file_upload_failed'));
     };
 
     const handleImagesUpload = (files) => {
-        if (!Array.isArray(files)) {
-            files = [files]; 
+        if (!files || (Array.isArray(files) && files.length === 0)) {
+            handleFileUploadError(new Error('No files received from upload'));
+            return;
         }
         
-        const fileObjects = files.map(file => createFileObject(file));
+        console.log('Received uploaded files:', files);
         
-        setUploadedFiles(prev => {
-            const prevPhotos = Array.isArray(prev.photos) ? prev.photos : [];
-            return {
+        // If we're receiving an array of files (multiple upload)
+        if (Array.isArray(files)) {
+            setUploadedFiles(prev => ({
                 ...prev,
-                photos: [...prevPhotos, ...fileObjects]
-            };
-        });
+                photos: [...(prev.photos || []), ...files]
+            }));
+            
+            setImagesReview(prev => {
+                const prevArray = Array.isArray(prev) ? prev : [];
+                return [...prevArray, ...files];
+            });
+        } else {
+            // Single file upload
+            setUploadedFiles(prev => ({
+                ...prev,
+                photos: [...(prev.photos || []), files]
+            }));
+            
+            setImagesReview(prev => {
+                const prevArray = Array.isArray(prev) ? prev : [];
+                return [...prevArray, files];
+            });
+        }
         
-        setImagesReview(prev => {
-            const prevImages = Array.isArray(prev) ? prev : [];
-            return [...prevImages, ...fileObjects.map(f => f.file || f)];
-        });
+        // Log the current state after update
+        console.log('Current photos after update:', 
+            Array.isArray(files) ? files.length : 1, 
+            'new files added');
+    };
+
+    const handleVideo360Upload = (file) => {
+        setUploadedFiles(prev => ({
+            ...prev,
+            video360: file
+        }));
+        setVideo360(file);
     };
 
     const handleFrontIdUpload = (file) => {
-        const fileObj = createFileObject(file);
         setUploadedFiles(prev => ({
             ...prev,
-            frontId: fileObj
+            frontId: file
         }));
     };
 
     const handleBackIdUpload = (file) => {
-        const fileObj = createFileObject(file);
         setUploadedFiles(prev => ({
             ...prev,
-            backId: fileObj
+            backId: file
         }));
     };
 
     const handleVerificationUpload = (file) => {
-        const fileObj = createFileObject(file);
         setUploadedFiles(prev => ({
             ...prev,
-            verification: fileObj
+            verification: file
         }));
-        setVerificationPhoto(fileObj.file);
+        setVerificationPhoto(file);
     };
 
     const handleRemoveFile = (type, fileId) => {
