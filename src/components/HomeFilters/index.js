@@ -148,70 +148,8 @@ export default function HomeFilters() {
   const [changed, setChanged] = useState(false)
   const [selectedRegion, setSelectedRegion] = useState(filter?.region || 'all')
   const [cityOptions, setCityOptions] = useState([])
-  const [selectedServices, setSelectedServices] = useState(
-    filter?.services?.length 
-      ? filter.services.map(id => SERVICE_OPTIONS.find(option => option.id === id)).filter(Boolean)
-      : []
-  )
-  const formRef = useRef()
-
-  // Create region options for the dropdown
-  const REGION_OPTIONS = useMemo(() => {
-    const allOption = { id: 'all', title: t('All Regions'), value: 'all' }
-    
-    const regionOptions = Object.values(CANTONS_AND_CITIES)
-      .filter(canton => canton.id !== 'all')
-      .map(canton => ({
-        id: canton.id,
-        title: canton.title,
-        value: canton.id
-      }));
-    
-    return [allOption, ...regionOptions];
-  }, [t]);
-
-  // Update city options when region changes
-  useEffect(() => {
-    if (selectedRegion === 'all') {
-      // For "All Regions", we can either show all cities or an empty list
-      // Here we'll show all cities
-      const allCities = [];
-      Object.values(CANTONS_AND_CITIES).forEach(canton => {
-        if (canton.id !== 'all' && canton.cities) {
-          canton.cities.forEach(city => {
-            allCities.push({
-              id: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
-              title: city,
-              value: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
-              canton: canton.id
-            });
-          });
-        }
-      });
-      setCityOptions(allCities);
-    } else {
-      // Get cities for the selected canton
-      const canton = CANTONS_AND_CITIES[selectedRegion];
-      if (!canton || !canton.cities) {
-        setCityOptions([]);
-      } else {
-        const filteredCities = canton.cities.map(city => ({
-          id: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
-          title: city,
-          value: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
-          canton: canton.id
-        }));
-        setCityOptions(filteredCities);
-      }
-    }
-  }, [selectedRegion]);
-
-  // Debug logging
-  useEffect(() => {
-    console.log('Selected region:', selectedRegion);
-    console.log('City options:', cityOptions);
-  }, [selectedRegion, cityOptions]);
-
+  
+  // Move SERVICE_OPTIONS to the top before it's used
   const SERVICE_OPTIONS = [
     { id: '69', title: '69' },
     { id: 'anulingus_recois', title: 'Anulingus (reçois)' },
@@ -256,8 +194,75 @@ export default function HomeFilters() {
     { id: 'sodomie_recois', title: 'Sodomie (reçois)' },
     { id: 'striptease', title: 'Striptease' }
   ];
+  
+  const [selectedServices, setSelectedServices] = useState(
+    filter?.services?.length 
+      ? filter.services.map(id => SERVICE_OPTIONS.find(option => option.id === id)).filter(Boolean)
+      : []
+  )
+  const formRef = useRef()
 
-  // Update selectedServices when filter changes
+  // Create region options for the dropdown
+  const REGION_OPTIONS = useMemo(() => {
+    const allOption = { id: 'all', title: t('All Regions'), value: 'all' }
+    
+    const regionOptions = Object.values(CANTONS_AND_CITIES)
+      .filter(canton => canton.id !== 'all')
+      .map(canton => ({
+        id: canton.id,
+        title: canton.title,
+        value: canton.id
+      }));
+      console.log('Selected region:', selectedRegion);
+      console.log('City options:', cityOptions);
+    return [allOption, ...regionOptions];
+  }, [t]);
+
+  // Update city options when region changes
+  useEffect(() => {
+    if (selectedRegion === 'all') {
+      // For "All Regions", we can either show all cities or an empty list
+      // Here we'll show all cities
+      const allCities = [];
+      Object.values(CANTONS_AND_CITIES).forEach(canton => {
+        if (canton.id !== 'all' && canton.cities) {
+          canton.cities.forEach(city => {
+            allCities.push({
+              id: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+              title: city,
+              value: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+              canton: canton.id
+            });
+          });
+        }
+      });
+      setCityOptions(allCities);
+    } else {
+      // Get cities for the selected canton
+      const canton = CANTONS_AND_CITIES[selectedRegion];
+      if (!canton || !canton.cities) {
+        setCityOptions([]);
+      } else {
+        const filteredCities = canton.cities.map(city => ({
+          id: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+          title: city,
+          value: `${city.toLowerCase().replace(/\s+/g, '-')}-${canton.id}`,
+          canton: canton.id
+        }));
+        setCityOptions(filteredCities);
+      }
+    }
+    console.log('Selected region:', selectedRegion);
+    console.log('City options:', cityOptions);
+  }, [selectedRegion]);
+
+  // Debug logging
+  useEffect(() => {
+    console.log('Selected region:', selectedRegion);
+    console.log('City options:', cityOptions);
+  }, [selectedRegion, cityOptions]);
+
+  // Simplify the useEffect for filter changes
   useEffect(() => {
     if (filter && filter.services && Array.isArray(filter.services)) {
       setSelectedServices(
@@ -324,15 +329,57 @@ export default function HomeFilters() {
         isMulti: true,
         quarter: !filter,
         customer: !!filter,
+        value: selectedServices.map(svc => `${svc.id}`),
         onChange: (values) => {
-          setSelectedServices(values || []);
-          setFilter(prev => ({
-            ...prev,
-            services: values ? values.map(v => v.id) : []
-          }));
-          setChanged(true);
-        },
-        value: selectedServices
+          try {
+            console.log('Services changed to (raw):', values);
+            
+            // Ensure values is always an array
+            let serviceIds = [];
+            
+            if (values === null || values === undefined) {
+              // Handle null/undefined
+              serviceIds = [];
+            } else if (Array.isArray(values)) {
+              // Already an array
+              serviceIds = values;
+            } else if (typeof values === 'string') {
+              // Single string value
+              serviceIds = [values];
+            } else if (typeof values === 'object') {
+              // Single object value (shouldn't happen with our setup, but just in case)
+              serviceIds = [values.id || values.value || ''];
+            }
+            
+            console.log('Processed service IDs:', serviceIds);
+            
+            // Map the selected IDs back to service objects
+            const serviceObjects = serviceIds
+              .map(id => SERVICE_OPTIONS.find(opt => opt.id === id))
+              .filter(Boolean);
+            
+            console.log('Service objects:', serviceObjects);
+            
+            // Update the selectedServices state with objects
+            setSelectedServices(serviceObjects);
+            
+            // Update the filter with just the IDs
+            setFilter(prev => ({
+              ...prev,
+              services: serviceIds
+            }));
+            
+            setChanged(true);
+          } catch (error) {
+            console.error('Error in services onChange:', error);
+            // Fallback to empty array on error
+            setSelectedServices([]);
+            setFilter(prev => ({
+              ...prev,
+              services: []
+            }));
+          }
+        }
       },
       {
         ref: 'category',

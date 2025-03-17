@@ -15,19 +15,22 @@ export const Select = ({
   secondary, 
   borderBackground, 
   formed,
-  disabled  // Add disabled prop
+  disabled,
+  isMulti  // Add this prop
 }) => {
-  const [opened, setOpened] = useState(false);
+  const [open, setOpen] = useState(false);
   
   const toggleOpen = () => {
     if (disabled) return; // Prevent opening if disabled
-    setOpened(!opened);
+    setOpen(!open);
   };
 
-  const optionAction = item => {
-    if (disabled) return; // Prevent changes if disabled
-    if (onChange && typeof onChange === 'function') {
-      onChange(item.target.value);
+  const optionAction = (event) => {
+    if (disabled) return;
+    const { value: newValue } = event.target;
+    if (onChange) {
+      // newValue will be an array if isMulti=true; otherwise, it's a single string
+      onChange(newValue);
     }
     toggleOpen();
   };
@@ -36,9 +39,10 @@ export const Select = ({
     <ThemedComponent>
       <FormControl variant="outlined" fullWidth>
         <MaterialSelect
+          multiple={isMulti}
           small={small}
           displayEmpty
-          disabled={disabled}  // Add disabled prop
+          disabled={disabled}
           color={secondary ? 'secondary' : 'background'}
           borderBackground={borderBackground}
           id={`select-${id}`}
@@ -46,10 +50,43 @@ export const Select = ({
           onChange={optionAction}
           formed={formed}
           renderValue={(selected) => {
-            if (!selected) {
+            // If no selection or empty array, show placeholder
+            if (!selected || 
+                (Array.isArray(selected) && selected.length === 0) ||
+                (typeof selected === 'object' && Object.keys(selected).length === 0)) {
               return <span>{placeholder}</span>;
             }
-            return options.find(option => `${option.id}` === selected)?.title;
+            
+            if (isMulti && Array.isArray(selected)) {
+              // If no items selected, show placeholder
+              if (selected.length === 0) {
+                return <span>{placeholder}</span>;
+              }
+              
+              // If multi-select, handle both object arrays and ID arrays
+              return selected
+                .map((val) => {
+                  if (typeof val === 'object' && val !== null) {
+                    // If val is an object, use its title property
+                    return val.title || val.name || val.id || '';
+                  } else {
+                    // If val is a primitive (like a string ID), find the matching option
+                    const opt = options.find(o => o.id === val || `${o.id}` === val);
+                    return opt ? opt.title : val;
+                  }
+                })
+                .join(', ');
+            } else {
+              // Single-select fallback
+              if (typeof selected === 'object' && selected !== null) {
+                // If selected is an object, use its title property
+                return selected.title || selected.name || selected.id || '';
+              } else {
+                // If selected is a primitive (like a string ID), find the matching option
+                const opt = options.find(option => option.id === selected || `${option.id}` === selected);
+                return opt ? opt.title : selected;
+              }
+            }
           }}
         >
           {options?.map((item, key) => (
@@ -66,11 +103,16 @@ export const Select = ({
 Select.propTypes = {
   placeholder: PropTypes.string,
   options: PropTypes.array,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array,
+    PropTypes.object
+  ]),
   small: PropTypes.bool,
   secondary: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,  // Add disabled to propTypes
+  disabled: PropTypes.bool,
+  isMulti: PropTypes.bool,
 };
 
 Select.defaultProps = {
@@ -80,7 +122,8 @@ Select.defaultProps = {
   small: false,
   secondary: false,
   onChange: undefined,
-  disabled: false,  // Add disabled default prop
+  disabled: false,
+  isMulti: false,
 };
 
 export default Select;

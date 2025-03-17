@@ -61,6 +61,9 @@ export default forwardRef(function FormCore({ formItems, register, disabled, tit
         if (!item.disabled) {
             changeForm(val, item.ref)
             scheduleBlur(item)
+            if (typeof item.onChange === 'function') {
+                item.onChange(val);
+              }
         }
     }
 
