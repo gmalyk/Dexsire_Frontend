@@ -570,3 +570,12 @@ export const NavIcon = styled.div`
     background-size: 20px;
   }
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  color: white;
+  font-size: 18px;
+`;

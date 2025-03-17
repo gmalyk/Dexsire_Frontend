@@ -1,11 +1,14 @@
 import ContainerAuthenticated from 'containers/Authenticated'
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Background, BodyContainer, BodyContent, EditContainer } from './styled'
 import Footer from 'components/Footer'
 import Button from 'components/Form/Button'
 import useI18n from 'hooks/useI18n'
 import { Container } from 'reactstrap'
 import { Icon } from 'ui/styled'
+import { CoreContext } from 'context/CoreContext'
+import { ReadOne } from 'services/core'
+import { toast } from 'react-toastify'
 import {
     ProfileContainer,
     ProfileHeader,
@@ -40,6 +43,7 @@ import {
     AppearanceTitle,
     AppearanceText,
     UploadFileContainer,
+    LoadingContainer
 } from './styled'
 import { useLocation, useParams } from 'react-router-dom'
 import { parseStrapiImage } from 'utils'
@@ -52,15 +56,69 @@ export default function EscortProfile() {
   const { id } = useParams()
   const location = useLocation()
   const profileData = location.state?.profileData
+  const { user, model } = useContext(CoreContext)
+  const [loading, setLoading] = useState(true)
+  const [userProfile, setUserProfile] = useState(null)
   
   // Add state to track active navigation tab
   const [activeTab, setActiveTab] = useState('photos')
 
   // Add this state to track following status
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false)
 
-  const [currentProfile, setCurrentProfile] = useState(null)
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      setLoading(true)
+      try {
+        // If we have a model ID from context, use it
+        if (model?.id) {
+          const response = await ReadOne('models', model.id)
+          if (response && response.data) {
+            setUserProfile(response.data)
+          }
+        } else if (id) {
+          // If we have an ID from params, use it
+          const response = await ReadOne('models', id)
+          if (response && response.data) {
+            setUserProfile(response.data)
+          }
+        } else if (profileData) {
+          // If we have profile data from location state, use it
+          setUserProfile(profileData)
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+        toast.error(t('error_loading_profile'))
+      } finally {
+        setLoading(false)
+      }
+    }
 
+    fetchUserProfile()
+  }, [model, id, profileData])
+
+  // Prepare profile data with fallbacks
+  const currentProfile = userProfile || {
+    id: user?.id || 1,
+    name: user?.name || "Guest User",
+    age: user?.age || 25,
+    location: {
+      city: user?.city || "Unknown",
+      state: user?.region || "Unknown"
+    },
+    description: user?.description || user?.about_me || "No description available",
+    images: user?.photos?.map(photo => parseStrapiImage(photo)) || ["/images/profile.png"],
+    services: user?.services || [],
+    prices: user?.prices || [],
+    phone: user?.phone || user?.telegram || "",
+    whatsapp: user?.whatsapp || "",
+    verified: user?.verified || false,
+    posts: user?.posts?.length || 0,
+    videos: user?.videos?.length || 0,
+    likes: user?.likes || 0,
+    comments: user?.comments || 0
+  }
 
   const handleEdit = () => setIsEditing(true)
   const handleSave = () => {
@@ -69,9 +127,6 @@ export default function EscortProfile() {
   const handlePhotoClick = (index) => {
     console.log(`Photo clicked: ${index}`)
   }
-
-  console.log('Profile ID:', id)
-  console.log('Profile Data:', profileData)
 
   const handleFileUpload = (file) => {
     setUploadedFile(file)
@@ -85,9 +140,9 @@ export default function EscortProfile() {
 
   // Add this function to handle follow/unfollow
   const handleFollowToggle = () => {
-    setIsFollowing(!isFollowing);
+    setIsFollowing(!isFollowing)
     // Here you would typically make an API call to update the follow status
-  };
+  }
 
   // Add this after the handleTabClick function
   const renderTabContent = () => {
@@ -95,63 +150,92 @@ export default function EscortProfile() {
       case 'photos':
         return (
           <PhotoGallery>
-            <GalleryTitle>Photo gallery</GalleryTitle>
+            <GalleryTitle>{t('photo_gallery')}</GalleryTitle>
             <GalleryGrid>
-              {currentProfile.images.slice(1).map((photo, index) => (
-                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                  <img src={photo} alt="" />
-                </GalleryItem>
-              ))}
+              {currentProfile.images && currentProfile.images.length > 1 ? 
+                currentProfile.images.slice(1).map((photo, index) => (
+                  <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
+                    <img src={photo} alt="" />
+                  </GalleryItem>
+                )) : 
+                <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+                  {t('no_photos_available')}
+                </div>
+              }
             </GalleryGrid>
           </PhotoGallery>
         );
       case 'profile':
         return (
           <div>
-            <GalleryTitle>Profile information</GalleryTitle>
+            <GalleryTitle>{t('profile_information')}</GalleryTitle>
             <ProfileDescription>
+              {currentProfile.description || t('no_description_available')}
             </ProfileDescription>
           </div>
         );
       case 'videos':
         return (
           <div>
-            <GalleryTitle>Video gallery</GalleryTitle>
+            <GalleryTitle>{t('video_gallery')}</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+              {t('no_videos_available')}
             </div>
           </div>
         );
       case 'star':
         return (
           <div>
-            <GalleryTitle>What some customers are saying:</GalleryTitle>
+            <GalleryTitle>{t('customer_reviews')}</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+              {t('no_reviews_available')}
             </div>
           </div>
         );
       case 'hot':
         return (
           <div>
-            <GalleryTitle>Services that the escort offers:</GalleryTitle>
+            <GalleryTitle>{t('services_offered')}</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+              {currentProfile.services && currentProfile.services.length > 0 ? 
+                currentProfile.services.map((service, index) => (
+                  <div key={index}>{service.title || service}</div>
+                )) : 
+                t('no_services_available')
+              }
             </div>
           </div>
         );
       default:
         return (
           <PhotoGallery>
-            <GalleryTitle>Photo gallery</GalleryTitle>
+            <GalleryTitle>{t('photo_gallery')}</GalleryTitle>
             <GalleryGrid>
-              {currentProfile.images.slice(1).map((photo, index) => (
-                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                  <img src={photo} alt="" />
-                </GalleryItem>
-              ))}
+              {currentProfile.images && currentProfile.images.length > 1 ? 
+                currentProfile.images.slice(1).map((photo, index) => (
+                  <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
+                    <img src={photo} alt="" />
+                  </GalleryItem>
+                )) : 
+                <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+                  {t('no_photos_available')}
+                </div>
+              }
             </GalleryGrid>
           </PhotoGallery>
         );
     }
   };
+
+  if (loading) {
+    return (
+      <ContainerAuthenticated free>
+        <LoadingContainer>
+          <div>{t('loading_profile')}</div>
+        </LoadingContainer>
+      </ContainerAuthenticated>
+    );
+  }
 
   return (
     <ContainerAuthenticated free>
@@ -159,15 +243,24 @@ export default function EscortProfile() {
         <Background />
         <BodyContent>
           <>
-            
             <ProfileContainer>
                 <ProfileHeader>
                     <ProfileTopRow>
-                        <ProfileAvatar src={currentProfile.images[0]} />
+                        <ProfileAvatar 
+                          src={currentProfile.images && currentProfile.images.length > 0 
+                            ? currentProfile.images[0] 
+                            : "/images/profile-placeholder.png"} 
+                        />
                         <ProfileInfo>
                             <ProfileName>
-                                <span>{currentProfile.name.split(' ')[0]}</span>
-                                <span>{currentProfile.name.split(' ')[1]}</span>
+                                {currentProfile.name && currentProfile.name.split(' ').length > 1 ? (
+                                  <>
+                                    <span>{currentProfile.name.split(' ')[0]}</span>
+                                    <span>{currentProfile.name.split(' ').slice(1).join(' ')}</span>
+                                  </>
+                                ) : (
+                                  <span>{currentProfile.name}</span>
+                                )}
                             </ProfileName>
                         </ProfileInfo>
                         <HeaderActions>
@@ -179,39 +272,41 @@ export default function EscortProfile() {
                     
                     <ProfileBottomRow>
                         <AgeDisplay>
-                            <label>Age</label>
-                            <span>{currentProfile.age} years</span>
+                            <label>{t('age')}</label>
+                            <span>{currentProfile.age} {t('years')}</span>
                         </AgeDisplay>
                         <CityDisplay>
-                            <label>City State</label>
-                            <span>{currentProfile.location.city}/{currentProfile.location.state}</span>
+                            <label>{t('city_state')}</label>
+                            <span>
+                              {currentProfile.location.city || t('unknown')}/
+                              {currentProfile.location.state || t('unknown')}
+                            </span>
                         </CityDisplay>
                     </ProfileBottomRow>
                 </ProfileHeader>
 
-                <ProfileDescription>{currentProfile.description}</ProfileDescription>
+                <ProfileDescription>
+                  {currentProfile.description || t('no_description_available')}
+                </ProfileDescription>
 
                 <ProfileStats>
                     <StatItem>
-                        <StatValue>{currentProfile.stats?.posts || currentProfile.posts}</StatValue>
-                        <StatLabel>posts</StatLabel>
+                        <StatValue>{currentProfile.posts}</StatValue>
+                        <StatLabel>{t('posts')}</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.stats?.videos || currentProfile.videos}</StatValue>
-                        <StatLabel>videos</StatLabel>
+                        <StatValue>{currentProfile.videos}</StatValue>
+                        <StatLabel>{t('videos')}</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.stats?.likes || currentProfile.likes}</StatValue>
-                        <StatLabel>likes</StatLabel>
+                        <StatValue>{currentProfile.likes}</StatValue>
+                        <StatLabel>{t('likes')}</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.stats?.comments || currentProfile.comments}</StatValue>
-                        <StatLabel>comments</StatLabel>
+                        <StatValue>{currentProfile.comments}</StatValue>
+                        <StatLabel>{t('comments')}</StatLabel>
                     </StatItem>
                 </ProfileStats>
-
-            
-                
 
                 <ActionButtons>
                     <FollowButton 
@@ -219,11 +314,23 @@ export default function EscortProfile() {
                         color={isFollowing ? 'white' : undefined}
                         onClick={handleFollowToggle}
                     >
-                        {isFollowing ? 'Followed' : 'Follow'}
+                        {isFollowing ? t('followed') : t('follow')}
                     </FollowButton>
+                    
+                    {/* Always show WhatsApp button, but handle the case when no number is available */}
                     <WhatsappButton 
                         outlineGradient
-                        onClick={() => window.open(`https://wa.me/${currentProfile.whatsapp}`)}
+                        onClick={() => {
+                            const whatsappNumber = currentProfile.whatsapp || currentProfile.phone;
+                            if (whatsappNumber) {
+                                // Format the number properly for WhatsApp
+                                const formattedNumber = whatsappNumber.replace(/\D/g, '');
+                                window.open(`https://wa.me/${formattedNumber}`);
+                            } else {
+                                // Show a message if no WhatsApp number is available
+                                toast.info(t('no_whatsapp_number_available'));
+                            }
+                        }}
                     >
                         <img src="/icons/whatsapp.svg" alt="WhatsApp" />
                     </WhatsappButton>
@@ -263,8 +370,6 @@ export default function EscortProfile() {
                 </NavigationBar>
 
                 {renderTabContent()}
-
-                
             </ProfileContainer>
           </>
         </BodyContent>
