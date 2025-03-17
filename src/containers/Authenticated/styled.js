@@ -3,10 +3,9 @@ import styled from 'styled-components'
 export const Container = styled.div.attrs({})`
   width: 100%;
   min-height: 100vh;
-  background: ${p => p.theme.palette.colors.black};
-  padding-left: 0;
-  margin-left: 0;
 
+  background: ${p => p.theme?.palette?.colors?.black || '#000000'};
+  
   @media(max-width:767px) {
     ${props => props.admin ? `
       background-image: url('/images/announcement.png') !important;
@@ -22,9 +21,8 @@ export const Container = styled.div.attrs({})`
 
 export const Content = styled.div.attrs({})`
   width: 100%;
-  padding-left: 0;
-  margin-left: 0;
   min-height: 100vh;
+  padding-left: ${props => props.admin ? '293px' : '0'};
   
   @media(max-width:767px) {
     padding-left: 0;

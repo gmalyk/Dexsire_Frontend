@@ -1,19 +1,15 @@
 import styled from "styled-components";
 
 export const SideBarContainer = styled.div.attrs({})`
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  z-index: 10;
-  width: 293px;
   display: flex;
   flex-direction: column;
+  width: 293px;
+  height: 100vh;
   gap: 26px;
   padding: 32px 45px;
   
   @media(max-width:767px){
-    width: 60px;
+    width: 100%;
     height: auto;
     padding: 10px 0;
     position: fixed;

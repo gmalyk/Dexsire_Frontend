@@ -55,7 +55,7 @@ export default function UploadFile({
 
     const handleChange = async (e) => {
         try {
-            const files = e.target.files;
+        const files = e.target.files;
             if (!files || files.length === 0) return;
             
             setLoading(true);
@@ -252,7 +252,7 @@ export default function UploadFile({
                             return [...remainingFiles, ...successfulUploads];
                         });
                     }
-                } else {
+        } else {
                     console.error('All file uploads failed');
                     console.error('Error uploading files. Please try again.');
                 }
@@ -273,8 +273,8 @@ export default function UploadFile({
         if (!files?.length) return;
 
         try {
-            if (multiple) {
-                const validFiles = Array.from(files).filter(file => !validate || validate(file));
+        if (multiple) {
+            const validFiles = Array.from(files).filter(file => !validate || validate(file));
                 
                 // Create temporary IDs for tracking uploads
                 const tempPreviews = validFiles.map(file => ({
@@ -338,12 +338,12 @@ export default function UploadFile({
                         // Add the new uploads
                         return [...remainingFiles, ...successfulUploads];
                     });
-                }
-            } else {
+            }
+        } else {
                 // Single file upload
                 if (!files[0]) return;
                 
-                const file = files[0];
+            const file = files[0];
                 if (validate && !validate(file)) return;
                 
                 // Create temporary preview

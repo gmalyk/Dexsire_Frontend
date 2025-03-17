@@ -6,12 +6,14 @@ import AdminHome from 'components/Admin/Escort/Home';
 
 import ContainerAuthenticated from 'containers/Authenticated'
 
-import { AdminContainer, BodyContainer, BodyContent, MobileView, DesktopView } from './styled';
+import { AdminContainer, BodyContainer, BodyContent } from './styled';
 import useI18n from 'hooks/useI18n';
  
 export default function EscortAdminHome() { 
+
   const history = useHistory();
   const navigate = to => history.push(`/${to}`);
+
   const { t } = useI18n()
  
   useEffect(() => {
@@ -20,33 +22,16 @@ export default function EscortAdminHome() {
 
   return (
     <>
-      {/* Desktop View */}
-      <DesktopView>
-        <ContainerAuthenticated admin title={t("Dashboard")}>
-          <AdminContainer>
-            <AdminSideBar escort />
-            <BodyContainer>
-              <BodyContent>
+      <ContainerAuthenticated admin title={t("Dashboard")}>
+        <AdminContainer>
+          <AdminSideBar escort />
+          <BodyContainer>
+            <BodyContent>
                 <AdminHome /> 
-              </BodyContent>
-            </BodyContainer>
-          </AdminContainer>
-        </ContainerAuthenticated>
-      </DesktopView>
-
-      {/* Mobile View */}
-      <MobileView>
-        <ContainerAuthenticated admin title={t("Dashboard")}>
-          <AdminContainer>
-            <AdminSideBar escort />
-            <BodyContainer>
-              <BodyContent>
-                <AdminHome /> 
-              </BodyContent>
-            </BodyContainer>
-          </AdminContainer>
-        </ContainerAuthenticated>
-      </MobileView>
+            </BodyContent>
+          </BodyContainer>
+        </AdminContainer>
+      </ContainerAuthenticated>
     </>
   )
 }
