@@ -59,34 +59,8 @@ export default function EscortProfile() {
   // Add this state to track following status
   const [isFollowing, setIsFollowing] = useState(false);
 
-  const [currentProfile] = useState(profileData || {
-    id: 1,
-    name: "Amanda Borges",
-    age: 23,
-    location: {
-      city: "Florianópolis",
-      state: "SC"
-    },
-    description: "I'm Amanda, I would be very happy to meet you in person and share my attractive and irresistible private content 💋",
-    images: [
-      "/images/profile.png",
-      "/images/escort3.png",
-      "/images/escort.jpeg",
-      "/images/escort2.jpeg"
-    ],
-    services: ["Service 1", "Service 2"],
-    prices: [
-      { text: "1 hour - 300 CHF" },
-      { text: "2 hours - 500 CHF" }
-    ],
-    phone: "+41 123 456 789",
-    whatsapp: "+41123456789",
-    verified: true,
-    posts: 34,
-    videos: 10,
-    likes: 124,
-    comments: 26
-  })
+  const [currentProfile, setCurrentProfile] = useState(null)
+
 
   const handleEdit = () => setIsEditing(true)
   const handleSave = () => {

@@ -35,6 +35,9 @@ export default function UploadFile({
     const [uploadProgress, setUploadProgress] = useState({});
     const { t } = useI18n();
 
+    // Ensure files is always an array and filter out null/undefined items
+    const safeFiles = Array.isArray(files) ? files.filter(Boolean) : (files ? [files].filter(Boolean) : []);
+
     const simulateUpload = (fileId) => {
         let progress = 0;
         const interval = setInterval(() => {
@@ -50,6 +53,7 @@ export default function UploadFile({
     };
 
     const handleChange = async (e) => {
+        e.preventDefault();
         const files = e.target.files;
         if (!files?.length) return;
 
@@ -57,25 +61,24 @@ export default function UploadFile({
             if (multiple) {
                 const validFiles = Array.from(files).filter(file => !validate || validate(file));
                 
-                // Create local preview URLs immediately for better UX
-                const localPreviews = validFiles.map(file => ({
+                // Create temporary IDs for tracking uploads
+                const tempPreviews = validFiles.map(file => ({
                     id: `temp-${Math.random().toString(36).substr(2, 9)}`,
                     name: file.name,
                     size: file.size,
                     url: URL.createObjectURL(file),
                     uploading: true,
-                    originalFile: file // Store the original file for later upload
+                    tempFile: true // Mark as temporary
                 }));
                 
-                // Show local previews immediately
-                onChange(localPreviews);
+                // Show temporary previews
+                onChange(tempPreviews);
                 
-                // Then start the actual upload
                 const uploadPromises = validFiles.map(async (file, index) => {
                     const formData = new FormData();
                     formData.append('files', file);
                     
-                    const tempId = localPreviews[index].id;
+                    const tempId = tempPreviews[index].id;
                     simulateUpload(tempId);
                     
                     try {
@@ -94,7 +97,8 @@ export default function UploadFile({
                                 name: file.name,
                                 size: file.size,
                                 url: fileUrl,
-                                uploading: false
+                                uploading: false,
+                                tempId: tempId // Keep track of which temp preview this replaces
                             };
                         }
                         return null;
@@ -108,38 +112,44 @@ export default function UploadFile({
                 const successfulUploads = uploadedFiles.filter(Boolean);
                 
                 if (successfulUploads.length > 0) {
-                    // Replace the temporary previews with the actual uploaded files
-                    onChange(successfulUploads);
+                    // Replace temporary previews with actual uploaded files
+                    onChange(prevFiles => {
+                        // Filter out temporary files that have been replaced
+                        const remainingFiles = prevFiles.filter(
+                            file => !file.tempFile || 
+                            !successfulUploads.some(upload => upload.tempId === file.id)
+                        );
+                        
+                        // Add the new uploads
+                        return [...remainingFiles, ...successfulUploads];
+                    });
                 }
             } else {
                 // Single file upload
+                if (!files[0]) return;
+                
                 const file = files[0];
+                if (validate && !validate(file)) return;
                 
-                if (validate && !validate(file)) {
-                    return;
-                }
-                
-                // Create local preview immediately for better UX
-                const tempId = `temp-${Math.random().toString(36).substr(2, 9)}`;
-                const localPreview = {
-                    id: tempId,
+                // Create temporary preview
+                const tempPreview = {
+                    id: `temp-${Math.random().toString(36).substr(2, 9)}`,
                     name: file.name,
                     size: file.size,
                     url: URL.createObjectURL(file),
                     uploading: true,
-                    originalFile: file // Store the original file for later upload
+                    tempFile: true
                 };
                 
-                // Show local preview immediately
-                onChange(localPreview);
+                // Show temporary preview
+                onChange(tempPreview);
                 
-                // Then start the actual upload
-                simulateUpload(tempId);
+                const formData = new FormData();
+                formData.append('files', file);
+                
+                simulateUpload(tempPreview.id);
                 
                 try {
-                    const formData = new FormData();
-                    formData.append('files', file);
-                    
                     const response = await Upload(formData);
                     console.log('Upload response for single file:', file.name, response);
                     
@@ -158,6 +168,7 @@ export default function UploadFile({
                             uploading: false
                         };
                         
+                        // Replace temporary preview with actual uploaded file
                         onChange(uploadedFile);
                     }
                 } catch (err) {
@@ -180,24 +191,24 @@ export default function UploadFile({
             if (multiple) {
                 const validFiles = Array.from(files).filter(file => !validate || validate(file));
                 
-                // Create local preview URLs immediately for better UX
-                const localPreviews = validFiles.map(file => ({
+                // Create temporary IDs for tracking uploads
+                const tempPreviews = validFiles.map(file => ({
                     id: `temp-${Math.random().toString(36).substr(2, 9)}`,
                     name: file.name,
                     size: file.size,
                     url: URL.createObjectURL(file),
-                    uploading: true
+                    uploading: true,
+                    tempFile: true // Mark as temporary
                 }));
                 
-                // Show local previews immediately
-                onChange(localPreviews);
+                // Show temporary previews
+                onChange(tempPreviews);
                 
-                // Then start the actual upload
                 const uploadPromises = validFiles.map(async (file, index) => {
                     const formData = new FormData();
                     formData.append('files', file);
                     
-                    const tempId = localPreviews[index].id;
+                    const tempId = tempPreviews[index].id;
                     simulateUpload(tempId);
                     
                     try {
@@ -216,7 +227,8 @@ export default function UploadFile({
                                 name: file.name,
                                 size: file.size,
                                 url: fileUrl,
-                                uploading: false
+                                uploading: false,
+                                tempId: tempId // Keep track of which temp preview this replaces
                             };
                         }
                         return null;
@@ -230,29 +242,67 @@ export default function UploadFile({
                 const successfulUploads = uploadedFiles.filter(Boolean);
                 
                 if (successfulUploads.length > 0) {
-                    // Replace the temporary previews with the actual uploaded files
-                    onChange(successfulUploads);
+                    // Replace temporary previews with actual uploaded files
+                    onChange(prevFiles => {
+                        // Filter out temporary files that have been replaced
+                        const remainingFiles = prevFiles.filter(
+                            file => !file.tempFile || 
+                            !successfulUploads.some(upload => upload.tempId === file.id)
+                        );
+                        
+                        // Add the new uploads
+                        return [...remainingFiles, ...successfulUploads];
+                    });
                 }
             } else {
+                // Single file upload
+                if (!files[0]) return;
+                
                 const file = files[0];
-                if (!validate || validate(file)) {
-                    const formData = new FormData();
-                    formData.append('files', file);
-                    
-                    simulateUpload(Math.random().toString(36).substr(2, 9));
-                    
+                if (validate && !validate(file)) return;
+                
+                // Create temporary preview
+                const tempPreview = {
+                    id: `temp-${Math.random().toString(36).substr(2, 9)}`,
+                    name: file.name,
+                    size: file.size,
+                    url: URL.createObjectURL(file),
+                    uploading: true,
+                    tempFile: true
+                };
+                
+                // Show temporary preview
+                onChange(tempPreview);
+                
+                const formData = new FormData();
+                formData.append('files', file);
+                
+                simulateUpload(tempPreview.id);
+                
+                try {
                     const response = await Upload(formData);
+                    console.log('Upload response for single file (drop):', file.name, response);
                     
                     if (response && response.length > 0) {
+                        // Get the full URL including domain
+                        const fileUrl = response[0].url.startsWith('http') 
+                            ? response[0].url 
+                            : `${process.env.REACT_APP_API_URL}${response[0].url}`;
+                            
                         const uploadedFile = {
                             ...response[0],
                             id: response[0].id,
                             name: file.name,
                             size: file.size,
-                            url: response[0].url || URL.createObjectURL(file)
+                            url: fileUrl,
+                            uploading: false
                         };
+                        
+                        // Replace temporary preview with actual uploaded file
                         onChange(uploadedFile);
                     }
+                } catch (err) {
+                    console.error('Error uploading single file (drop):', file.name, err);
                 }
             }
         } catch (error) {
@@ -273,7 +323,7 @@ export default function UploadFile({
         <UploadWrapper>
             <UploadContainer 
                 onClick={() => inputRef.current?.click()}
-                hasFiles={files.length > 0}
+                hasFiles={safeFiles.length > 0}
             >
                 <input
                     type="file"
@@ -289,19 +339,19 @@ export default function UploadFile({
                 <UploadText>{t(dragText)}</UploadText>
             </UploadContainer>
 
-            <AppearanceTitleContainer hasFiles={files.length > 0}>
+            <AppearanceTitleContainer hasFiles={safeFiles.length > 0}>
                 <AppearanceInfoText>{t("supported_files")}: {supportedFiles}</AppearanceInfoText>
                 <AppearanceInfoText>{t("maximum_file_size")}: {maxFileSize}</AppearanceInfoText>
             </AppearanceTitleContainer>
 
-            {files.length > 0 && (
+            {safeFiles.length > 0 && (
                 <PreviewContainer>
-                    {files.map(file => (
-                        <PreviewItem key={file.id}>
+                    {safeFiles.map(file => (
+                        <PreviewItem key={file.id || `file-${Math.random()}`}>
                             {file.url && (
                                 <img 
                                     src={file.url} 
-                                    alt={file.name} 
+                                    alt={file.name || 'File preview'} 
                                     onError={(e) => {
                                         console.error('Error loading image preview:', file.url);
                                         e.target.src = '/icons/file-placeholder.svg'; // Fallback image
@@ -309,9 +359,9 @@ export default function UploadFile({
                                 />
                             )}
                             <FileInfo>
-                                <FileName>{file.name}</FileName>
+                                <FileName>{file.name || 'Unnamed file'}</FileName>
                                 <FileStatus>
-                                    {(file.size / (1024 * 1024)).toFixed(2)}mb - 
+                                    {file.size ? `${(file.size / (1024 * 1024)).toFixed(2)}mb - ` : ''}
                                     {file.uploading ? 'Uploading...' : 'Upload completed'}
                                 </FileStatus>
                                 {file.uploading && (
@@ -320,7 +370,7 @@ export default function UploadFile({
                             </FileInfo>
                             <DeleteButton onClick={(e) => {
                                 e.stopPropagation();
-                                onRemove(file.id);
+                                if (onRemove) onRemove(file.id);
                             }}>
                                 <Icon icon="trash" size={16} />
                             </DeleteButton>
