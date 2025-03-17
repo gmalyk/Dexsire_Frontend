@@ -454,18 +454,61 @@ export default function RegisterEscort() {
         const savedPreuser = localStorage.getItem('escortRegistrationPreuser')
         return savedPreuser ? JSON.parse(savedPreuser) : null
     })
-    const [video360, setVideo360] = useState(() => {
-        const savedVideo = localStorage.getItem('escortRegistrationVideo360')
-        return savedVideo ? JSON.parse(savedVideo) : null
-    })
     const [verificationPhoto, setVerificationPhoto] = useState(() => {
-        const savedPhoto = localStorage.getItem('escortRegistrationVerificationPhoto')
-        return savedPhoto ? JSON.parse(savedPhoto) : null
-    })
+        try {
+            const savedPhoto = localStorage.getItem('escortRegistrationVerificationPhoto');
+            if (!savedPhoto) return null;
+            
+            const parsedPhoto = JSON.parse(savedPhoto);
+            // Check if the ID is temporary
+            if (parsedPhoto && typeof parsedPhoto.id === 'string' && parsedPhoto.id.startsWith('temp-')) {
+                console.log('Filtered out temporary verification photo from localStorage');
+                return null; // Force re-upload
+            }
+            return parsedPhoto;
+        } catch (error) {
+            console.error('Error parsing verification photo from localStorage:', error);
+            return null;
+        }
+    });
+    const [video360, setVideo360] = useState(() => {
+        try {
+            const savedVideo = localStorage.getItem('escortRegistrationVideo360');
+            if (!savedVideo) return null;
+            
+            const parsedVideo = JSON.parse(savedVideo);
+            // Check if the ID is temporary
+            if (parsedVideo && typeof parsedVideo.id === 'string' && parsedVideo.id.startsWith('temp-')) {
+                console.log('Filtered out temporary 360 video from localStorage');
+                return null; // Force re-upload
+            }
+            return parsedVideo;
+        } catch (error) {
+            console.error('Error parsing 360 video from localStorage:', error);
+            return null;
+        }
+    });
     const [imagesReview, setImagesReview] = useState(() => {
-        const savedImages = localStorage.getItem('escortRegistrationImagesReview')
-        return savedImages ? JSON.parse(savedImages) : []
-    })
+        try {
+            const savedImages = localStorage.getItem('escortRegistrationImagesReview');
+            if (!savedImages) return [];
+            
+            const parsedImages = JSON.parse(savedImages);
+            // Filter out any temporary images
+            const validImages = parsedImages.filter(img => 
+                !(img && typeof img.id === 'string' && img.id.startsWith('temp-'))
+            );
+            
+            if (validImages.length !== parsedImages.length) {
+                console.log('Filtered out temporary images from localStorage');
+            }
+            
+            return validImages;
+        } catch (error) {
+            console.error('Error parsing images from localStorage:', error);
+            return [];
+        }
+    });
 
     const [services, setServices] = useState(() => {
         const savedServices = localStorage.getItem('escortRegistrationServices')
@@ -551,12 +594,12 @@ export default function RegisterEscort() {
     }, [preuser])
 
     useEffect(() => {
-        if (video360) localStorage.setItem('escortRegistrationVideo360', JSON.stringify(video360))
-    }, [video360])
-
-    useEffect(() => {
         if (verificationPhoto) localStorage.setItem('escortRegistrationVerificationPhoto', JSON.stringify(verificationPhoto))
     }, [verificationPhoto])
+
+    useEffect(() => {
+        if (video360) localStorage.setItem('escortRegistrationVideo360', JSON.stringify(video360))
+    }, [video360])
 
     useEffect(() => {
         localStorage.setItem('escortRegistrationImagesReview', JSON.stringify(imagesReview))
