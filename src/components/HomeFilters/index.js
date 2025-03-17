@@ -196,9 +196,9 @@ export default function HomeFilters() {
   ];
   
   const [selectedServices, setSelectedServices] = useState(
-    filter?.services?.length 
-      ? filter.services.map(id => SERVICE_OPTIONS.find(option => option.id === id)).filter(Boolean)
-      : []
+    Array.isArray(filter?.services)
+    ? filter.services.map(id => SERVICE_OPTIONS.find(option => option.id === id)).filter(Boolean)
+    : []
   )
   const formRef = useRef()
 
@@ -364,12 +364,7 @@ export default function HomeFilters() {
             setSelectedServices(serviceObjects);
             
             // Update the filter with just the IDs
-            setFilter(prev => ({
-              ...prev,
-              services: serviceIds
-            }));
             
-            setChanged(true);
           } catch (error) {
             console.error('Error in services onChange:', error);
             // Fallback to empty array on error
