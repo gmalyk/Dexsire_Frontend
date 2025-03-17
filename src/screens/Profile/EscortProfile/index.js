@@ -1,14 +1,11 @@
 import ContainerAuthenticated from 'containers/Authenticated'
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Background, BodyContainer, BodyContent, EditContainer } from './styled'
 import Footer from 'components/Footer'
 import Button from 'components/Form/Button'
 import useI18n from 'hooks/useI18n'
 import { Container } from 'reactstrap'
 import { Icon } from 'ui/styled'
-import { CoreContext } from 'context/CoreContext'
-import { ReadOne } from 'services/core'
-import { toast } from 'react-toastify'
 import {
     ProfileContainer,
     ProfileHeader,
@@ -43,10 +40,10 @@ import {
     AppearanceTitle,
     AppearanceText,
     UploadFileContainer,
-    LoadingContainer
 } from './styled'
 import { useLocation, useParams } from 'react-router-dom'
 import { parseStrapiImage } from 'utils'
+import { toast } from 'react-toastify'
 
 export default function EscortProfile() {
   const { t } = useI18n()
@@ -56,69 +53,43 @@ export default function EscortProfile() {
   const { id } = useParams()
   const location = useLocation()
   const profileData = location.state?.profileData
-  const { user, model } = useContext(CoreContext)
-  const [loading, setLoading] = useState(true)
-  const [userProfile, setUserProfile] = useState(null)
   
   // Add state to track active navigation tab
   const [activeTab, setActiveTab] = useState('photos')
 
-  // Add this state to track following status
+  // Add state to track following, liked, and notification status
   const [isFollowing, setIsFollowing] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
+  const [isNotified, setIsNotified] = useState(false)
 
-  // Fetch user profile data
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      setLoading(true)
-      try {
-        // If we have a model ID from context, use it
-        if (model?.id) {
-          const response = await ReadOne('models', model.id)
-          if (response && response.data) {
-            setUserProfile(response.data)
-          }
-        } else if (id) {
-          // If we have an ID from params, use it
-          const response = await ReadOne('models', id)
-          if (response && response.data) {
-            setUserProfile(response.data)
-          }
-        } else if (profileData) {
-          // If we have profile data from location state, use it
-          setUserProfile(profileData)
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error)
-        toast.error(t('error_loading_profile'))
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUserProfile()
-  }, [model, id, profileData])
-
-  // Prepare profile data with fallbacks
-  const currentProfile = userProfile || {
-    id: user?.id || 1,
-    name: user?.name || "Guest User",
-    age: user?.age || 25,
+  const [currentProfile] = useState(profileData || {
+    id: 1,
+    name: "Amanda Borges",
+    age: 23,
     location: {
-      city: user?.city || "Unknown",
-      state: user?.region || "Unknown"
+      city: "Florianópolis",
+      state: "SC"
     },
-    description: user?.description || user?.about_me || "No description available",
-    images: user?.photos?.map(photo => parseStrapiImage(photo)) || ["/images/profile.png"],
-    services: user?.services || [],
-    prices: user?.prices || [],
-    phone: user?.phone || user?.telegram || "",
-    whatsapp: user?.whatsapp || "",
-    verified: user?.verified || false,
-    posts: user?.posts?.length || 0,
-    videos: user?.videos?.length || 0,
-    likes: user?.likes || 0,
-    comments: user?.comments || 0
-  }
+    description: "I'm Amanda, I would be very happy to meet you in person and share my attractive and irresistible private content 💋",
+    images: [
+      "/images/profile.png",
+      "/images/escort3.png",
+      "/images/escort.jpeg",
+      "/images/escort2.jpeg"
+    ],
+    services: ["Service 1", "Service 2"],
+    prices: [
+      { text: "1 hour - 300 CHF" },
+      { text: "2 hours - 500 CHF" }
+    ],
+    phone: "+41 123 456 789",
+    whatsapp: "+41123456789",
+    verified: true,
+    posts: 34,
+    videos: 10,
+    likes: 124,
+    comments: 26
+  })
 
   const handleEdit = () => setIsEditing(true)
   const handleSave = () => {
@@ -127,6 +98,9 @@ export default function EscortProfile() {
   const handlePhotoClick = (index) => {
     console.log(`Photo clicked: ${index}`)
   }
+
+  console.log('Profile ID:', id)
+  console.log('Profile Data:', profileData)
 
   const handleFileUpload = (file) => {
     setUploadedFile(file)
@@ -138,10 +112,30 @@ export default function EscortProfile() {
     setActiveTab(tabName)
   }
 
-  // Add this function to handle follow/unfollow
+  // Handle follow/unfollow
   const handleFollowToggle = () => {
     setIsFollowing(!isFollowing)
     // Here you would typically make an API call to update the follow status
+  }
+
+  // Handle like/unlike
+  const handleLikeToggle = () => {
+    setIsLiked(!isLiked)
+    // Here you would typically make an API call to update the like status
+    toast.success(isLiked ? 'Removed from favorites' : 'Added to favorites')
+  }
+
+  // Handle notification toggle
+  const handleNotificationToggle = () => {
+    setIsNotified(!isNotified)
+    // Here you would typically make an API call to update the notification status
+    toast.success(isNotified ? 'Notifications turned off' : 'Notifications turned on')
+  }
+
+  // Handle message
+  const handleMessage = () => {
+    // Here you would typically navigate to a chat screen or open a chat modal
+    toast.info('Message feature coming soon')
   }
 
   // Add this after the handleTabClick function
@@ -150,92 +144,69 @@ export default function EscortProfile() {
       case 'photos':
         return (
           <PhotoGallery>
-            <GalleryTitle>{t('photo_gallery')}</GalleryTitle>
+            <GalleryTitle>Photo gallery</GalleryTitle>
             <GalleryGrid>
-              {currentProfile.images && currentProfile.images.length > 1 ? 
-                currentProfile.images.slice(1).map((photo, index) => (
-                  <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                    <img src={photo} alt="" />
-                  </GalleryItem>
-                )) : 
-                <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-                  {t('no_photos_available')}
-                </div>
-              }
+              {currentProfile.images.slice(1).map((photo, index) => (
+                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
+                  <img src={photo} alt="" />
+                </GalleryItem>
+              ))}
             </GalleryGrid>
           </PhotoGallery>
         );
       case 'profile':
         return (
           <div>
-            <GalleryTitle>{t('profile_information')}</GalleryTitle>
+            <GalleryTitle>Profile information</GalleryTitle>
             <ProfileDescription>
-              {currentProfile.description || t('no_description_available')}
+              {currentProfile.description}
             </ProfileDescription>
           </div>
         );
       case 'videos':
         return (
           <div>
-            <GalleryTitle>{t('video_gallery')}</GalleryTitle>
+            <GalleryTitle>Video gallery</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-              {t('no_videos_available')}
+              No videos available
             </div>
           </div>
         );
       case 'star':
         return (
           <div>
-            <GalleryTitle>{t('customer_reviews')}</GalleryTitle>
+            <GalleryTitle>What some customers are saying:</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-              {t('no_reviews_available')}
+              No reviews yet
             </div>
           </div>
         );
       case 'hot':
         return (
           <div>
-            <GalleryTitle>{t('services_offered')}</GalleryTitle>
+            <GalleryTitle>Services that the escort offers:</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-              {currentProfile.services && currentProfile.services.length > 0 ? 
-                currentProfile.services.map((service, index) => (
-                  <div key={index}>{service.title || service}</div>
-                )) : 
-                t('no_services_available')
-              }
+              {currentProfile.services.map((service, index) => (
+                <div key={index} style={{margin: '10px 0'}}>{service}</div>
+              ))}
             </div>
           </div>
         );
       default:
         return (
           <PhotoGallery>
-            <GalleryTitle>{t('photo_gallery')}</GalleryTitle>
+            <GalleryTitle>Photo gallery</GalleryTitle>
             <GalleryGrid>
-              {currentProfile.images && currentProfile.images.length > 1 ? 
-                currentProfile.images.slice(1).map((photo, index) => (
-                  <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                    <img src={photo} alt="" />
-                  </GalleryItem>
-                )) : 
-                <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-                  {t('no_photos_available')}
-                </div>
-              }
+              {currentProfile.images.slice(1).map((photo, index) => (
+                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
+                  <img src={photo} alt="" />
+                </GalleryItem>
+              ))}
             </GalleryGrid>
           </PhotoGallery>
         );
     }
   };
-
-  if (loading) {
-    return (
-      <ContainerAuthenticated free>
-        <LoadingContainer>
-          <div>{t('loading_profile')}</div>
-        </LoadingContainer>
-      </ContainerAuthenticated>
-    );
-  }
 
   return (
     <ContainerAuthenticated free>
@@ -246,65 +217,72 @@ export default function EscortProfile() {
             <ProfileContainer>
                 <ProfileHeader>
                     <ProfileTopRow>
-                        <ProfileAvatar 
-                          src={currentProfile.images && currentProfile.images.length > 0 
-                            ? currentProfile.images[0] 
-                            : "/images/profile-placeholder.png"} 
-                        />
+                        <ProfileAvatar src={currentProfile.images[0]} />
                         <ProfileInfo>
                             <ProfileName>
-                                {currentProfile.name && currentProfile.name.split(' ').length > 1 ? (
-                                  <>
-                                    <span>{currentProfile.name.split(' ')[0]}</span>
-                                    <span>{currentProfile.name.split(' ').slice(1).join(' ')}</span>
-                                  </>
-                                ) : (
-                                  <span>{currentProfile.name}</span>
-                                )}
+                                <span>{currentProfile.name.split(' ')[0]}</span>
+                                <span>{currentProfile.name.split(' ')[1]}</span>
                             </ProfileName>
                         </ProfileInfo>
                         <HeaderActions>
-                            <NavIcon icon="heart" src="/icons/heart.svg" />
-                            <NavIcon icon="message" src="/icons/message.svg" />
-                            <NavIcon icon="bell" src="/icons/bell.svg" />
+                            <NavIcon 
+                              icon="heart" 
+                              src={isLiked ? "/icons/heart-white.svg" : "/icons/heart.svg"} 
+                              active={isLiked}
+                              onClick={handleLikeToggle}
+                              style={{
+                                backgroundColor: isLiked ? '#FF4D4F' : 'rgba(0, 0, 0, 0.3)',
+                                border: isLiked ? 'none' : '1px solid rgba(255, 255, 255, 0.2)'
+                              }}
+                            />
+                            <NavIcon 
+                              icon="message" 
+                              src="/icons/message.svg" 
+                              onClick={handleMessage}
+                            />
+                            <NavIcon 
+                              icon="bell" 
+                              src={isNotified ? "/icons/bell-white.svg" : "/icons/bell.svg"} 
+                              active={isNotified}
+                              onClick={handleNotificationToggle}
+                              style={{
+                                backgroundColor: isNotified ? '#FF4D4F' : 'rgba(0, 0, 0, 0.3)',
+                                border: isNotified ? 'none' : '1px solid rgba(255, 255, 255, 0.2)'
+                              }}
+                            />
                         </HeaderActions>
                     </ProfileTopRow>
                     
                     <ProfileBottomRow>
                         <AgeDisplay>
-                            <label>{t('age')}</label>
-                            <span>{currentProfile.age} {t('years')}</span>
+                            <label>Age</label>
+                            <span>{currentProfile.age} years</span>
                         </AgeDisplay>
                         <CityDisplay>
-                            <label>{t('city_state')}</label>
-                            <span>
-                              {currentProfile.location.city || t('unknown')}/
-                              {currentProfile.location.state || t('unknown')}
-                            </span>
+                            <label>City State</label>
+                            <span>{currentProfile.location.city}/{currentProfile.location.state}</span>
                         </CityDisplay>
                     </ProfileBottomRow>
                 </ProfileHeader>
 
-                <ProfileDescription>
-                  {currentProfile.description || t('no_description_available')}
-                </ProfileDescription>
+                <ProfileDescription>{currentProfile.description}</ProfileDescription>
 
                 <ProfileStats>
                     <StatItem>
-                        <StatValue>{currentProfile.posts}</StatValue>
-                        <StatLabel>{t('posts')}</StatLabel>
+                        <StatValue>{currentProfile.stats?.posts || currentProfile.posts}</StatValue>
+                        <StatLabel>posts</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.videos}</StatValue>
-                        <StatLabel>{t('videos')}</StatLabel>
+                        <StatValue>{currentProfile.stats?.videos || currentProfile.videos}</StatValue>
+                        <StatLabel>videos</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.likes}</StatValue>
-                        <StatLabel>{t('likes')}</StatLabel>
+                        <StatValue>{currentProfile.stats?.likes || currentProfile.likes}</StatValue>
+                        <StatLabel>likes</StatLabel>
                     </StatItem>
                     <StatItem>
-                        <StatValue>{currentProfile.comments}</StatValue>
-                        <StatLabel>{t('comments')}</StatLabel>
+                        <StatValue>{currentProfile.stats?.comments || currentProfile.comments}</StatValue>
+                        <StatLabel>comments</StatLabel>
                     </StatItem>
                 </ProfileStats>
 
@@ -314,7 +292,7 @@ export default function EscortProfile() {
                         color={isFollowing ? 'white' : undefined}
                         onClick={handleFollowToggle}
                     >
-                        {isFollowing ? t('followed') : t('follow')}
+                        {isFollowing ? 'Followed' : 'Follow'}
                     </FollowButton>
                     
                     {/* Always show WhatsApp button, but handle the case when no number is available */}
@@ -328,7 +306,7 @@ export default function EscortProfile() {
                                 window.open(`https://wa.me/${formattedNumber}`);
                             } else {
                                 // Show a message if no WhatsApp number is available
-                                toast.info(t('no_whatsapp_number_available'));
+                                toast.info('No WhatsApp number available');
                             }
                         }}
                     >
