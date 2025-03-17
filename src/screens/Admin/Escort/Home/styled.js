@@ -1,34 +1,69 @@
 import styled from "styled-components";
 
-export const BodyContainer = styled.div.attrs({})`
-  width: 100%;
-  min-height: 100%;
-  padding-top: 120px;
-  margin-top: 90px;
+// Desktop view container (only visible on desktop)
+export const DesktopView = styled.div`
+  display: none;
+  
+  @media(min-width: 768px) {
+    display: block;
+  }
+`;
 
-  @media(max-width:767px){
-    margin-right: 0;
-    max-width: 100%;
-    padding: 80px 16px 0;
+// Mobile view container (only visible on mobile)
+export const MobileView = styled.div`
+  display: block;
+  
+  @media(min-width: 768px) {
+    display: none;
+  }
+`;
+
+// Base styles for both views
+export const AdminContainer = styled.div.attrs({})`
+  display: flex;
+`;
+
+// Different styles for desktop and mobile
+export const BodyContainer = styled.div.attrs({})`
+  margin-top: 130px;
+  min-height: 100%;
+  width: 100%;
+  background: linear-gradient(to left, ${p => p.theme.palette.gradient.secondary} 0%, ${p => p.theme.palette.gradient.primary} 100%);
+  padding-top: 1px;
+
+  // Desktop-specific styles
+  ${DesktopView} & {
+    margin-right: 40px;
+  }
+  
+  // Mobile-specific styles
+  ${MobileView} & {
+    margin-right: 0px;
+    max-width: calc(100% - 60px);
+  }
+  
+  @media(max-width: 767px) {
+    margin-right: 0px;
+    max-width: calc(100% - 60px);
   }
 `;
 
 export const BodyContent = styled.div.attrs({})`
   width: 100%;
   height: 100%;
-  padding: 37px 0 62px 0;
+  background: ${p => p.theme.palette.colors.black};
   
-  @media(max-width:767px){
-    padding: 12px 0;
-    margin-bottom: 70px;
+  // Desktop-specific styles
+  ${DesktopView} & {
+    padding: 37px 0 62px 0;
   }
-`;
-
-export const AdminContainer = styled.div.attrs({})`
-  display: flex;
-  width: 100%;
   
-  @media(max-width:767px){
-    justify-content: center;
+  // Mobile-specific styles
+  ${MobileView} & {
+    padding: 12px;
+  }
+  
+  @media(max-width: 767px) {
+    padding: 12px;
   }
 `;
