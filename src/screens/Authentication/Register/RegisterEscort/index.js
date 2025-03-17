@@ -363,7 +363,7 @@ export default function RegisterEscort() {
 
     const { setUser, reloadMe } = useContext(CoreContext)
     const saveProfile = async () => {
-        // Simplify the file handling to match the working version
+        // Validate required files
         if (!verificationPhoto || !video360 || !imagesReview?.length) {
             toast.error(t("missing_required_files"));
             return;
@@ -373,6 +373,54 @@ export default function RegisterEscort() {
             toast.error(t("minimum_4_photos_required"));
             return;
         }
+
+        // Check for temporary files or invalid IDs
+        const hasTemporaryFiles = [
+            verificationPhoto && (typeof verificationPhoto.id === 'string' && verificationPhoto.id.startsWith('temp-')),
+            video360 && (typeof video360.id === 'string' && video360.id.startsWith('temp-')),
+            imagesReview.some(img => typeof img.id === 'string' && img.id.startsWith('temp-'))
+        ].some(Boolean);
+
+        if (hasTemporaryFiles) {
+            toast.error(t("files_not_uploaded_properly"));
+            console.error("Temporary files detected:", {
+                verificationPhoto: verificationPhoto?.id,
+                video360: video360?.id,
+                imagesWithTempIds: imagesReview.filter(img => typeof img.id === 'string' && img.id.startsWith('temp-')).map(img => img.id)
+            });
+            return;
+        }
+
+        // Validate file IDs are numbers or valid Strapi IDs
+        const validateFileId = (id) => {
+            if (!id) return false;
+            // Strapi IDs are typically numbers or valid UUIDs
+            return !isNaN(Number(id)) || 
+                   (typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+        };
+
+        const invalidFileIds = [
+            !validateFileId(verificationPhoto?.id),
+            !validateFileId(video360?.id),
+            imagesReview.some(img => !validateFileId(img?.id))
+        ].some(Boolean);
+
+        if (invalidFileIds) {
+            toast.error(t("invalid_file_ids"));
+            console.error("Invalid file IDs detected:", {
+                verificationPhoto: verificationPhoto?.id,
+                video360: video360?.id,
+                invalidImageIds: imagesReview.filter(img => !validateFileId(img?.id)).map(img => img?.id)
+            });
+            return;
+        }
+
+        // Log all file IDs for debugging
+        console.log("File IDs being sent:", {
+            verificationPhoto: verificationPhoto?.id,
+            video360: video360?.id,
+            imageIds: imagesReview.map(img => img?.id)
+        });
 
         const payload = {
             services: services?.map(m => m?.id),
@@ -413,6 +461,15 @@ export default function RegisterEscort() {
                 await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id });
                 await Create("welcome", { name: preuser?.user?.name, email: preuser?.user?.email });
                 handleSuccess();
+            } else {
+                // If there's a Strapi error, log it for debugging
+                console.error("Strapi error:", result);
+                if (result?.error?.message?.includes("relation") && result?.error?.message?.includes("plugin::upload.file")) {
+                    toast.error(t("file_relation_error"));
+                    console.error("File relation error. This usually means one or more file IDs don't exist in the database.");
+                } else {
+                    toast.error(t("error_creating_profile"));
+                }
             }
         } catch (error) {
             setLoading(false);
@@ -1082,6 +1139,13 @@ export default function RegisterEscort() {
                     console.warn('Filtering out invalid file:', file);
                     return false;
                 }
+                
+                // Filter out files with temporary IDs
+                if (typeof file.id === 'string' && file.id.startsWith('temp-')) {
+                    console.warn('Filtering out file with temporary ID:', file.id);
+                    return false;
+                }
+                
                 return true;
             });
         
@@ -1127,6 +1191,21 @@ export default function RegisterEscort() {
     };
 
     const handleVideo360Upload = (file) => {
+        if (!file || !file.id) {
+            console.error("Invalid 360 video file received:", file);
+            toast.error(t("invalid_file_upload"));
+            return;
+        }
+        
+        console.log("360 video uploaded:", file);
+        
+        // Ensure the file has a valid ID
+        if (typeof file.id === 'string' && file.id.startsWith('temp-')) {
+            console.error("Temporary ID detected in 360 video:", file.id);
+            toast.error(t("temporary_file_id"));
+            return;
+        }
+        
         setUploadedFiles(prev => ({
             ...prev,
             video360: file
@@ -1149,6 +1228,21 @@ export default function RegisterEscort() {
     };
 
     const handleVerificationUpload = (file) => {
+        if (!file || !file.id) {
+            console.error("Invalid verification file received:", file);
+            toast.error(t("invalid_file_upload"));
+            return;
+        }
+        
+        console.log("Verification photo uploaded:", file);
+        
+        // Ensure the file has a valid ID
+        if (typeof file.id === 'string' && file.id.startsWith('temp-')) {
+            console.error("Temporary ID detected in verification photo:", file.id);
+            toast.error(t("temporary_file_id"));
+            return;
+        }
+        
         setUploadedFiles(prev => ({
             ...prev,
             verification: file
