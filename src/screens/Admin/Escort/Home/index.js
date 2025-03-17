@@ -22,7 +22,7 @@ export default function EscortAdminHome() {
     <>
       {/* Desktop View */}
       <DesktopView>
-        <ContainerAuthenticated admin title={t("admin_side_option1")}>
+        <ContainerAuthenticated admin title={t("Dashboard")}>
           <AdminContainer>
             <AdminSideBar escort />
             <BodyContainer>

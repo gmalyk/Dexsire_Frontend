@@ -21,6 +21,9 @@ export const MobileView = styled.div`
 // Base styles for both views
 export const AdminContainer = styled.div.attrs({})`
   display: flex;
+  width: 100%;
+  padding-left: 0;
+  margin-left: 0;
 `;
 
 // Different styles for desktop and mobile
@@ -34,16 +37,22 @@ export const BodyContainer = styled.div.attrs({})`
   // Desktop-specific styles
   ${DesktopView} & {
     margin-right: 40px;
+    margin-left: 0;
+    padding-left: 0;
   }
   
   // Mobile-specific styles
   ${MobileView} & {
     margin-right: 0px;
+    margin-left: 0;
+    padding-left: 0;
     max-width: calc(100% - 60px);
   }
   
   @media(max-width: 767px) {
     margin-right: 0px;
+    margin-left: 0;
+    padding-left: 0;
     max-width: calc(100% - 60px);
   }
 `;
@@ -60,10 +69,10 @@ export const BodyContent = styled.div.attrs({})`
   
   // Mobile-specific styles
   ${MobileView} & {
-    padding: 12px;
+    padding: 12px 12px 12px 0;
   }
   
   @media(max-width: 767px) {
-    padding: 12px;
+    padding: 12px 12px 12px 0;
   }
 `;
