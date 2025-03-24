@@ -344,3 +344,21 @@ export const EndContent = styled.div.attrs({})`
     padding-bottom: 4px;
   }
 `;
+
+export const LocationContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+`;
+
+export const LocationBadge = styled.div`
+  background-color: white;
+  color: black;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;

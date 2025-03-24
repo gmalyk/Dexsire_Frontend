@@ -85,10 +85,7 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
       iconActive: "heart-active",
       action: handleLike
     },
-    {
-      icon: "message",
-      action: () => history.push(`chat/${profile?.id}`)
-    },
+    
     {
       icon: "bell",
       iconActive: "bell-active",

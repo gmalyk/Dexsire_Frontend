@@ -30,6 +30,17 @@ import PaymentMethods2 from './Google_Pay_Logo.png'
 import PaymentMethods3 from './Apple_Pay_logo.png'
 import styled from 'styled-components'
 
+// Add a styled component for section headings
+const SectionHeading = styled.div`
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 26px;
+  text-align: left;
+  color: ${p => p.theme.palette.colors.white}; // White color
+  margin-bottom: 8px;
+`
+
 const AddressSection = styled.div`
   color: white;
   display: flex;
@@ -90,6 +101,24 @@ const PaymentMethodsContainer = styled.div`
   margin: 4px 0;
   padding-left: 16px;
 `
+
+// Add a new styled component for footer buttons with borders
+const FooterButton = styled(Button)`
+  && {
+    .MuiButton-root, .MuiButtonBase-root {
+      border: 1px solid #888888 !important;
+    }
+  }
+`;
+
+// Create a styled component for the LangSelector to add a border
+const BorderedLangSelector = styled(LangSelector)`
+  && {
+    button {
+      border: 1px solid #888888 !important;
+    }
+  }
+`;
 
 export default function Footer() {
   const history = useHistory()
@@ -161,16 +190,16 @@ export default function Footer() {
       !user?.email
         ? { title: t('login_register'), icon: 'user', action: () => navigate('pre-login') }
         : null,
-      !user?.email
-        ? { title: t('announcement'), icon: 'megaphone', action: () => navigate('announcement') }
+      { title: t('announcement'), icon: 'megaphone', action: () => navigate('announcement') },
+      user?.email
+        ? { 
+            title: t('my_profile'), 
+            icon: 'lock', 
+            action: user?.model || user?.admin
+              ? () => setModal({ type: 'profile' })
+              : () => navigate('profile/customer')
+          }
         : null,
-      {
-        title: t('my_profile'),
-        icon: 'lock',
-        action: user?.model || user?.admin
-          ? () => setModal({ type: 'profile' })
-          : () => navigate('profile/customer'),
-      },
       user?.email
         ? { title: t('exit'), icon: 'exit', action: () => exit() }
         : null,
@@ -239,9 +268,7 @@ export default function Footer() {
           </FooterSection>
 
           <FooterSection>
-            <FooterSection>
-              {t('find_escorts_by_region')}
-            </FooterSection>
+            <SectionHeading>{t('find_escorts_by_region')}</SectionHeading>
             <FooterSectionOptions>
               {footerRegions.map((option, index) => (
                 <FooterText key={index} onClick={() => filterRegion(option)}>
@@ -252,7 +279,7 @@ export default function Footer() {
           </FooterSection>
 
           <FooterSection>
-            <FooterSection>{t('contact_us')}</FooterSection>
+            <SectionHeading>{t('contact_us')}</SectionHeading>
             <FooterSectionOptions>
               {footerContact.map((option, index) => (
                 <FooterText key={index}>
@@ -283,15 +310,17 @@ export default function Footer() {
                   small
                   leftIcon={m.icon}
                   onClick={m.action}
+                  bordered
                 >
                   {m.title}
                 </Button>
               ))}
-
-              {/* You had a LangSelector in your code */}
-              <LangSelector footer />
+              
+              {/* Replace LangSelector with bordered version */}
+              <LangSelector footer bordered />
             </FooterButtonContainer>
-
+            
+            {/* Keep this button without a border */}
             <Button
               outlineGradient
               width={'313px'}

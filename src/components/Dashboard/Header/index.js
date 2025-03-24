@@ -6,7 +6,8 @@ import {
     AppLogo,
     MenuIcon,
     MenuItemsContainer,
-    MenuButtonContainer
+    MenuButtonContainer,
+    SearchButtonStyled
 } from "./styled";
 import { Icon } from "ui/styled";
 import Button from "components/Form/Button";
@@ -35,6 +36,13 @@ export default function DashboardHeader() {
     // console.log('user', user)
 
     const [opened, setOpened] = useState(false)
+    const [showSearch, setShowSearch] = useState(false);
+    
+    const handleSearchClick = () => {
+        setShowSearch(!showSearch);
+        // You can implement additional search functionality here
+        console.log("Search button clicked");
+    };
 
     // const buttons = []
     const buttons = useMemo(() => [
@@ -61,6 +69,9 @@ export default function DashboardHeader() {
                         }
                         <LangSelector />
                     </MenuButtonContainer>
+                    <SearchButtonStyled onClick={handleSearchClick}>
+                        <img src="/icons/search.svg" alt="Search" />
+                    </SearchButtonStyled>
                     <MenuIcon src={`/icons/menu.svg`} alt="menu-icon" onClick={() => setOpened(true)} />
                 </MenuItemsContainer>
             </DashboardHeaderContainer>

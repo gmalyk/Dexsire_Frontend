@@ -425,8 +425,8 @@ export default function UploadFile({
             </UploadContainer>
 
             <AppearanceTitleContainer hasFiles={safeFiles.length > 0}>
-                <AppearanceInfoText>{t("supported_files")}: {supportedFiles}</AppearanceInfoText>
-                <AppearanceInfoText>{t("maximum_file_size")}: {maxFileSize}</AppearanceInfoText>
+                <AppearanceInfoText>{t("Supported files")}: {supportedFiles}</AppearanceInfoText>
+                <AppearanceInfoText>{t("Maximum file size")}: {maxFileSize}</AppearanceInfoText>
             </AppearanceTitleContainer>
 
             {safeFiles.length > 0 && (

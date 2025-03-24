@@ -1,17 +1,20 @@
 import { ReadObject, SaveObject } from './storage'
 
 const ENDPOINTS = {
-	'localhost' : 'http://localhost:1337/api',
+	// 'localhost' : 'http://localhost:1337/api',
+	'localhost' : 'https://api.dexsire.com/api',
 	'dexsire.com' : 'https://api.dexsire.com/api'
 } 
 
 const BUCKET_ENDPOINTS = {
-	'localhost' : 'http://localhost:1337',
+	// 'localhost' : 'http://localhost:1337',
+	'localhost' : 'https://api.dexsire.com',
 	'dexsire.com' : 'https://api.dexsire.com'
 } 
  
-const SOCKET_ENDPOINTS = {
-	'localhost' : 'http://localhost:1337',
+const SOCKET_ENDPOINTS =  {
+	// 'localhost' : 'http://localhost:1337',
+	'localhost' : 'https://api.dexsire.com',
 	'dexsire.com' : 'https://api.dexsire.com'
 }
  
@@ -35,99 +38,53 @@ export const SOCKET_ENDPOINT = envEndpoint(SOCKET_ENDPOINTS)
 export const CHECKOUT_ENDPOINT = envEndpoint(CHECKOUT_ENDPOINTS)
 
 export const GetHeaders = async authenticated => {
-	const headers = { 
-		'Content-Type': 'application/json',
-	}
-	
-	// Add API Token for public endpoints
-	headers['Authorization'] = `Bearer ${process.env.REACT_APP_API_TOKEN}`
-	
-	// Add JWT token for authenticated endpoints if available
+	const headers = { 'Content-Type': 'application/json' }
 	const authentication = await ReadObject('authentication')
 	if (authenticated && authentication.jwt) {
-		headers['Authorization'] = `Bearer ${authentication.jwt}`
+		headers.Authorization = `Bearer ${authentication.jwt}`
 	}
-	
 	return { headers }
 }
 
 export const ServerFetch = async (url, options, authenticated) => {
 	const { headers } = await GetHeaders(authenticated)
-	console.log('Fetching:', url, 'with options:', options)
+	// console.info(url, options, headers)
 	try{
-		const response = await fetch(url, {
-			...options,
-			headers: {
-				...headers,
-				'Content-Type': 'application/json'
-			}
-		}) 
-		const data = await response.json()
-		
-		if (!response.ok) {
-			console.error('Server error:', {
-				status: response.status,
-				data: data
-			})
-			return {
-				error: true,
-				status: response.status,
-				message: data?.error?.message || 'An error occurred'
-			}
-		}
-		
+		const response = await fetch(url, { ...options, headers }) 
 		if (response.statusCode === 403 && authenticated) {
 			await SaveObject('authentication', {})
 		}
-		return data
+		try{
+			return await response.json()
+		}catch(err){
+			console.log('ServerParseError', err)
+			return { error:true, message:response }
+		}  
 	}catch(error){
-		console.error('ServerFetchError:', error)
-		return {
-			error: true,
-			message: error.message
-		}
+		console.log('ServerFetchError', error)
+		return false;
 	}
 }
 
 export const GET = async (path, authenticated = false) => {
-	const url = `${API_ENDPOINT}${path}`;
-	console.log('Making GET request to:', url);
-	
-	try {
-		const response = await ServerFetch(
-			url,
-			{ method: 'GET' },
-			authenticated
-		);
-		
-		console.log('GET Response:', response);
-		return response;
-	} catch (error) {
-		console.error('GET error:', error);
-		return { error: true, message: error.message };
-	}
+	return await ServerFetch(
+		`${API_ENDPOINT}${path}`,
+		{
+			method: 'GET'
+		},
+		authenticated
+	)
 }
 
 export const POST = async (path, body, authenticated = false) => {
-	const url = `${API_ENDPOINT}${path}`;
-	console.log('Making POST request to:', url, 'with body:', body);
-	
-	try {
-		const response = await ServerFetch(
-			url,
-			{
-				method: 'POST',
-				body: JSON.stringify(body)
-			},
-			authenticated
-		);
-		
-		console.log('POST Response:', response);
-		return response;
-	} catch (error) {
-		console.error('POST error:', error);
-		return { error: true, message: error.message };
-	}
+	return await ServerFetch(
+		`${API_ENDPOINT}${path}`,
+		{
+			method: 'POST',
+			body: JSON.stringify(body)
+		},
+		authenticated
+	)
 }
 
 export const PUT = async (path, body, authenticated = false) => {
@@ -158,7 +115,6 @@ export const ReadAddressesByZipCode = async (zipCode) => {
     }catch(err){ return false; }
 }
 
-    //test the db connection
 
 
 export const PostImage = async (fileToUpload) => {
@@ -206,62 +162,3 @@ export const getUserIp = async () => {
 	const data = await response.json();
 	return data.ip;
 };
-
-export const register = async (userData) => {
-	return await POST('/api/auth/local/register', {
-		username: userData.email,
-		email: userData.email,
-		password: userData.password
-	});
-}
-
-export const DoRegister = async (userData) => {
-	console.log('Starting registration with:', userData);
-	
-	// Format the registration data according to Strapi's requirements
-	const registrationData = {
-		username: userData.email?.replace(/ /g, ''),
-		email: userData.email?.replace(/ /g, ''),
-		password: userData.password,
-		name: userData.name,
-		provider: 'local',
-		confirmed: true
-	};
-	
-	console.log('Sending registration data:', registrationData);
-	
-	return await POST('/api/auth/local/register', registrationData);
-}
-
-export const DoLogin = async (credentials) => {
-	return await POST('/api/auth/local', {
-		identifier: credentials.identifier,
-		password: credentials.password
-	});
-}
-
-export const Create = async (path, data) => {
-	return await POST(`/${path}`, data, true);
-}
-
-export const UpdateMe = async (data) => {
-	return await PUT('/users/me', data, true);
-}
-
-// Update the registration flow to handle the escort-specific data
-export const completeEscortProfile = async (userId, escortData) => {
-	return await PUT(`/api/users/${userId}`, {
-		role: 3,  // Escort role
-		plan: 1,  // Default plan
-		name: escortData.name,
-		confirmed: true,
-		blocked: false
-	}, true);
-}
-
-// Function to get all roles
-export const getRoles = async () => {
-    const response = await GET('/users-permissions/roles');
-    console.log('Available roles:', response); // This will show all roles and their IDs
-    return response;
-}

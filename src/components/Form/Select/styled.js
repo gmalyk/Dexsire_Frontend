@@ -6,13 +6,13 @@ import InputLabel from '@mui/material/InputLabel';
 
 export const MaterialSelect = styled(Select)(({ theme, ...props }) => ({
   [`& .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: props.borderBackground ? theme.palette.borderBackground.main : theme.palette.white.main,
+    borderColor: 'white',
   },
   [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: props.borderBackground ? theme.palette.borderBackground.main : theme.palette.white.main,
+    borderColor: 'white',
   },
   [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: props.borderBackground ? theme.palette.borderBackground.main : theme.palette.white.main,
+    borderColor: 'white',
   },
   [`& .MuiSelect-icon`]: {
     color: theme.palette.white.main,
@@ -25,7 +25,7 @@ export const MaterialSelect = styled(Select)(({ theme, ...props }) => ({
     pointerEvents: 'none',
     
     [`& .${outlinedInputClasses.notchedOutline}`]: {
-      borderColor: 'rgba(128, 128, 128, 0.3)',
+      borderColor: 'rgba(255, 255, 255, 0.5)',
     },
     
     '& .MuiSelect-icon': {
@@ -35,7 +35,7 @@ export const MaterialSelect = styled(Select)(({ theme, ...props }) => ({
     // Prevent hover effects when disabled
     '&:hover': {
       [`& .${outlinedInputClasses.notchedOutline}`]: {
-        borderColor: 'rgba(128, 128, 128, 0.3)',
+        borderColor: 'rgba(255, 255, 255, 0.5)',
       },
     },
   },

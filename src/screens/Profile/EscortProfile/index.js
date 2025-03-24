@@ -1,5 +1,5 @@
 import ContainerAuthenticated from 'containers/Authenticated'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Background, BodyContainer, BodyContent, EditContainer } from './styled'
 import Footer from 'components/Footer'
 import Button from 'components/Form/Button'
@@ -41,12 +41,16 @@ import {
     AppearanceText,
     UploadFileContainer,
 } from './styled'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useParams, useHistory } from 'react-router-dom'
 import { parseStrapiImage } from 'utils'
 import { toast } from 'react-toastify'
+import { CoreContext } from 'context/CoreContext'
 
 export default function EscortProfile() {
   const { t } = useI18n()
+  const { user } = useContext(CoreContext)
+  const history = useHistory()
+  const navigate = (to) => history.push(`/${to}`)
   const [isEditing, setIsEditing] = useState(false)
   const [preview, setPreview] = useState(null)
   const [uploadedFile, setUploadedFile] = useState(null)
@@ -114,6 +118,15 @@ export default function EscortProfile() {
 
   // Handle follow/unfollow
   const handleFollowToggle = () => {
+    // Check if user is logged in
+    if (!user) {
+      // Redirect to login page
+      window.location.href = '/login';
+      toast.info('Please login to follow this profile')
+      return
+    }
+    
+    // If user is logged in, proceed with follow/unfollow
     setIsFollowing(!isFollowing)
     // Here you would typically make an API call to update the follow status
   }
@@ -219,38 +232,36 @@ export default function EscortProfile() {
                     <ProfileTopRow>
                         <ProfileAvatar src={currentProfile.images[0]} />
                         <ProfileInfo>
-                            <ProfileName>
-                                <span>{currentProfile.name.split(' ')[0]}</span>
-                                <span>{currentProfile.name.split(' ')[1]}</span>
+                            <ProfileName style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+                                {currentProfile.name}
                             </ProfileName>
+                            <HeaderActions>
+                                <NavIcon 
+                                    icon="heart" 
+                                    src={isLiked ? "/icons/heart-white.svg" : "/icons/heart.svg"} 
+                                    active={isLiked}
+                                    onClick={handleLikeToggle}
+                                    style={{
+                                        backgroundColor: isLiked ? '#FF4D4F' : 'rgba(0, 0, 0, 0.3)',
+                                        border: isLiked ? 'none' : '1px solid rgba(255, 255, 255, 0.2)',
+                                        width: '32px',
+                                        height: '32px'
+                                    }}
+                                />
+                                <NavIcon 
+                                    icon="bell" 
+                                    src={isNotified ? "/icons/bell-white.svg" : "/icons/bell.svg"} 
+                                    active={isNotified}
+                                    onClick={handleNotificationToggle}
+                                    style={{
+                                        backgroundColor: isNotified ? '#FF4D4F' : 'rgba(0, 0, 0, 0.3)',
+                                        border: isNotified ? 'none' : '1px solid rgba(255, 255, 255, 0.2)',
+                                        width: '32px',
+                                        height: '32px'
+                                    }}
+                                />
+                            </HeaderActions>
                         </ProfileInfo>
-                        <HeaderActions>
-                            <NavIcon 
-                              icon="heart" 
-                              src={isLiked ? "/icons/heart-white.svg" : "/icons/heart.svg"} 
-                              active={isLiked}
-                              onClick={handleLikeToggle}
-                              style={{
-                                backgroundColor: isLiked ? '#FF4D4F' : 'rgba(0, 0, 0, 0.3)',
-                                border: isLiked ? 'none' : '1px solid rgba(255, 255, 255, 0.2)'
-                              }}
-                            />
-                            <NavIcon 
-                              icon="message" 
-                              src="/icons/message.svg" 
-                              onClick={handleMessage}
-                            />
-                            <NavIcon 
-                              icon="bell" 
-                              src={isNotified ? "/icons/bell-white.svg" : "/icons/bell.svg"} 
-                              active={isNotified}
-                              onClick={handleNotificationToggle}
-                              style={{
-                                backgroundColor: isNotified ? '#FF4D4F' : 'rgba(0, 0, 0, 0.3)',
-                                border: isNotified ? 'none' : '1px solid rgba(255, 255, 255, 0.2)'
-                              }}
-                            />
-                        </HeaderActions>
                     </ProfileTopRow>
                     
                     <ProfileBottomRow>
@@ -267,20 +278,20 @@ export default function EscortProfile() {
 
                 <ProfileDescription>{currentProfile.description}</ProfileDescription>
 
-                <ProfileStats>
-                    <StatItem>
+                <ProfileStats style={{ borderColor: 'white' }}>
+                    <StatItem style={{ borderColor: 'white' }}>
                         <StatValue>{currentProfile.stats?.posts || currentProfile.posts}</StatValue>
                         <StatLabel>posts</StatLabel>
                     </StatItem>
-                    <StatItem>
+                    <StatItem style={{ borderColor: 'white' }}>
                         <StatValue>{currentProfile.stats?.videos || currentProfile.videos}</StatValue>
                         <StatLabel>videos</StatLabel>
                     </StatItem>
-                    <StatItem>
+                    <StatItem style={{ borderColor: 'white' }}>
                         <StatValue>{currentProfile.stats?.likes || currentProfile.likes}</StatValue>
                         <StatLabel>likes</StatLabel>
                     </StatItem>
-                    <StatItem>
+                    <StatItem style={{ borderColor: 'white' }}>
                         <StatValue>{currentProfile.stats?.comments || currentProfile.comments}</StatValue>
                         <StatLabel>comments</StatLabel>
                     </StatItem>
@@ -291,6 +302,7 @@ export default function EscortProfile() {
                         outlineGradient={!isFollowing}
                         color={isFollowing ? 'white' : undefined}
                         onClick={handleFollowToggle}
+                        disabled={!user}
                     >
                         {isFollowing ? 'Followed' : 'Follow'}
                     </FollowButton>

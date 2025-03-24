@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import InputMask from 'react-input-mask';
+import styled from 'styled-components';
 
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -20,6 +21,32 @@ import FormControl from '@mui/material/FormControl';
 import { ThemedComponent } from "ui/theme";
 import { Icon } from "ui/styled";
 
+const PasswordWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  
+  /* iOS-specific styles to prevent password suggestions */
+  &.no-suggestions input[type="password"],
+  &.no-suggestions input[type="text"] {
+    -webkit-text-security: disc;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-modify: read-write-plaintext-only;
+  }
+  
+  /* Add a pseudo-element to intercept iOS suggestion UI */
+  &.no-suggestions::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
+    z-index: 10;
+  }
+`;
 
 export const Input = React.forwardRef(({ 
     type, 
@@ -33,6 +60,7 @@ export const Input = React.forwardRef(({
     textarea, 
     noHolder, 
     spaced, 
+    registration,
     ...props 
 }, ref) => {
     const [visible, setVisible] = useState(false)
@@ -40,12 +68,17 @@ export const Input = React.forwardRef(({
     const handleClickShowPassword = (e) => {
         e.preventDefault()
         setVisible(!visible)
+        if (props.onTogglePasswordVisibility) {
+            props.onTogglePasswordVisibility(!visible)
+        }
     }
 
     const passwordProps = type === 'password' ? {
+        name: `pw_${Math.random().toString(36).substr(2, 9)}`,
+        id: `pw_${Math.random().toString(36).substr(2, 9)}`,
         autoComplete: "new-password",
         autoCorrect: "off",
-        autoCapitalize: "off",
+        autoCapitalize: "none",
         spellCheck: "false",
         "data-lpignore": "true",
         "data-1p-ignore": "true",
@@ -53,13 +86,26 @@ export const Input = React.forwardRef(({
         "data-private": "true",
         "aria-hidden": "true",
         "aria-autocomplete": "none",
-        name: `pwd_${Math.random().toString(36).substr(2, 9)}`,
+        readOnly: true,
+        onFocus: (e) => {
+            e.target.removeAttribute('readonly');
+            e.target.setAttribute('autocomplete', 'off');
+            setTimeout(() => {
+                const val = e.target.value;
+                e.target.value = '';
+                e.target.value = val;
+            }, 0);
+        },
+        onBlur: (e) => {
+            e.target.setAttribute('readonly', 'true');
+        },
+        inputMode: "verbatim",
         "data-name": name,
         style: {
-            WebkitTextSecurity: type === 'password' ? 'disc' : 'none',
+            WebkitTextSecurity: visible ? 'none' : 'disc',
             fontFamily: '-apple-system !important',
             WebkitAppearance: 'none',
-            appearance: 'none'
+            appearance: 'none',
         }
     } : {};
 
@@ -67,46 +113,50 @@ export const Input = React.forwardRef(({
 
     return (
         <ThemedComponent>
-            <FormControl fullWidth variant={outline ? "outlined" : "outlined"}>
-                {!props.label ? null : <InputLabel>{props.label}</InputLabel>}
-                <GInput
-                    ref={ref}
-                    type={visible ? 'text' : type}
-                    placeholder={noHolder ? placeholder : ''}
-                    value={value}
-                    onChange={onChange}
-                    name={name}
-                    disabled={disabled}
-                    outline={outline}
-                    error={error}
-                    multiline={type === 'textarea'}
-                    maxRows={2}
-                    textarea={type === 'textarea'}
-                    disableUnderline
-                    {...passwordProps}
-                    {...props}
-                    onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
-                    startAdornment={
-                        !props.startIcon ? null :
-                            <InputAdornment position="start">
-                                <IconButton>
-                                    <Icon icon={props.startIcon} />
-                                </IconButton>
-                            </InputAdornment>
-                    }
-                    endAdornment={
-                        type === 'password' && (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    onClick={handleClickShowPassword}
-                                >
-                                    {visible ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }
-                />
-            </FormControl>
+            <PasswordWrapper className={type === 'password' ? 'no-suggestions' : ''}>
+                <FormControl fullWidth variant={outline ? "outlined" : "outlined"}>
+                    {!props.label ? null : <InputLabel>{props.label}</InputLabel>}
+                    <GInput
+                        ref={ref}
+                        type={visible ? 'text' : type}
+                        placeholder={noHolder ? placeholder : ''}
+                        value={value}
+                        onChange={onChange}
+                        name={name}
+                        disabled={disabled}
+                        outline={outline}
+                        error={error}
+                        multiline={type === 'textarea'}
+                        maxRows={2}
+                        textarea={type === 'textarea'}
+                        disableUnderline
+                        registration={registration}
+                        {...passwordProps}
+                        {...props}
+                        onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
+                        startAdornment={
+                            !props.startIcon ? null :
+                                <InputAdornment position="start">
+                                    <IconButton>
+                                        <Icon icon={props.startIcon} />
+                                    </IconButton>
+                                </InputAdornment>
+                        }
+                        endAdornment={
+                            (type === 'password' || props.password) ? (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={handleClickShowPassword}
+                                    >
+                                        {visible ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ) : null
+                        }
+                        className={registration ? 'registration-form' : ''}
+                    />
+                </FormControl>
+            </PasswordWrapper>
         </ThemedComponent>
     );
 });

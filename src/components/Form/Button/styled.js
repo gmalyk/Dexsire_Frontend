@@ -17,7 +17,7 @@ export const Load = styledCmp(ReactLoading).attrs(props => ({
 }))`          
 `;
 
-export const ColorButton = styled(Button)(({ theme, nospace, small, width, white }) => ({
+export const ColorButton = styled(Button)(({ theme, nospace, small, width, white, bordered }) => ({
     width: width ? width : '100%',
     height: small ? '40px' : '51px',
     marginTop: nospace ? '0px' : '16px',
@@ -28,7 +28,8 @@ export const ColorButton = styled(Button)(({ theme, nospace, small, width, white
     textTransform: 'none',
     color: white ? theme.palette.primary.contrastText : '',
     whiteSpace: 'nowrap',
-
+    border: bordered ? '1px solid #888888' : 'none',
+    
     '& .MuiButton-label': {
         fontWeight: 700,
     }
@@ -66,6 +67,8 @@ export const ButtonGradient = styledCmp.div`
         ${props => props.theme.palette.gradient.secondary}
     );
     transition: transform 0.3s ease, background 0.3s ease;
+    border: ${props => props.bordered ? '1px solid #888888' : 'none'};
+    
     > div {
         width: 100%;
         height: 100%;

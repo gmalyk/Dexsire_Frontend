@@ -1,12 +1,12 @@
 import styledCmp from 'styled-components'
 
-import { styled } from '@mui/material/styles';
+import { styled as muiStyled } from '@mui/material/styles';
 import Input from '@mui/material/Input'; // standard (material)
 // import Input from '@mui/material/FilledInput';
 import InputOutline from '@mui/material/OutlinedInput';
 
 
-export const MaterialInput = styled(Input)(({ theme, ...props }) => ({
+export const MaterialInput = muiStyled(Input)(({ theme, registration, ...props }) => ({
   background: theme.palette.primary.main,
   height: props.textarea ? '176px' : '56px',
   borderRadius: props.textarea ? '40px' : '100px',
@@ -15,7 +15,8 @@ export const MaterialInput = styled(Input)(({ theme, ...props }) => ({
   lineHeight: '24px',
   fontFamily: 'Inter',
   padding: props.textarea ? '24px 16px ' : props.noHolder ? '0' : '0 32px',
-  borderColor: theme.palette.borderBackground.main,
+  borderColor: 'white',
+  border: '1px solid white',
   '-webkit-text-size-adjust': '100%',
 
   '& .MuiInputBase-input': {
@@ -50,35 +51,47 @@ export const MaterialInput = styled(Input)(({ theme, ...props }) => ({
   },
 
   '&[type="password"]': {
-    '&::-webkit-credentials-auto-fill-button': {
+    '&::-webkit-credentials-auto-fill-button, &::-webkit-contacts-auto-fill-button, &::-webkit-strong-password-auto-fill-button, &::-webkit-caps-lock-indicator': {
       display: 'none !important',
       visibility: 'hidden !important',
       position: 'absolute !important',
-      right: '0 !important'
+      right: '0 !important',
+      pointerEvents: 'none !important',
+      opacity: '0 !important',
+      width: '0 !important',
+      height: '0 !important',
+      margin: '0 !important',
+      padding: '0 !important',
+      border: 'none !important',
+      appearance: 'none !important',
+      background: 'transparent !important',
     },
-    '&::-webkit-contacts-auto-fill-button': {
+    
+    '&::-webkit-credentials-auto-fill-button:hover, &::-webkit-contacts-auto-fill-button:hover, &::-webkit-strong-password-auto-fill-button:hover': {
       display: 'none !important',
-      visibility: 'hidden !important'
+      visibility: 'hidden !important',
+      pointerEvents: 'none !important',
+      opacity: '0 !important',
     },
-    '&::-webkit-strong-password-auto-fill-button': {
-      display: 'none !important',
-      visibility: 'hidden !important'
-    },
+    
     '-webkit-text-security': props.type === 'text' ? 'none' : 'disc',
     'font-family': '-apple-system !important',
     '-webkit-appearance': 'none',
-    'appearance': 'none'
+    'appearance': 'none',
+    
+    '-webkit-user-modify': 'read-write-plaintext-only',
   },
 
-  '&:-webkit-autofill': {
+  '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active': {
     '-webkit-box-shadow': '0 0 0 30px #000 inset !important',
     '-webkit-text-fill-color': `${theme.palette.primary.contrastText} !important`,
-    'transition': 'background-color 5000s ease-in-out 0s'
+    'transition': 'background-color 5000s ease-in-out 0s',
+    'caret-color': `${theme.palette.primary.contrastText} !important`,
   }
 }));
 
 
-export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) => ({
+export const MaterialInputOutline = muiStyled(InputOutline)(({ theme, registration, ...props }) => ({
   height: props.textarea ? '176px' : '56px',
   borderRadius: props.textarea ? '40px' : '100px',
   fontSize: '16px',
@@ -88,27 +101,29 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
   padding:  props.spaced ?  '24px 46px' : props.textarea ? '24px 16px ' : '0 32px',
   alignItems: props.textarea ? 'flex-start ' : 'center',
   background: 'transparent',
-  borderColor: theme.palette.borderBackground.main,
+  borderColor: 'white',
   color: theme.palette.primary.contrastText,
   resize: 'none',
   '-webkit-text-size-adjust': '100%',
 
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.borderBackground.main,
+    borderColor: 'white',
+    borderWidth: '1px',
   },
 
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.borderBackground.main,
+    borderColor: 'white',
+    borderWidth: '1px',
   },
 
   '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { 
-    borderColor: theme.palette.borderBackground.main,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
     color: theme.palette.white.main,
   },
 
 
   '&:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.borderBackground.main,
+    borderColor: 'white',
   },
 
   '& .MuiInputBase-input': {
@@ -143,28 +158,43 @@ export const MaterialInputOutline = styled(InputOutline)(({ theme, ...props }) =
   },
 
   '&[type="password"]': {
-    '&::-webkit-credentials-auto-fill-button': {
+    '&::-webkit-credentials-auto-fill-button, &::-webkit-contacts-auto-fill-button, &::-webkit-strong-password-auto-fill-button, &::-webkit-caps-lock-indicator': {
+      display: 'none !important',
+      visibility: 'hidden !important',
+      position: 'absolute !important',
+      right: '0 !important',
+      pointerEvents: 'none !important',
+      opacity: '0 !important',
+      width: '0 !important',
+      height: '0 !important',
+      margin: '0 !important',
+      padding: '0 !important',
+      border: 'none !important',
+      appearance: 'none !important',
+      background: 'transparent !important',
+    },
+    
+    '&::-webkit-credentials-auto-fill-button:hover, &::-webkit-contacts-auto-fill-button:hover, &::-webkit-strong-password-auto-fill-button:hover': {
       display: 'none !important',
       visibility: 'hidden !important',
       pointerEvents: 'none !important',
-      position: 'absolute !important',
-      right: '0 !important'
+      opacity: '0 !important',
     },
-    '&::-webkit-contacts-auto-fill-button': {
-      display: 'none !important',
-      visibility: 'hidden !important',
-      pointerEvents: 'none !important'
-    },
-    '&::-webkit-strong-password-auto-fill-button': {
-      display: 'none !important',
-      visibility: 'hidden !important',
-      pointerEvents: 'none !important'
-    },
+    
     '-webkit-text-security': props.type === 'text' ? 'none' : 'disc',
     'font-family': '-apple-system !important',
     '-webkit-appearance': 'none',
-    'appearance': 'none'
+    'appearance': 'none',
+    
+    '-webkit-user-modify': 'read-write-plaintext-only',
   },
+
+  '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active': {
+    '-webkit-box-shadow': '0 0 0 30px #000 inset !important',
+    '-webkit-text-fill-color': `${theme.palette.primary.contrastText} !important`,
+    'transition': 'background-color 5000s ease-in-out 0s',
+    'caret-color': `${theme.palette.primary.contrastText} !important`,
+  }
 }));
 
 
@@ -177,4 +207,42 @@ export const InputError = styledCmp.div`
     font-size: 12px;
     margin-top: 4px;
     font-family: 'Inter', sans-serif;
+`;
+
+// Update the input styling to have white borders for registration forms
+export const InputContainer = styledCmp.div`
+  position: relative;
+  width: 100%;
+  
+  // Add a class for registration inputs with white borders
+  &.registration-input {
+    input {
+      border-color: white !important;
+    }
+  }
+`;
+
+export const StyledInput = styledCmp.input`
+  width: 100%;
+  height: 51px;
+  background: transparent;
+  border: 1px solid ${props => props.outline ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'};
+  border-radius: 100px;
+  padding: ${props => props.startIcon ? '0 24px 0 48px' : props.endIcon ? '0 48px 0 24px' : '0 24px'};
+  color: ${props => props.theme.palette.colors.white};
+  font-size: 16px;
+  
+  // Add specific styling for registration inputs
+  .registration-form & {
+    border-color: white;
+  }
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: white;
+  }
 `;

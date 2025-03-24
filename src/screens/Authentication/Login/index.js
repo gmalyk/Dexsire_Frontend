@@ -35,6 +35,8 @@ export default function Login() {
     const formValue = ref => { return form?.[ref] ? form?.[ref] : ''; }
     const changeForm = (value, ref) => { setForm({ ...form, [ref]: value }); }
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const valid = (verbose = false) => {
 
         if (!formValue('identifier') || !formValue('identifier').length) {
@@ -65,8 +67,7 @@ export default function Login() {
 
     const completeLogin = (user) => {
         if(user?.admin || user?.model){
-            navigate('')  
-            setModal({ type: 'profile' }); 
+            navigate('admin/escort')
             return;
         }
         navigate('profile/customer') 
@@ -80,12 +81,22 @@ export default function Login() {
                         <Container>
                             <FormTitle>{ t("login") }</FormTitle>
                             <LoginText>
-                                {t("Enter your username and\npassword.")}
+                                {t("Enter your username and password")}
                             </LoginText>
                         </Container>
                         <FormSpacer />
                         <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')} startIcon={"letter"} />
-                        <Input placeholder={ t("password") } type="password" password noHolder value={formValue('password')} onChange={e => changeForm(e.target.value, 'password')} onSubmitEditing={login} startIcon={"lock-medium"} />
+                        <Input 
+                            placeholder={ t("password") } 
+                            type={showPassword ? "text" : "password"}
+                            password
+                            noHolder
+                            value={formValue('password')}
+                            onChange={e => changeForm(e.target.value, 'password')}
+                            onSubmitEditing={login}
+                            startIcon={"lock-medium"}
+                            onTogglePasswordVisibility={(visible) => setShowPassword(visible)}
+                        />
                         <ForgotLink onClick={() => navigate('forgot')}>{ t("i_forgot_my_password") }</ForgotLink>
                         <Button 
                             primary 

@@ -93,7 +93,7 @@ export const FormContainer = styled.div.attrs({
         width: 100%;
         height: 48px;
         background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid white;
         border-radius: 100px;
         padding: 0 24px;
         color: ${props => props.theme.palette.colors.white};
@@ -119,11 +119,11 @@ export const FormContainer = styled.div.attrs({
         color: ${props => props.theme.palette.colors.white};
 
         fieldset {
-            border-color: rgba(255, 255, 255, 0.1);
+            border-color: white;
         }
 
         &:hover fieldset {
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: white;
         }
 
         &.Mui-focused fieldset {

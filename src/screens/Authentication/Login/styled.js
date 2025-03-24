@@ -98,19 +98,24 @@ export const LoginContent = styled.div.attrs({
     }
 `;
 
-export const LoginText = styled.div`
-    font-size: 32px;
-    line-height: 40px;
-    font-weight: 700;
-    color: ${props => props.theme.palette.colors.white};
-    text-align: center;
-    margin: 0 auto;
-    white-space: pre-line;
+export const LoginText = styled.div.attrs({
+})`
+  color: ${props => props.theme.palette.colors.white};
+  font-size: 24px;
+  font-weight: 400;
+  text-align: center;
+  white-space: pre-line;
+  margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 20px; // Smaller text on mobile
+    white-space: normal; // Allow text to wrap naturally
     
-    @media (max-width: 768px) {
-        font-size: 24px;
-        line-height: 32px;
-        width: 280px;  // Adjusted width to ensure proper break point
-        margin-bottom: 32px;
+    // Force two-line display
+    &:after {
+      content: '';
+      display: block;
+      margin-top: 8px;
     }
+  }
 `;

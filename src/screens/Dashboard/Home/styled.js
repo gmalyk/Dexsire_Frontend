@@ -118,3 +118,37 @@ export const HomeContainer = styled.div`
         padding: 12px;
     }
 `;
+
+export const SearchButton = styled.button`
+    position: fixed;
+    top: 16px;
+    right: 60px; /* Position it between language button and menu button */
+    z-index: 1000;
+    background: #000000; /* Black background */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    
+    &:hover {
+        background-color: #333333;
+        transform: scale(1.05);
+    }
+    
+    img {
+        width: 18px;
+        height: 18px;
+    }
+    
+    @media (max-width: 768px) {
+        right: 50px; /* Adjust for mobile */
+        width: 36px;
+        height: 36px;
+    }
+`;

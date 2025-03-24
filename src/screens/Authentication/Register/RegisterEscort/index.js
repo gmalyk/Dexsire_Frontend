@@ -54,6 +54,7 @@ import {
     AppearanceTitle as AppearanceTitleStyled,
     AppearanceText as AppearanceTextStyled,
 } from 'components/Appearance/styled'
+import CustomPasswordInput from 'components/Form/CustomPasswordInput';
 
 const SERVICES_OPTIONS = [
   "69",
@@ -102,31 +103,224 @@ const SERVICES_OPTIONS = [
 
 const DEFAULT_OPTIONS = {
     services: SERVICES_OPTIONS,
-    regions: [
-        { id: 2, title: 'Bern' },
-        { id: 6, title: 'Geneva' },
-        
-        
-        { id: 3, title: 'Luzern' },
-        
-        { id: 5, title: 'Schwyz' },
-        { id: 4, title: 'Uri' },
-        { id: 1, title: 'Zürich' },
-        
-    ],
-    cities: [
-        { id: 1, title: 'Zürich City', region: { data: { id: 1 } } },
-        { id: 2, title: 'Winterthur', region: { data: { id: 1 } } },
-        { id: 3, title: 'Uster', region: { data: { id: 1 } } },
-        { id: 4, title: 'Bern City', region: { data: { id: 2 } } },
-        { id: 5, title: 'Thun', region: { data: { id: 2 } } },
-        { id: 6, title: 'Biel', region: { data: { id: 2 } } },
-        { id: 7, title: 'Luzern City', region: { data: { id: 3 } } },
-        { id: 8, title: 'Emmen', region: { data: { id: 3 } } },
-        { id: 9, title: 'Uri City', region: { data: { id: 4 } } },
-        { id: 10, title: 'Schwyz City', region: { data: { id: 5 } } },
-        { id: 11, title: 'Geneva City', region: { data: { id: 6 } } }
-    ],
+    
+    
+        regions: [
+            { id: 11, title: 'Aarau' },
+            { id: 12, title: 'Basel' },
+            { id: 2, title: 'Bern' },
+            { id: 10, title: 'Fribourg' },
+            { id: 6, title: 'Geneva' },
+            { id: 19, title: 'Glaris' },
+            { id: 14, title: 'Graubünden' },
+            { id: 3, title: 'Luzern' },
+            { id: 9, title: 'Neuchâtel' },
+            { id: 18, title: 'Nidwald' },
+            { id: 5, title: 'Schwyz' },
+            { id: 13, title: 'Solothurn' },
+            { id: 16, title: 'St. Gallen' },
+            { id: 17, title: 'Ticino' },
+            { id: 15, title: 'Thurgau' },
+            { id: 4, title: 'Uri' },
+            { id: 8, title: 'Valais' },
+            { id: 7, title: 'Vaud' },
+            { id: 1, title: 'Zürich' }
+        ],
+        cities: [
+            // Aarau cities - alphabetically sorted
+            { id: 82, title: 'Aarau City', region: { data: { id: 11 } } },
+            { id: 98, title: 'Aesch', region: { data: { id: 12 } } },
+            { id: 13, title: 'Aigle', region: { data: { id: 7 } } },
+            { id: 107, title: 'Adliswil', region: { data: { id: 1 } } },
+            { id: 99, title: 'Allschwil', region: { data: { id: 12 } } },
+            { id: 165, title: 'Altstätten', region: { data: { id: 16 } } },
+            { id: 46, title: 'Aproz', region: { data: { id: 8 } } },
+            { id: 160, title: 'Arbon', region: { data: { id: 15 } } },
+            { id: 47, title: 'Ardon', region: { data: { id: 8 } } },
+            { id: 143, title: 'Arosa', region: { data: { id: 14 } } },
+            { id: 172, title: 'Ascona', region: { data: { id: 17 } } },
+            { id: 14, title: 'Aubonne', region: { data: { id: 7 } } },
+            { id: 83, title: 'Baden', region: { data: { id: 11 } } },
+            { id: 125, title: 'Balsthal', region: { data: { id: 13 } } },
+            { id: 97, title: 'Basel City', region: { data: { id: 12 } } },
+            { id: 126, title: 'Bellach', region: { data: { id: 13 } } },
+            { id: 173, title: 'Bellinzone', region: { data: { id: 17 } } },
+            { id: 4, title: 'Bern City', region: { data: { id: 2 } } },
+            { id: 187, title: 'Betschwanden', region: { data: { id: 19 } } },
+            { id: 15, title: 'Bex', region: { data: { id: 7 } } },
+            { id: 127, title: 'Biberist', region: { data: { id: 13 } } },
+            { id: 6, title: 'Biel', region: { data: { id: 2 } } },
+            { id: 174, title: 'Biasca', region: { data: { id: 17 } } },
+            { id: 100, title: 'Binningen', region: { data: { id: 12 } } },
+            { id: 101, title: 'Birsfelden', region: { data: { id: 12 } } },
+            { id: 84, title: 'Bremgarten', region: { data: { id: 11 } } },
+            { id: 48, title: 'Brig', region: { data: { id: 8 } } },
+            { id: 85, title: 'Brugg', region: { data: { id: 11 } } },
+            { id: 166, title: 'Buchs', region: { data: { id: 16 } } },
+            { id: 108, title: 'Bülach', region: { data: { id: 1 } } },
+            { id: 76, title: 'Bulle', region: { data: { id: 10 } } },
+            { id: 152, title: 'Burgdorf', region: { data: { id: 2 } } },
+            { id: 16, title: 'Bussigny', region: { data: { id: 7 } } },
+            { id: 182, title: 'Buochs', region: { data: { id: 18 } } },
+            { id: 35, title: 'Carouge', region: { data: { id: 6 } } },
+            { id: 36, title: 'Champel', region: { data: { id: 6 } } },
+            { id: 77, title: 'Châtel-Saint-Denis', region: { data: { id: 10 } } },
+            { id: 17, title: 'Chavannes-Renens', region: { data: { id: 7 } } },
+            { id: 175, title: 'Chiasso', region: { data: { id: 17 } } },
+            { id: 142, title: 'Chur', region: { data: { id: 14 } } },
+            { id: 37, title: 'Cité-Centre', region: { data: { id: 6 } } },
+            { id: 18, title: 'Clarens', region: { data: { id: 7 } } },
+            { id: 49, title: 'Collombey', region: { data: { id: 8 } } },
+            { id: 50, title: 'Conthey', region: { data: { id: 8 } } },
+            { id: 19, title: 'Coppet', region: { data: { id: 7 } } },
+            { id: 38, title: 'Cornavin', region: { data: { id: 6 } } },
+            { id: 20, title: 'Corcelles-près-Payerne', region: { data: { id: 7 } } },
+            { id: 72, title: 'Cortaillod', region: { data: { id: 9 } } },
+            { id: 51, title: 'Crans-Montana', region: { data: { id: 8 } } },
+            { id: 21, title: 'Crissier', region: { data: { id: 7 } } },
+            { id: 109, title: 'Dällikon', region: { data: { id: 1 } } },
+            { id: 144, title: 'Davos', region: { data: { id: 14 } } },
+            { id: 128, title: 'Derendingen', region: { data: { id: 13 } } },
+            { id: 110, title: 'Dietikon', region: { data: { id: 1 } } },
+            { id: 111, title: 'Dübendorf', region: { data: { id: 1 } } },
+            { id: 78, title: 'Düdingen', region: { data: { id: 10 } } },
+            { id: 39, title: 'Eaux-vives', region: { data: { id: 6 } } },
+            { id: 8, title: 'Emmen', region: { data: { id: 3 } } },
+            { id: 112, title: 'Embrach', region: { data: { id: 1 } } },
+            { id: 183, title: 'Ennetbürgen', region: { data: { id: 18 } } },
+            { id: 79, title: 'Estavayer-le-Lac', region: { data: { id: 10 } } },
+            { id: 145, title: 'Flims', region: { data: { id: 14 } } },
+            { id: 159, title: 'Frauenfeld', region: { data: { id: 15 } } },
+            { id: 75, title: 'Fribourg City', region: { data: { id: 10 } } },
+            { id: 86, title: 'Frick', region: { data: { id: 11 } } },
+            { id: 52, title: 'Gampel', region: { data: { id: 8 } } },
+            { id: 11, title: 'Geneva City', region: { data: { id: 6 } } },
+            { id: 134, title: 'Gisikon', region: { data: { id: 3 } } },
+            { id: 176, title: 'Giubiasco', region: { data: { id: 17 } } },
+            { id: 186, title: 'Glaris City', region: { data: { id: 19 } } },
+            { id: 22, title: 'Gland', region: { data: { id: 7 } } },
+            { id: 167, title: 'Gossau', region: { data: { id: 16 } } },
+            { id: 129, title: 'Grenchen', region: { data: { id: 13 } } },
+            { id: 53, title: 'Grône', region: { data: { id: 8 } } },
+            { id: 184, title: 'Hergiswil', region: { data: { id: 18 } } },
+            { id: 135, title: 'Hochdorf', region: { data: { id: 3 } } },
+            { id: 113, title: 'Horgen', region: { data: { id: 1 } } },
+            { id: 136, title: 'Horw', region: { data: { id: 3 } } },
+            { id: 153, title: 'Interlaken', region: { data: { id: 2 } } },
+            { id: 156, title: 'Ittigen', region: { data: { id: 2 } } },
+            { id: 87, title: 'Klingnau', region: { data: { id: 11 } } },
+            { id: 114, title: 'Kloten', region: { data: { id: 1 } } },
+            { id: 154, title: 'Köniz', region: { data: { id: 2 } } },
+            { id: 161, title: 'Kreuzlingen', region: { data: { id: 15 } } },
+            { id: 137, title: 'Kriens', region: { data: { id: 3 } } },
+            { id: 88, title: 'Künten', region: { data: { id: 11 } } },
+            { id: 146, title: 'Laax', region: { data: { id: 14 } } },
+            { id: 73, title: 'La Chaux-de Fonds', region: { data: { id: 9 } } },
+            { id: 130, title: 'Langendorf', region: { data: { id: 13 } } },
+            { id: 155, title: 'Langnau im Emmental', region: { data: { id: 2 } } },
+            { id: 147, title: 'Landquart', region: { data: { id: 14 } } },
+            { id: 12, title: 'Lausanne', region: { data: { id: 7 } } },
+            { id: 74, title: 'Le Locle', region: { data: { id: 9 } } },
+            { id: 54, title: 'Leuk', region: { data: { id: 8 } } },
+            { id: 89, title: 'Lenzburg', region: { data: { id: 11 } } },
+            { id: 102, title: 'Liestal', region: { data: { id: 12 } } },
+            { id: 177, title: 'Locarno', region: { data: { id: 17 } } },
+            { id: 171, title: 'Lugano', region: { data: { id: 17 } } },
+            { id: 7, title: 'Luzern City', region: { data: { id: 3 } } },
+            { id: 148, title: 'Malans', region: { data: { id: 14 } } },
+            { id: 80, title: 'Marly', region: { data: { id: 10 } } },
+            { id: 55, title: 'Martigny', region: { data: { id: 8 } } },
+            { id: 138, title: 'Meggen', region: { data: { id: 3 } } },
+            { id: 115, title: 'Meilen', region: { data: { id: 1 } } },
+            { id: 178, title: 'Mendrisio', region: { data: { id: 17 } } },
+            { id: 188, title: 'Mitlödi', region: { data: { id: 19 } } },
+            { id: 56, title: 'Monthey', region: { data: { id: 8 } } },
+            { id: 23, title: 'Montreux', region: { data: { id: 7 } } },
+            { id: 24, title: 'Morges', region: { data: { id: 7 } } },
+            { id: 25, title: 'Moudon', region: { data: { id: 7 } } },
+            { id: 90, title: 'Muri', region: { data: { id: 11 } } },
+            { id: 157, title: 'Muri bei Bern', region: { data: { id: 2 } } },
+            { id: 103, title: 'Muttenz', region: { data: { id: 12 } } },
+            { id: 189, title: 'Näfels', region: { data: { id: 19 } } },
+            { id: 57, title: 'Naters', region: { data: { id: 8 } } },
+            { id: 58, title: 'Nendaz', region: { data: { id: 8 } } },
+            { id: 71, title: 'Neuchâtel City', region: { data: { id: 9 } } },
+            { id: 26, title: 'Nyon', region: { data: { id: 7 } } },
+            { id: 104, title: 'Oberwil', region: { data: { id: 12 } } },
+            { id: 91, title: 'Oftringen', region: { data: { id: 11 } } },
+            { id: 131, title: 'Olten', region: { data: { id: 13 } } },
+            { id: 116, title: 'Opfikon', region: { data: { id: 1 } } },
+            { id: 27, title: 'Oron', region: { data: { id: 7 } } },
+            { id: 28, title: 'Payerne', region: { data: { id: 7 } } },
+            { id: 40, title: 'Plainpalais', region: { data: { id: 6 } } },
+            { id: 41, title: 'Plan-les-ouates', region: { data: { id: 6 } } },
+            { id: 105, title: 'Pratteln', region: { data: { id: 12 } } },
+            { id: 149, title: 'Prättigau/Davos', region: { data: { id: 14 } } },
+            { id: 29, title: 'Prilly', region: { data: { id: 7 } } },
+            { id: 59, title: 'Raron', region: { data: { id: 8 } } },
+            { id: 117, title: 'Regensdorf', region: { data: { id: 1 } } },
+            { id: 106, title: 'Reinach', region: { data: { id: 12 } } },
+            { id: 30, title: 'Renens', region: { data: { id: 7 } } },
+            { id: 92, title: 'Rheinfelden', region: { data: { id: 11 } } },
+            { id: 60, title: 'Riddes', region: { data: { id: 8 } } },
+            { id: 179, title: 'Riviera', region: { data: { id: 17 } } },
+            { id: 31, title: 'Roche', region: { data: { id: 7 } } },
+            { id: 81, title: 'Romont', region: { data: { id: 10 } } },
+            { id: 162, title: 'Romanshorn', region: { data: { id: 15 } } },
+            { id: 168, title: 'Rorschach', region: { data: { id: 16 } } },
+            { id: 118, title: 'Rümlang', region: { data: { id: 1 } } },
+            { id: 61, title: 'Saillon', region: { data: { id: 8 } } },
+            { id: 62, title: 'Saint-Léonard', region: { data: { id: 8 } } },
+            { id: 63, title: 'Saint-Maurice', region: { data: { id: 8 } } },
+            { id: 150, title: 'Samedan', region: { data: { id: 14 } } },
+            { id: 139, title: 'Sarnen', region: { data: { id: 3 } } },
+            { id: 64, title: 'Saxon', region: { data: { id: 8 } } },
+            { id: 93, title: 'Schinznach-Bad', region: { data: { id: 11 } } },
+            { id: 119, title: 'Schlieren', region: { data: { id: 1 } } },
+            { id: 190, title: 'Schwanden', region: { data: { id: 19 } } },
+            { id: 10, title: 'Schwyz City', region: { data: { id: 5 } } },
+            { id: 42, title: 'Servette', region: { data: { id: 6 } } },
+            { id: 65, title: 'Sierre', region: { data: { id: 8 } } },
+            { id: 45, title: 'Sion', region: { data: { id: 8 } } },
+            { id: 124, title: 'Solothurn City', region: { data: { id: 13 } } },
+            { id: 181, title: 'Stans', region: { data: { id: 18 } } },
+            { id: 164, title: 'St. Gallen City', region: { data: { id: 16 } } },
+            { id: 151, title: 'St. Moritz', region: { data: { id: 14 } } },
+            { id: 140, title: 'Sursee', region: { data: { id: 3 } } },
+            { id: 180, title: 'Taverne', region: { data: { id: 17 } } },
+            { id: 5, title: 'Thun', region: { data: { id: 2 } } },
+            { id: 43, title: 'Thônex', region: { data: { id: 6 } } },
+            { id: 132, title: 'Trimbach', region: { data: { id: 13 } } },
+            { id: 66, title: 'Turtmann', region: { data: { id: 8 } } },
+            { id: 9, title: 'Uri City', region: { data: { id: 4 } } },
+            { id: 3, title: 'Uster', region: { data: { id: 1 } } },
+            { id: 67, title: 'Verbier', region: { data: { id: 8 } } },
+            { id: 44, title: 'Versoix', region: { data: { id: 6 } } },
+            { id: 32, title: 'Vevey', region: { data: { id: 7 } } },
+            { id: 68, title: 'Vétroz', region: { data: { id: 8 } } },
+            { id: 33, title: 'Villeneuve', region: { data: { id: 7 } } },
+            { id: 69, title: 'Visp', region: { data: { id: 8 } } },
+            { id: 120, title: 'Volketswil', region: { data: { id: 1 } } },
+            { id: 121, title: 'Wallisellen', region: { data: { id: 1 } } },
+            { id: 122, title: 'Wädenswil', region: { data: { id: 1 } } },
+            { id: 163, title: 'Weinfelden', region: { data: { id: 15 } } },
+            { id: 94, title: 'Wettingen', region: { data: { id: 11 } } },
+            { id: 123, title: 'Wetzikon', region: { data: { id: 1 } } },
+            { id: 158, title: 'Wichtrach', region: { data: { id: 2 } } },
+            { id: 170, title: 'Wil', region: { data: { id: 16 } } },
+            { id: 141, title: 'Willisau', region: { data: { id: 3 } } },
+            { id: 2, title: 'Winterthur', region: { data: { id: 1 } } },
+            { id: 169, title: 'Wittenbach', region: { data: { id: 16 } } },
+            { id: 95, title: 'Wohlen', region: { data: { id: 11 } } },
+            { id: 185, title: 'Wolfenschiessen', region: { data: { id: 18 } } },
+            { id: 34, title: 'Yverdon-les-bains', region: { data: { id: 7 } } },
+            { id: 70, title: 'Zermatt', region: { data: { id: 8 } } },
+            { id: 96, title: 'Zofingen', region: { data: { id: 11 } } },
+            { id: 133, title: 'Zuchwil', region: { data: { id: 13 } } },
+            { id: 1, title: 'Zürich City', region: { data: { id: 1 } } }
+        ],
+    
+    
     categories: [
         { id: 1, title: 'Independent' },
         { id: 2, title: 'Agency' },
@@ -362,8 +556,45 @@ export default function RegisterEscort() {
     const { t } = useI18n()
 
     const { setUser, reloadMe } = useContext(CoreContext)
+    const [formProfile, setFormProfile] = useState({});
+    const [errors, setErrors] = useState({});
+
+    const formValue = (ref) => {
+        return formProfile[ref] || '';
+    };
+
+    const changeForm = (value, ref) => {
+        setFormProfile(prev => ({
+            ...prev,
+            [ref]: value
+        }));
+    };
+
     const saveProfile = async () => {
-        // Validate required files
+        // First, check if we're on the Personal data step and validate passwords
+        if (infoOption === 'Personal data') {
+            // Check if passwords are provided
+            if (!formProfile.password || !formProfile.confirmPassword) {
+                toast.error(t("password_fields_required"));
+                return;
+            }
+            
+            // Check if passwords match
+            if (formProfile.password !== formProfile.confirmPassword) {
+                toast.error(t("passwords_dont_match"));
+                setErrors(prev => ({...prev, confirmPassword: t('passwords_dont_match')}));
+                return;
+            }
+            
+            // Check password length
+            if (formProfile.password.length < 8) {
+                toast.error(t("password_min_length"));
+                setErrors(prev => ({...prev, password: t('password_min_length')}));
+                return;
+            }
+        }
+        
+        // Continue with the existing validation for files, etc.
         if (!verificationPhoto || !video360 || !imagesReview?.length) {
             toast.error(t("missing_required_files"));
             return;
@@ -451,13 +682,13 @@ export default function RegisterEscort() {
         }
 
         console.log('Saving profile with payload:', payload);
-        
+
         setLoading(true);
         try {
             const result = await Create("models", { data: payload });
             setLoading(false);
-            
-            if (result && !exposeStrapiError(result)) {
+        
+        if (result && !exposeStrapiError(result)) {
                 await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id });
                 await Create("welcome", { name: preuser?.user?.name, email: preuser?.user?.email });
                 handleSuccess();
@@ -482,10 +713,6 @@ export default function RegisterEscort() {
     const [error, setError] = useState(null)
     const [infoOption, setInfoOption] = useState(() => {
         return localStorage.getItem('escortRegistrationStep') || 'Personal data'
-    })
-    const [formProfile, setFormProfile] = useState(() => {
-        const savedProfile = localStorage.getItem('escortRegistrationProfile')
-        return savedProfile ? JSON.parse(savedProfile) : {}
     })
     const [mobility, setMobility] = useState(() => {
         const savedMobility = localStorage.getItem('escortRegistrationMobility')
@@ -699,48 +926,55 @@ export default function RegisterEscort() {
             {
                 ref: 'password',
                 placeholder: t('password'),
-                type: 'password',
-                password: true,
-                full: true,
-                outline: true,
-                inputProps: {
-                    autoComplete: "off",
-                    "data-lpignore": "true",
-                    "data-form-type": "other",
-                    webkitautofill: "off",
-                    autoCorrect: "off",
-                    spellCheck: "false",
-                    autoCapitalize: "off",
-                    "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true",
-                    "data-private": "true",
-                    maxLength: "524288",
-                    autoSave: "off",
-                    role: "presentation"
+                component: CustomPasswordInput,
+                value: formValue('password'),
+                onChange: (e) => {
+                    changeForm(e.target.value, 'password');
+                    // If confirm password is already filled, check if they match
+                    if (formProfile.confirmPassword && formProfile.confirmPassword.length > 0) {
+                        if (e.target.value !== formProfile.confirmPassword) {
+                            setErrors(prev => ({...prev, confirmPassword: t('passwords_dont_match')}));
+                        } else {
+                            setErrors(prev => {
+                                const newErrors = {...prev};
+                                delete newErrors.confirmPassword;
+                                return newErrors;
+                            });
+                        }
+                    }
+                },
+                required: true,
+                validate: (value) => {
+                    if (!value) return t('password_required');
+                    if (value.length < 8) return t('password_min_length');
+                    return null;
                 }
             },
             {
-                ref: 'cpassword',
+                ref: 'confirmPassword',
                 placeholder: t('confirm_password'),
-                type: 'password',
-                password: true,
-                full: true,
-                outline: true,
-                inputProps: {
-                    autoComplete: "off",
-                    "data-lpignore": "true",
-                    "data-form-type": "other",
-                    webkitautofill: "off",
-                    autoCorrect: "off",
-                    spellCheck: "false",
-                    autoCapitalize: "off",
-                    "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true",
-                    "data-private": "true",
-                    maxLength: "524288",
-                    autoSave: "off",
-                    role: "presentation"
-                }
+                component: CustomPasswordInput,
+                value: formValue('confirmPassword'),
+                onChange: (e) => {
+                    changeForm(e.target.value, 'confirmPassword');
+                    // Check if passwords match
+                    if (e.target.value !== formProfile.password) {
+                        setErrors(prev => ({...prev, confirmPassword: t('passwords_dont_match')}));
+                    } else {
+                        setErrors(prev => {
+                            const newErrors = {...prev};
+                            delete newErrors.confirmPassword;
+                            return newErrors;
+                        });
+                    }
+                },
+                required: true,
+                validate: (value) => {
+                    if (!value) return t('confirm_password_required');
+                    if (value !== formProfile.password) return t('passwords_dont_match');
+                    return null;
+                },
+                error: errors?.confirmPassword
             }
         ]
     }, [t])
@@ -963,7 +1197,32 @@ export default function RegisterEscort() {
     };
 
     const saveStep1 = () => {
-        handleHeaderInfo('Appearance');
+        // First, check if we're on the Personal data step and validate passwords
+        if (infoOption === 'Personal data') {
+            // Check if passwords are provided
+            if (!formProfile.password || !formProfile.confirmPassword) {
+                toast.error(t("password_fields_required"));
+                return;
+            }
+            
+            // Check if passwords match
+            if (formProfile.password !== formProfile.confirmPassword) {
+                toast.error(t("passwords_dont_match"));
+                setErrors(prev => ({...prev, confirmPassword: t('passwords_dont_match')}));
+                return;
+            }
+            
+            // Check password length
+            if (formProfile.password.length < 8) {
+                toast.error(t("password_min_length"));
+                setErrors(prev => ({...prev, password: t('password_min_length')}));
+                return;
+            }
+        }
+        
+        // If all validations pass, proceed to the next step
+        setInfoOption('Appearance');
+        localStorage.setItem('escortRegistrationStep', 'Appearance');
     };
 
     const handleSuccess = () => {
@@ -1116,7 +1375,7 @@ export default function RegisterEscort() {
             ) : [];
             
             return {
-                ...prev,
+            ...prev,
                 photos
             };
         });
@@ -1407,6 +1666,15 @@ export default function RegisterEscort() {
                                         rightIcon={'chevron-right'} 
                                         onClick={saveStep1}
                                         between
+                                        disabled={
+                                            (infoOption === 'Personal data' && (
+                                                !formProfile.password || 
+                                                !formProfile.confirmPassword || 
+                                                formProfile.password !== formProfile.confirmPassword ||
+                                                formProfile.password.length < 8 ||
+                                                Object.keys(errors).length > 0
+                                            ))
+                                        }
                                     >
                                         {t("advance")}
                                     </Button>
@@ -1418,7 +1686,7 @@ export default function RegisterEscort() {
                                             <Content>
                                 <AppearanceContainerStyled>
                                     <AppearanceTitleContainerStyled>
-                                        <AppearanceTitleStyled>{t("upload_360_video")}</AppearanceTitleStyled>
+                                        <AppearanceTitleStyled>{t("Upload 360 video")}</AppearanceTitleStyled>
                                         <AppearanceTextStyled>
                                             <Icon icon="doubt" /> {t("instruction_on_how")}
                                         </AppearanceTextStyled>
@@ -1428,47 +1696,47 @@ export default function RegisterEscort() {
                                         onChange={handleVideo360Upload}
                                         files={uploadedFiles.video360 ? [uploadedFiles.video360] : []}
                                         onRemove={() => handleRemoveFile('video360')}
-                                        dragText="drag_the_video_here_or_click_here"
+                                        dragText="Drag the video here or click here"
                                         supportedFiles="MP4, AVI"
                                         maxFileSize="50mb"
                                     />
                                 </AppearanceContainerStyled>
 
                                 <AppearanceContainerStyled>
-                                    <AppearanceTitleStyled>{t("send_photos")}</AppearanceTitleStyled>
+                                    <AppearanceTitleStyled>{t("Send photos")}</AppearanceTitleStyled>
                                     <UploadFile
                                         accept="image/*"
                                         multiple
                                         onChange={handleImagesUpload}
                                         files={uploadedFiles.photos}
                                         onRemove={(fileId) => handleRemoveFile('photos', fileId)}
-                                        dragText="drag_the_photos_here_or_click_here"
+                                        dragText="Drag the photos here or click here"
                                         supportedFiles="JPG, PNG"
                                         maxFileSize="8mb. Minimum 4 photos."
                                     />
                                 </AppearanceContainerStyled>
 
                                 <AppearanceContainerStyled>
-                                    <AppearanceTitleStyled>{t("upload_id_front")}</AppearanceTitleStyled>
+                                    <AppearanceTitleStyled>{t("Upload ID Front")}</AppearanceTitleStyled>
                                     <UploadFile
                                         accept="image/*"
                                         onChange={handleFrontIdUpload}
                                         files={uploadedFiles.frontId ? [uploadedFiles.frontId] : []}
                                         onRemove={() => handleRemoveFile('frontId')}
-                                        dragText="drag_the_id_front_here_or_click_here"
+                                        dragText="Drag the ID front here or click here"
                                         supportedFiles="JPG, PNG"
                                         maxFileSize="8mb"
                                     />
                                 </AppearanceContainerStyled>
 
                                 <AppearanceContainerStyled>
-                                    <AppearanceTitleStyled>{t("upload_id_back")}</AppearanceTitleStyled>
+                                    <AppearanceTitleStyled>{t("Upload ID back")}</AppearanceTitleStyled>
                                     <UploadFile
                                         accept="image/*"
                                         onChange={handleBackIdUpload}
                                         files={uploadedFiles.backId ? [uploadedFiles.backId] : []}
                                         onRemove={() => handleRemoveFile('backId')}
-                                        dragText="drag_the_id_back_here_or_click_here"
+                                        dragText="Drag the ID back here or click here"
                                         supportedFiles="JPG, PNG"
                                         maxFileSize="8mb"
                                     >
@@ -1480,7 +1748,7 @@ export default function RegisterEscort() {
                                                     <Container />
                                                     <Icon icon="double-page" />
                                                     <AppearanceTextStyled>
-                                                        {t('drag_the_id_back_here_or_click_here')}
+                                                        {t('Drag the ID back here or click here')}
                                                     </AppearanceTextStyled>
                                                 </>
                                             )}
@@ -1489,7 +1757,7 @@ export default function RegisterEscort() {
                                 </AppearanceContainerStyled>
 
                                                 <VerificationUploadContainer>
-                                    <AppearanceTitleStyled>{t("verification_photo")}</AppearanceTitleStyled>
+                                    <AppearanceTitleStyled>{t("Verification photo")}</AppearanceTitleStyled>
                                     <AppearanceTextStyled full>{t("send_a_photo_holding")}</AppearanceTextStyled>
                                                         <VerificationUpload>
                                                             <SampleContent>
@@ -1503,7 +1771,7 @@ export default function RegisterEscort() {
                                             onChange={handleVerificationUpload}
                                             files={uploadedFiles.verification ? [uploadedFiles.verification] : []}
                                             onRemove={() => handleRemoveFile('verification')}
-                                            dragText="drag_the_verification_photo_here_or_click_here"
+                                            dragText="Drag the verification photo here or click here"
                                             supportedFiles="JPG, PNG"
                                             maxFileSize="8mb"
                                                             >

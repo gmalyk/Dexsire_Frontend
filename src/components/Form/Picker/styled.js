@@ -14,7 +14,7 @@ export const MaterialInput = styled(Input)`
         line-height: 24px;
         font-family: Inter;
         color: ${props => props.theme.palette.primary.contrastText};
-        border: 1px solid ${props => props.theme.palette.borderBackground.main};
+        border: 1px solid white;
 
         &::-webkit-datetime-edit {
             padding: 0;
@@ -39,6 +39,12 @@ export const MaterialInput = styled(Input)`
 
         &:focus {
             outline: none;
+            border-color: white;
+        }
+        
+        &:disabled {
+            opacity: 0.5;
+            border-color: rgba(255, 255, 255, 0.5);
         }
     }
 `; 

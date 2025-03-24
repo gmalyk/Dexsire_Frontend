@@ -91,11 +91,7 @@ export default function ModalSearchAdvanced() {
       options: PREDEFINED_OPTIONS.categories,
       quarter: true,
     },
-    {
-      ref: 'nationality',
-      placeholder: t("advancedsearch_nationality"),
-      options: PREDEFINED_OPTIONS.nationalities,
-    },
+    
     {
       ref: 'languages',
       placeholder: t("advancedsearch_lang"),

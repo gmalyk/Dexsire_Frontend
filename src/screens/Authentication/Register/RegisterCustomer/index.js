@@ -13,7 +13,7 @@ import {
 
 import ContainerUnauthenticated from "containers/Unauthenticated";
 
-import { DoRegister, Create, GET } from "services/api";
+import { DoRegister } from "services/authentication";
 import { exposeStrapiError, normalizeStrapiList } from "utils";
 import { Background, FormSpacer, FormTitle, Title } from "ui/styled";
 import { Container } from "reactstrap";
@@ -26,6 +26,7 @@ import PlansCard from "components/Cards/PlansCard";
 import Success from "components/Success";
 
 import { isEmail } from "utils/validators";
+import { Create, Read } from "services/core";
 import useI18n from "hooks/useI18n";
 
 export default function RegisterCustomer() {
@@ -36,18 +37,18 @@ export default function RegisterCustomer() {
     const { t } = useI18n()
 
     const [plans, setPlans] = useState([])
+
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
     const [infoOption, setInfoOption] = useState(t('personal_data'))
     const [success, setSuccess] = useState(null)
-    const [form, setForm] = useState({})
-    const [initialized, setInitialized] = useState(false)
+
+    const [form, setForm] = useState({}) 
 
     const registerFormItems = useMemo(() => {
         return [
             {
                 ref: 'name',
-                placeholder: t('pseudo'),
+                placeholder: t('name'),
                 type: 'text',
                 full: true,
                 outline: true,
@@ -60,53 +61,22 @@ export default function RegisterCustomer() {
                 outline: true,
             },
             {
+                password: true,
                 ref: 'password',
                 placeholder: t('password'),
                 type: 'password',
-                password: true,
                 full: true,
                 outline: true,
-                inputProps: {
-                    autoComplete: "off",
-                    "data-lpignore": "true",
-                    "data-form-type": "other",
-                    webkitautofill: "off",
-                    autoCorrect: "off",
-                    spellCheck: "false",
-                    autoCapitalize: "off",
-                    "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true",
-                    "data-private": "true",
-                    maxLength: "524288",
-                    autoSave: "off",
-                    role: "presentation"
-                }
             },
             {
                 ref: 'cpassword',
                 placeholder: t('confirm_password'),
                 type: 'password',
-                password: true,
                 full: true,
                 outline: true,
-                inputProps: {
-                    autoComplete: "off",
-                    "data-lpignore": "true",
-                    "data-form-type": "other",
-                    webkitautofill: "off",
-                    autoCorrect: "off",
-                    spellCheck: "false",
-                    autoCapitalize: "off",
-                    "data-1p-ignore": "true",
-                    "data-disable-password-manager": "true",
-                    "data-private": "true",
-                    maxLength: "524288",
-                    autoSave: "off",
-                    role: "presentation"
-                }
-            }
+            },
         ]
-    }, [t])
+    }, [])
 
     const data = [
         { title: t('personal_data') },
@@ -126,7 +96,7 @@ export default function RegisterCustomer() {
             return false;
         }
 
-        if(payload?.password !== payload?.cpassword){
+        if(payload?.password !== payload?.password){
             toast.error(t("password_and_confirmation_not_match"))
             return false;
         }
@@ -175,99 +145,52 @@ export default function RegisterCustomer() {
         })
     }
 
+    const init = async () => {
+        const result = await Read("plans")
+        if(result){
+            const normalResult = normalizeStrapiList(result)
+            setPlans(normalResult)
+        }
+    }
+
     useEffect(() => {
-        const initializeComponent = async () => {
-            try {
-                setLoading(true)
-                // Only fetch plans if we need them
-                if (infoOption === 'Plan') {
-                    const result = await GET("/plans")
-                    if (result?.data) {
-                        const normalResult = normalizeStrapiList(result.data)
-                        setPlans(normalResult)
-                    }
-                }
-                setInitialized(true)
-            } catch (err) {
-                console.error('Initialization error:', err)
-                setError(err.message)
-                toast.error(t("error_loading_data"))
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        initializeComponent()
-
-        return () => {
-            setPlans([])
-            setForm({})
-            setError(null)
-        }
-    }, [infoOption, t])
+        init()
+    }, [])
 
     return (
-        <ContainerUnauthenticated background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
-            {success ? (
-                <Success {...success} footer />
-            ) : (
-                <>
+        <>
+            <ContainerUnauthenticated background={success ? '/images/success.png' : ''} scrollTo={infoOption} >
+                {!success ? null : <Success {...success} footer />}
+                {success ? null : <>
                     <BodyContainer>
                         <Background />
                         <BodyContent>
-                            {(!initialized || loading) ? (
-                                <Container style={{ 
-                                    width: '100%', 
-                                    display: 'flex', 
-                                    flexDirection: 'column', 
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    minHeight: '50vh'
-                                }}>
-                                    <Title>{t("loading")}...</Title>
-                                </Container>
-                            ) : error ? (
-                                <Container style={{ 
-                                    width: '100%', 
-                                    display: 'flex', 
-                                    flexDirection: 'column', 
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    minHeight: '50vh'
-                                }}>
-                                    <Title>{t("error_loading_data")}</Title>
-                                </Container>
-                            ) : (
-                                <>
-                                    <InfoData data={data} active={infoOption} />
-                                    {infoOption === 'Plan' ? (
-                                        <>
-                                            <Container>
-                                                <FormTitle>{t("plan")}</FormTitle>
-                                                <Title nomargin>{t("select_a_plan")}</Title>
-                                            </Container>
-                                            <PlansCard 
-                                                item={plans?.find(f => f.title === 'Free')} 
-                                                loading={loading} 
-                                                action={() => save(plans?.find(f => f.title === 'Free')?.id)} 
-                                            /> 
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Container style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                <FormTitle>{t("fill_in_your_details")}</FormTitle>
-                                                <Title nomargin>{t("user_registration")}</Title> 
-                                            </Container>
-                                            <RegisterForm items={registerFormItems} action={action} />
-                                        </>
-                                    )}
-                                </>
-                            )}
+                            <InfoData data={data} active={infoOption} />
+                            {
+                                infoOption === 'Plan' ? null :
+                                    <>
+                                        <Container>
+                                            <FormTitle>{ t("fill_in_your_details") }</FormTitle>
+                                            <Title nomargin>{ t("user_registration") }</Title> 
+                                        </Container>
+                                        <RegisterForm items={registerFormItems} action={action} />
+                                    </>
+                            }
+                            {
+                                infoOption !== 'Plan' ? null :
+                                    <>
+                                        <Container>
+                                            <FormTitle>{ t("plan") }</FormTitle>
+                                            <Title nomargin>{ t("select_a_plan") }</Title>
+                                        </Container>
+                                        <PlansCard item={plans?.find(f => f.title === 'Free')} loading={loading} action={() => save(plans?.find(f => f.title === 'Free')?.id)} /> 
+                                    </>
+                            }
                         </BodyContent>
                     </BodyContainer>
                     <Footer />
-                </>
-            )}
-        </ContainerUnauthenticated>
-    )
+                </>}
+            </ContainerUnauthenticated>
+        </>
+    );
 }

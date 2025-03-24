@@ -7,7 +7,7 @@ import useI18n from 'hooks/useI18n'
 import { optionsLanguage } from 'utils/options'
 import { LangContent, LangItem, LangScroll, WrapLanguages } from './styled'
 
-export default function LangSelector({ footer }) { 
+export default function LangSelector({ footer, bordered }) { 
 
   const { t, language, setLanguage } = useI18n() 
 
@@ -21,7 +21,7 @@ export default function LangSelector({ footer }) {
   return (
     <> 
         <WrapLanguages>
-          <Button nospace primary small leftIcon={'globelang'} rightIcon={`chevron-${ open ? `up` : `down` }`} onClick={() => setOpen(!open)}>
+          <Button nospace primary small leftIcon={'globelang'} rightIcon={`chevron-${ open ? `up` : `down` }`} onClick={() => setOpen(!open)} bordered={bordered}>
               { language }
           </Button>
           {

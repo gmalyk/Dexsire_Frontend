@@ -5,6 +5,7 @@ import FormCore from '../../components/Form/Core'
 import { CoreContext } from 'context/CoreContext'
 import { optionsCategory } from 'utils/options'
 import useI18n from 'hooks/useI18n'
+import Select from 'components/Form/Select'
 
 // Define the cantons and cities
 const CANTONS_AND_CITIES = {
@@ -273,6 +274,41 @@ export default function HomeFilters() {
     }
   }, [filter]);
 
+  // First, let's modify the city dropdown to be disabled when "All cantons" is selected
+  const isCityDisabled = selectedRegion === 'all' || !selectedRegion;
+
+  // Then update the city dropdown component
+  const handleCityChange = (value) => {
+    console.log('City changed to:', value);
+    const form = formRef?.current?.getForm();
+    if (form) {
+      form.city = value;
+      
+      // If a city is selected and region is 'all', update the region
+      if (value && selectedRegion === 'all') {
+        // Extract canton from city value (format: city-canton)
+        const cantonFromCity = value.split('-').pop();
+        if (cantonFromCity && CANTONS_AND_CITIES[cantonFromCity]) {
+          console.log('Setting region to:', cantonFromCity, 'based on city:', value);
+          form.region = cantonFromCity;
+          setSelectedRegion(cantonFromCity);
+        }
+      }
+      
+      setChanged(!changed);
+    }
+  };
+
+  // Optionally, we can also reset the city selection when all cantons is selected
+  const handleRegionChange = (value) => {
+    setSelectedRegion(value);
+    
+    // Reset city selection when "All cantons" is selected
+    if (value === 'all') {
+      setCityOptions([]);
+    }
+  };
+
   const formItems = useMemo(() => {
     return [
       {
@@ -282,44 +318,15 @@ export default function HomeFilters() {
         customer: true,
         defaultValue: selectedRegion,
         value: selectedRegion,
-        onChange: (value) => {
-          console.log('Region changed to:', value);
-          setSelectedRegion(value);
-          
-          const form = formRef?.current?.getForm();
-          if (form) {
-            form.region = value;
-            // Clear city when region changes
-            form.city = '';
-            setChanged(!changed);
-          }
-        }
+        onChange: handleRegionChange
       },
       {
         ref: 'city',
         placeholder: t('Select City'),
         options: cityOptions,
         customer: true,
-        onChange: (value) => {
-          console.log('City changed to:', value);
-          const form = formRef?.current?.getForm();
-          if (form) {
-            form.city = value;
-            
-            // If a city is selected and region is 'all', update the region
-            if (value && selectedRegion === 'all') {
-              // Extract canton from city value (format: city-canton)
-              const cantonFromCity = value.split('-').pop();
-              if (cantonFromCity && CANTONS_AND_CITIES[cantonFromCity]) {
-                console.log('Setting region to:', cantonFromCity, 'based on city:', value);
-                form.region = cantonFromCity;
-                setSelectedRegion(cantonFromCity);
-              }
-            }
-            
-            setChanged(!changed);
-          }
-        }
+        onChange: handleCityChange,
+        disabled: isCityDisabled
       },
       {
         ref: 'services',
@@ -419,7 +426,7 @@ export default function HomeFilters() {
         action: () => save(),
       },
     ].filter(f => f);
-  }, [t, REGION_OPTIONS, selectedRegion, cityOptions, changed, filter, SERVICE_OPTIONS, setFilter, selectedServices]);
+  }, [t, REGION_OPTIONS, selectedRegion, cityOptions, changed, filter, SERVICE_OPTIONS, setFilter, selectedServices, isCityDisabled, handleCityChange, handleRegionChange]);
 
   const save = () => {
     const form = formRef?.current?.getForm();

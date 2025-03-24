@@ -185,7 +185,7 @@ export const optionsPayment = [
     { id: 'Twint', title: 'Twint', payment:true },
     { id: 'Postfinance', title: 'Postfinance', payment:true },
     { id: 'Visa', title: 'Visa', payment:true },
-    { id: 'Bitcoin', title: 'Bitcoin', payment:true },
+    { id: 'Cryptocurrency', title: 'Cryptocurrency', payment:true },
 ]
 
 export const optionsLanguage = [

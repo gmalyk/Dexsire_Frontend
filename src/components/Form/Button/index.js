@@ -5,13 +5,13 @@ import { ButtonGradient, ButtonTextContainer, ColorButton, Load } from "./styled
 import { ThemedComponent } from "ui/theme";
 import { Icon } from "ui/styled";
 
-export const Button = ({ children, loading, primary, secondary, outline, link, nospace, centred, onClick, small, width, leftIcon, rightIcon, start, between, end, outlineGradient, color, white }) => {
+export const Button = ({ children, loading, primary, secondary, outline, link, nospace, centred, onClick, small, width, leftIcon, rightIcon, start, between, end, outlineGradient, color, white, bordered }) => {
 
   const GButton = outlineGradient ? ButtonGradient : ColorButton
   return (
     <>
       <ThemedComponent>
-        <GButton variant={link ? "text" : outline ? "outlined" : "contained"} color={secondary ? 'secondary' : primary ? 'primary' : color ? color : 'white'} width={width} small={small} nospace={nospace} centred={centred} onClick={onClick} white={white}>
+        <GButton variant={link ? "text" : outline ? "outlined" : "contained"} color={secondary ? 'secondary' : primary ? 'primary' : color ? color : 'white'} width={width} small={small} nospace={nospace} centred={centred} onClick={onClick} white={white} bordered={bordered}>
           {
             loading ? <Load primary={primary} secondary={secondary} outline={outline} /> : <>
               <ButtonTextContainer start={start} between={between} end={end}>
@@ -37,6 +37,7 @@ Button.propTypes = {
   centred: PropTypes.bool,
   loading: PropTypes.bool,
   onClick: PropTypes.func,
+  bordered: PropTypes.bool,
 };
 
 Button.defaultProps = {
@@ -49,6 +50,7 @@ Button.defaultProps = {
   centred: false,
   loading: false,
   onClick: undefined,
+  bordered: false,
 };
 
 export default Button;

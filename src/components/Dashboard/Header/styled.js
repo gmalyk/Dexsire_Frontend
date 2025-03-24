@@ -31,7 +31,12 @@ export const MenuIcon = styled.img.attrs({
 
 export const MenuItemsContainer = styled.div.attrs({})`
     display: flex;
-    gap: 70px;
+    align-items: center;
+    gap: 16px;
+    
+    @media (max-width: 777px) {
+        gap: 12px; /* Reduce gap on mobile */
+    }
 `;
 
 export const MenuButtonContainer = styled.div.attrs({})`
@@ -39,5 +44,44 @@ export const MenuButtonContainer = styled.div.attrs({})`
     gap: 16px;
     @media (max-width: 777px) {
         display: none;
+    }
+`;
+
+export const SearchButtonStyled = styled.button`
+    background: #000000;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0;
+    overflow: hidden;
+    
+    &:hover {
+        background-color: #333333;
+        transform: scale(1.05);
+    }
+    
+    img {
+        width: 18px;
+        height: 18px;
+    }
+    
+    @media (max-width: 777px) {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        max-width: 36px;
+        max-height: 36px;
     }
 `;

@@ -61,18 +61,20 @@ export default function RegisterForm({ items, action, loading }) {
           />
           <FormCore 
             ref={formRef} 
-            formItems={items} 
+            formItems={items.map(item => ({...item, registration: true}))}
             autoComplete="off"
           >
             <Input 
               type="password" 
               placeholder={t("Password")} 
               name="password"
+              registration={true}
             />
             <Input 
               type="password" 
               placeholder={t("Confirm Password")} 
               name="confirmPassword"
+              registration={true}
             />
           </FormCore>
           <CheckContainer>
