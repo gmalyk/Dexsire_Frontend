@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import UploadFile from 'components/Form/UploadFile';
 import { AppearanceContainer, AppearanceText, AppearanceTitle, AppearanceTitleContainer, UploadFileContainer } from './styled';
@@ -8,19 +8,36 @@ import { toast } from 'react-toastify';
 import UploadAndPreview from 'components/UploadAndPreview';
 import { parseStrapiImage } from 'utils';
 import useI18n from 'hooks/useI18n';
+import { optionsAppearance } from 'utils/options';
 
 export default function Appearance({ uploadedFile, setUploadedFile }) {
   const [preview, setPreview] = useState(null);
-  // const [uploadedFile, setUploadedFile] = useState(null); 
+  const [files, setFiles] = useState([]);
+  const { t } = useI18n();
 
-  const { t } = useI18n()
+  useEffect(() => {
+    if (uploadedFile) {
+      setFiles([uploadedFile]);
+    } else {
+      setFiles([]);
+    }
+  }, [uploadedFile]);
 
   const handlePreview = (url) => {
     setPreview(url);
   };
 
   const handleFileChange = (file) => {
+    if (file && file.type && !file.type.startsWith('video/')) {
+      console.error('Only video files are allowed');
+      return;
+    }
+    
     setUploadedFile(file);
+  };
+
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
   };
 
   const validateFile = (file) => { 
@@ -30,8 +47,6 @@ export default function Appearance({ uploadedFile, setUploadedFile }) {
     }
     return true;
   };
-
-  // console.log("uploadedFile", uploadedFile)
 
   return (
     <>

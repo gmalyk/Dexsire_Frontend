@@ -209,26 +209,26 @@ By clicking "I accept" or otherwise indicating acceptance, the Content Provider 
             </div>
         );
     };
-
+    
     return (
-        <Container>
-            <Content>
-                <FormContainer>
-                    <div className="policy-container" style={{
-                        borderRadius: '8px',
-                        padding: '2px',
-                        color: 'white'
-                    }}>
-                        <div style={{
-                            height: '600px',
-                            backgroundColor: 'white',
-                            borderRadius: '33px',
-                            padding: '10px',
-                            overflowY: 'auto',
-                            color: '#1a202c'
+            <Container>
+                <Content>
+                    <FormContainer>
+                        <div className="policy-container" style={{
+                            borderRadius: '8px',
+                            padding: '2px',
+                            color: 'white'
                         }}>
+                            <div style={{
+                                height: '600px',
+                                backgroundColor: 'white',
+                                borderRadius: '33px',
+                                padding: '10px',
+                                overflowY: 'auto',
+                                color: '#1a202c'
+                            }}>
                             {renderContent()}
-                        </div>
+                            </div>
                         <ButtonContent style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
                             <Button
                                 outlineGradient
@@ -241,7 +241,7 @@ By clicking "I accept" or otherwise indicating acceptance, the Content Provider 
                 </FormContainer>
             </Content>
         </Container>
-    );
+);
 };
 
 export default PrivacyAndTerms;

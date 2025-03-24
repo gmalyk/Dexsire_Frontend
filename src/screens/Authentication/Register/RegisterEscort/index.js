@@ -1684,6 +1684,8 @@ export default function RegisterEscort() {
 
                         {infoOption === 'Appearance' && (
                                             <Content>
+                                                <Appearance uploadedFile={video360} setUploadedFile={setVideo360} />
+                                                
                                 <AppearanceContainerStyled>
                                     <AppearanceTitleContainerStyled>
                                         <AppearanceTitleStyled>{t("Upload 360 video")}</AppearanceTitleStyled>
