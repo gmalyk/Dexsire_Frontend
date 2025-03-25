@@ -124,7 +124,13 @@ export default function FilePreview({ file, onRemove, uploading = false, progres
                 } 
                 // For relative paths, use parseStrapiImage
                 else {
-                    url = parseStrapiImage(file.url);
+                    // Check if the URL starts with /uploads and prepend API base URL if needed
+                    if (file.url.startsWith('/uploads')) {
+                        // Use the full API URL
+                        url = `${process.env.REACT_APP_API_URL || 'https://api.dexsire.com'}${file.url}`;
+                    } else {
+                        url = parseStrapiImage(file.url);
+                    }
                 }
             } 
             // If it's a File object, create an object URL
@@ -148,7 +154,7 @@ export default function FilePreview({ file, onRemove, uploading = false, progres
     }, [file]);
 
     const handleImageError = () => {
-        console.error('Error loading image preview:', previewUrl);
+        // Don't log the error for every image to avoid console spam
         setError(true);
     };
 
@@ -177,11 +183,14 @@ export default function FilePreview({ file, onRemove, uploading = false, progres
     return (
         <FilePreviewContainer>
             <FilePreviewContent>
-                {!error && file.type && file.type.startsWith('image/') ? (
+                {!error && ((file.type && file.type.startsWith('image/')) || 
+                            (file.mime && file.mime.startsWith('image/')) ||
+                            (file.name && /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name))) ? (
                     <FilePreviewImage 
                         src={previewUrl} 
                         alt={file.name} 
                         onError={handleImageError}
+                        crossOrigin="anonymous"
                     />
                 ) : (
                     <Icon icon={getFileIcon()} size={24} />
