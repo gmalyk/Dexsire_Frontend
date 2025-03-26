@@ -3,21 +3,21 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './router'; // MOD
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { CoreState } from 'context/CoreContext';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-toastify/dist/ReactToastify.css';
-
-import { ToastContainer } from 'react-toastify';
-import { CoreState } from './context/CoreContext'
-import ModalCore from 'components/Modal/Core';
 
 ReactDOM.render(
   <React.StrictMode>
-    <CoreState>
-      <App />
-
-      <ToastContainer theme='dark' />
-    </CoreState>
+    <BrowserRouter>
+      <CoreState>
+        <App />
+        <ToastContainer theme="dark" />
+      </CoreState>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );

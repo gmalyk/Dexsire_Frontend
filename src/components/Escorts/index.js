@@ -90,9 +90,7 @@ export default function Escorts() {
   return (
     <>
       <EscortsContainer>
-        <EscortsTitle>
-          { t("discover_some_models_available_to_you") }
-        </EscortsTitle>
+        
         <EscortsCardContainer>
           {
             escorts?.filter(filterFilter)?.slice(0, ((page)*6)).map((m, k) => (

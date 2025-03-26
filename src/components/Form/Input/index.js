@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import InputMask from 'react-input-mask';
 import styled from 'styled-components';
@@ -8,7 +8,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import {
     MaterialInput,
-    MaterialInputOutline
+    MaterialInputOutline,
+    FloatingLabelContainer,
+    FloatingLabel,
+    InputError,
+    StyledTextArea
 } from "./styled";
 
 import CurrencyFormat from "react-currency-format";
@@ -58,20 +62,33 @@ export const Input = React.forwardRef(({
     disabled, 
     outline, 
     textarea, 
-    noHolder, 
-    spaced, 
+    startIcon,
+    endIcon,
+    onSubmitEditing,
+    onKeyDown,
+    onBlur,
+    noHolder,
+    secondary,
+    spaced,
+    full,
     registration,
     ...props 
 }, ref) => {
-    const [visible, setVisible] = useState(false)
+    const [isFocused, setIsFocused] = useState(false);
+    const hasValue = value && value.length > 0;
 
-    const handleClickShowPassword = (e) => {
-        e.preventDefault()
-        setVisible(!visible)
-        if (props.onTogglePasswordVisibility) {
-            props.onTogglePasswordVisibility(!visible)
-        }
-    }
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
+    const handleMouseDownPassword = (event) => event.preventDefault();
+
+    const handleFocus = () => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = (e) => {
+        setIsFocused(false);
+        if (onBlur) onBlur(e);
+    };
 
     const passwordProps = type === 'password' ? {
         name: `pw_${Math.random().toString(36).substr(2, 9)}`,
@@ -102,7 +119,7 @@ export const Input = React.forwardRef(({
         inputMode: "verbatim",
         "data-name": name,
         style: {
-            WebkitTextSecurity: visible ? 'none' : 'disc',
+            WebkitTextSecurity: showPassword ? 'none' : 'disc',
             fontFamily: '-apple-system !important',
             WebkitAppearance: 'none',
             appearance: 'none',
@@ -113,59 +130,181 @@ export const Input = React.forwardRef(({
 
     return (
         <ThemedComponent>
-            <PasswordWrapper className={type === 'password' ? 'no-suggestions' : ''}>
-                <FormControl fullWidth variant={outline ? "outlined" : "outlined"}>
-                    {!props.label ? null : <InputLabel>{props.label}</InputLabel>}
-                    <GInput
-                        ref={ref}
-                        type={visible ? 'text' : type}
-                        placeholder={noHolder ? placeholder : ''}
-                        value={value}
-                        onChange={onChange}
-                        name={name}
-                        disabled={disabled}
-                        outline={outline}
-                        error={error}
-                        multiline={type === 'textarea'}
-                        maxRows={2}
-                        textarea={type === 'textarea'}
-                        disableUnderline
-                        registration={registration}
-                        {...passwordProps}
-                        {...props}
-                        onKeyDown={ev => typeof props.onSubmitEditing === 'function' ? (ev.keyCode === 13 ? props.onSubmitEditing() : null) : props.onKeyDown}
-                        startAdornment={
-                            !props.startIcon ? null :
-                                <InputAdornment position="start">
-                                    <IconButton>
-                                        <Icon icon={props.startIcon} />
-                                    </IconButton>
-                                </InputAdornment>
-                        }
-                        endAdornment={
-                            (type === 'password' || props.password) ? (
+            <FloatingLabelContainer>
+                {textarea ? (
+                    <FormControl variant={outline ? "outlined" : "standard"} fullWidth>
+                        <StyledTextArea
+                            value={value}
+                            onChange={onChange}
+                            disabled={disabled}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            onKeyDown={onKeyDown}
+                            {...props}
+                        />
+                        <FloatingLabel 
+                            active={true}
+                            focused={isFocused}
+                            textarea={textarea}
+                            hasStartIcon={!!startIcon}
+                        >
+                            {placeholder}
+                        </FloatingLabel>
+                    </FormControl>
+                ) : type === 'password' ? (
+                    <FormControl variant={outline ? "outlined" : "standard"} fullWidth>
+                        <MaterialInput
+                            id="standard-adornment-password"
+                            type={showPassword ? 'text' : 'password'}
+                            value={value}
+                            onChange={onChange}
+                            disabled={disabled}
+                            outline={outline}
+                            spaced={spaced}
+                            fullWidth={full}
+                            noHolder={noHolder}
+                            registration={registration}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
+                                        aria-label="toggle password visibility"
                                         onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
                                     >
-                                        {visible ? <VisibilityOff /> : <Visibility />}
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
                                 </InputAdornment>
-                            ) : null
-                        }
-                        className={registration ? 'registration-form' : ''}
-                    />
-                </FormControl>
-            </PasswordWrapper>
+                            }
+                            {...passwordProps}
+                            {...props}
+                        />
+                        <FloatingLabel 
+                            active={isFocused || hasValue}
+                            focused={isFocused}
+                            textarea={textarea}
+                            hasStartIcon={!!startIcon}
+                        >
+                            {placeholder}
+                        </FloatingLabel>
+                    </FormControl>
+                ) : (
+                    <FormControl variant={outline ? "outlined" : "standard"} fullWidth>
+                        <MaterialInput
+                            id="standard-adornment-input"
+                            type={type}
+                            value={value}
+                            onChange={onChange}
+                            disabled={disabled}
+                            outline={outline}
+                            textarea={textarea}
+                            spaced={spaced}
+                            fullWidth={full}
+                            noHolder={noHolder}
+                            registration={registration}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            onKeyDown={onKeyDown}
+                            startAdornment={
+                                !startIcon ? null :
+                                    <InputAdornment position="start">
+                                        <Icon icon={startIcon} nomargin />
+                                    </InputAdornment>
+                            }
+                            endAdornment={
+                                !endIcon ? null :
+                                    <InputAdornment position="end">
+                                        <Icon icon={endIcon} nomargin />
+                                    </InputAdornment>
+                            }
+                            {...props}
+                        />
+                        <FloatingLabel 
+                            active={isFocused || hasValue}
+                            focused={isFocused}
+                            textarea={textarea}
+                            hasStartIcon={!!startIcon}
+                        >
+                            {placeholder}
+                        </FloatingLabel>
+                    </FormControl>
+                )}
+                {error && <InputError>{error}</InputError>}
+            </FloatingLabelContainer>
         </ThemedComponent>
     );
 });
 
-export const MaskedInput = (props) => (
-    <InputMask mask={props.mask} value={props.value} disabled={false} placeholder={props.placeholder} noHolder={props.noHolder} outline={props.outline} onChange={props.onChange} maskChar="">
-        {(inputProps) => <Input {...inputProps} type="tel" value={null} onChange={null} />}
-    </InputMask>
-);
+export const MaskedInput = ({ 
+    type, 
+    placeholder, 
+    value, 
+    onChange, 
+    mask, 
+    error, 
+    disabled, 
+    outline, 
+    onSubmitEditing,
+    onBlur,
+    noHolder,
+    secondary,
+    spaced,
+    full,
+    registration,
+    ...props 
+}) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const hasValue = value && value.length > 0;
+
+    const handleFocus = () => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = (e) => {
+        setIsFocused(false);
+        if (onBlur) onBlur(e);
+    };
+
+    return (
+        <ThemedComponent>
+            <FloatingLabelContainer>
+                <FormControl variant={outline ? "outlined" : "standard"} fullWidth>
+                    <InputMask 
+                        mask={mask} 
+                        value={value} 
+                        onChange={onChange} 
+                        onBlur={handleBlur} 
+                        onFocus={handleFocus}
+                        disabled={disabled}
+                    >
+                        {(inputProps) => 
+                            <MaterialInput
+                                id="standard-adornment-input"
+                                type={type}
+                                disabled={disabled}
+                                outline={outline}
+                                spaced={spaced}
+                                fullWidth={full}
+                                noHolder={noHolder}
+                                registration={registration}
+                                {...inputProps}
+                                {...props}
+                            />
+                        }
+                    </InputMask>
+                    <FloatingLabel 
+                        active={isFocused || hasValue}
+                        focused={isFocused}
+                    >
+                        {placeholder}
+                    </FloatingLabel>
+                </FormControl>
+                {error && <InputError>{error}</InputError>}
+            </FloatingLabelContainer>
+        </ThemedComponent>
+    );
+};
 
 export const CurrencyInput = ({ value, onChange, ...props }) => (
     <CurrencyFormat
@@ -190,7 +329,6 @@ MaskedInput.propTypes = {
     mask: PropTypes.string.isRequired
 };
 
-
 MaskedInput.defaultProps = {
     type: 'text',
     label: '',
@@ -212,7 +350,6 @@ Input.propTypes = {
     onSubmitEditing: PropTypes.func,
     onChange: PropTypes.func.isRequired,
 };
-
 
 Input.defaultProps = {
     type: 'text',

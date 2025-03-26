@@ -159,7 +159,7 @@ export default function RegisterCustomer() {
 
     return (
         <>
-            <ContainerUnauthenticated background={success ? '/images/success.png' : ''} scrollTo={infoOption} >
+            <ContainerUnauthenticated background={success ? '/images/success.png' : '/images/backgroundLogin.png'} scrollTo={infoOption} >
                 {!success ? null : <Success {...success} footer />}
                 {success ? null : <>
                     <BodyContainer>

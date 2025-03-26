@@ -441,12 +441,11 @@ export const StatValue = styled.div`
 `;
 
 export const StatLabel = styled.div`
-    font-size: 14px;
-    color: ${props => props.theme.palette.colors.grey};
-
-    @media (max-width: 768px) {
-        font-size: 12px;
-    }
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    color: ${props => props.theme.palette.colors.white};
+    margin-top: 4px;
 `;
 
 export const Icon = styled.div`

@@ -1,67 +1,49 @@
-import React, { useEffect, useRef } from "react";
-import { useHistory } from 'react-router-dom';
-
-import { Row, Col } from 'reactstrap';
-import { ReadObject } from "services/storage";
-import { ThemedComponent } from "ui/theme";
-import Header from 'components/Dashboard/Header'
-
+import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import {
-    SideBackgroundImageContainer,
-    SideBackgroundImage,
-    SideBackgroundImageDegree,
-
-    FormContent,
-    AppLogo,
+    Container,
     Content,
-    Touch,
-    LoginPage,
-    Container
+    Background,
+    BackgroundImage,
+    Logo,
+    LogoContainer,
 } from './styled'
 
+import { Icon } from 'ui/styled'
+import useI18n from 'hooks/useI18n'
+import { ThemedComponent } from 'ui/theme'
 
-export default function ContainerUnauthenticated({ children, background, scrollTo, keep }) {
+export default function ContainerUnauthenticated({ children, background, login, scrollTo }) {
+    const history = useHistory()
+    const navigate = to => history.push(`/${to}`)
 
-    const history = useHistory();
-    const navigate = to => history.push(`/${to}`);
-
-    const contentRef = useRef(null);
-
-    const init = () => {
-        const authentication = ReadObject('authentication')
-        if (authentication?.jwt && !keep) {
-            completeNext()
-        }
-    }
-
-    const completeNext = () => {
-        navigate('')
-    }
+    const { t } = useI18n()
 
     useEffect(() => {
-        if (contentRef.current) {
-            contentRef.current.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+        if (scrollTo) {
+            const element = document.getElementById(scrollTo)
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' })
+            }
         }
-    }, [scrollTo]);
-
-    useEffect(() => { init() }, [])
+    }, [scrollTo])
 
     return (
-        <Container background={background}>
-            <ThemedComponent>
-                <Content ref={contentRef}>
-                    <LoginPage src={background} >
-                        <Header />
-                        <FormContent center>
-                            {children}
-                        </FormContent>
-                    </LoginPage>
+        <ThemedComponent>
+            <Container>
+                <Content>
+                    <LogoContainer>
+                        <Logo onClick={() => navigate('')}>
+                            <Icon icon={'logo'} width={150} height={40} />
+                        </Logo>
+                    </LogoContainer>
+                    {children}
                 </Content>
-            </ThemedComponent>
-        </Container>
-    );
+                <Background>
+                    <BackgroundImage src={background || '/images/background.jpeg'} />
+                </Background>
+            </Container>
+        </ThemedComponent>
+    )
 }

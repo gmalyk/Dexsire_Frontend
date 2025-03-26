@@ -172,21 +172,16 @@ export const EscortsInfoEmphasis = styled.div.attrs({})`
 
 export const Content = styled.div.attrs({})``;
 
-export const CardLogo = styled.img.attrs({
-  src: '/icons/logo.svg'
+export const CardLogo = styled.div.attrs({
 })`
-  filter: invert(0.2);
-  opacity: 0.6;
-  max-width: 120px;
-  height: auto;
-  
-  @media (max-width: 768px) {
-    max-width: 100px;
-  }
-
-  @media (max-width: 480px) {
-    max-width: 80px;
-  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const HalfContent = styled.div.attrs({})`

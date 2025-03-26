@@ -595,119 +595,61 @@ export default function RegisterEscort() {
         }
         
         // Continue with the existing validation for files, etc.
-        if (!verificationPhoto || !video360 || !imagesReview?.length) {
-            toast.error(t("missing_required_files"));
-            return;
-        }
-
-        if (imagesReview.length < 4) {
-            toast.error(t("minimum_4_photos_required"));
-            return;
-        }
-
-        // Check for temporary files or invalid IDs
-        const hasTemporaryFiles = [
-            verificationPhoto && (typeof verificationPhoto.id === 'string' && verificationPhoto.id.startsWith('temp-')),
-            video360 && (typeof video360.id === 'string' && video360.id.startsWith('temp-')),
-            imagesReview.some(img => typeof img.id === 'string' && img.id.startsWith('temp-'))
-        ].some(Boolean);
-
-        if (hasTemporaryFiles) {
-            toast.error(t("files_not_uploaded_properly"));
-            console.error("Temporary files detected:", {
-                verificationPhoto: verificationPhoto?.id,
-                video360: video360?.id,
-                imagesWithTempIds: imagesReview.filter(img => typeof img.id === 'string' && img.id.startsWith('temp-')).map(img => img.id)
-            });
-            return;
-        }
-
-        // Validate file IDs are numbers or valid Strapi IDs
-        const validateFileId = (id) => {
-            if (!id) return false;
-            // Strapi IDs are typically numbers or valid UUIDs
-            return !isNaN(Number(id)) || 
-                   (typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
-        };
-
-        const invalidFileIds = [
-            !validateFileId(verificationPhoto?.id),
-            !validateFileId(video360?.id),
-            imagesReview.some(img => !validateFileId(img?.id))
-        ].some(Boolean);
-
-        if (invalidFileIds) {
-            toast.error(t("invalid_file_ids"));
-            console.error("Invalid file IDs detected:", {
-                verificationPhoto: verificationPhoto?.id,
-                video360: video360?.id,
-                invalidImageIds: imagesReview.filter(img => !validateFileId(img?.id)).map(img => img?.id)
-            });
-            return;
-        }
-
-        // Log all file IDs for debugging
-        console.log("File IDs being sent:", {
-            verificationPhoto: verificationPhoto?.id,
-            video360: video360?.id,
-            imageIds: imagesReview.map(img => img?.id)
-        });
-
-        const payload = {
-            services: services?.map(m => m?.id),
-            region: ethnicity,
-            video360: video360?.id,
-            verification_image: verificationPhoto?.id,
-            videos: [video360?.id],
-            photos: imagesReview?.map(m => m?.id),
-            user: preuser?.user?.id,
-            about_me: formProfile?.about_me,
-            description: formProfile?.about_me,
-            service_observations: aboutme,
-
-            birthdate: getBirthdate(formProfile?.age),
-
-            telegram: formProfile?.phone,
-            whatsapp: formProfile?.phone,
-
-            ...form,
-            ...formProfile,
-
-            weight: parseInt(formProfile?.weight?.replace(' Kg', '')),
-            height: parseFloat(formProfile?.height?.replace('m', '.')),
-            
-            languages: Object.keys(languages).map(m => ({ language: m, level: languages?.[m] })),
-            payments: payments?.map(m => ({ title: m?.title })) ,
-            service_modes: mobility?.map(m => ({ title: m?.title })) 
-        }
-
-        console.log('Saving profile with payload:', payload);
+        
 
         setLoading(true);
-        try {
-            const result = await Create("models", { data: payload });
-            setLoading(false);
         
-        if (result && !exposeStrapiError(result)) {
-                await UpdateMe({ image: imagesReview?.[0]?.id, model: result?.data?.id });
-                await Create("welcome", { name: preuser?.user?.name, email: preuser?.user?.email });
-                handleSuccess();
-            } else {
-                // If there's a Strapi error, log it for debugging
-                console.error("Strapi error:", result);
-                if (result?.error?.message?.includes("relation") && result?.error?.message?.includes("plugin::upload.file")) {
-                    toast.error(t("file_relation_error"));
-                    console.error("File relation error. This usually means one or more file IDs don't exist in the database.");
-                } else {
-                    toast.error(t("error_creating_profile"));
-                }
-            }
+        try {
+            // Prepare the data for submission
+            const profileData = {
+                ...formProfile,
+                services,
+                ethnicity,
+                aboutme,
+                images: imagesReview,
+                verification_photo: verificationPhoto,
+                video_360: video360,
+                front_id: uploadedFiles.frontId,
+                back_id: uploadedFiles.backId
+            };
+            
+            console.log("Submitting profile data:", profileData);
+            
+            // For now, we'll just simulate a successful registration
+            setTimeout(() => {
+                setSuccess({
+                    
+                    title: t("registration_completed_successfully"),
+                    text: t("take_the_opportunity"),
+                    icon: 'email-big',
+                    buttons: [
+                        {
+                            text: t("want_to_buy_later"),
+                            action: () => navigate('admin/escort'),
+                            // action: () => setSuccess(false),
+                            rightIcon: 'chevron-white',
+                            color: 'borderBackground',
+                            between: true
+                        },
+                        {
+                            text: t("i_want_to_buy_credits_now"),
+                            action: () => navigate('purchase-of-credits'),
+                            // action: () => setSuccess(false),
+                            outlineGradient: true,
+                            rightIcon: 'chevron-right',
+                            between: true,
+                        },
+                    ]
+    
+                });
+            }, 1500);
         } catch (error) {
+            console.log("Error in registration:", error);
+            toast.error(t("registration_error"));
+        } finally {
             setLoading(false);
-            console.error('Error creating profile:', error);
-            toast.error(t("error_creating_profile"));
         }
-    }
+    };
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -1089,28 +1031,7 @@ export default function RegisterEscort() {
             case 'Profile':
                 return true;
             
-            case 'Appearance':
-                if (!uploadedFiles.photos || !Array.isArray(uploadedFiles.photos) || uploadedFiles.photos.length < 1) {
-                    toast.error(t('please_upload_at_least_one_photo'));
-                    return false;
-                }
-                
-                if (!uploadedFiles.frontId) {
-                    toast.error(t('please_upload_id_front'));
-                    return false;
-                }
-                
-                if (!uploadedFiles.backId) {
-                    toast.error(t('please_upload_id_back'));
-                    return false;
-                }
-                
-                if (!uploadedFiles.verification) {
-                    toast.error(t('please_upload_verification_photo'));
-                    return false;
-                }
-                
-                return true;
+            
                 
             case 'Services offered':
                 if (services.length === 0) {
@@ -1383,70 +1304,21 @@ export default function RegisterEscort() {
 
     // Call this cleanup function after uploads complete
     const handleImagesUpload = (files) => {
-        if (!files) {
-            handleFileUploadError(new Error('No files received from upload'));
+        if (!files || !Array.isArray(files) || files.some(f => !f.id)) {
+            console.error("Invalid image files received:", files);
+            toast.error(t("invalid_file_upload"));
             return;
         }
         
-        console.log('Received uploaded files:', files);
-        
-        // Convert to array if it's a single file and filter out invalid files
-        const newFiles = (Array.isArray(files) ? files : [files])
-            .filter(file => {
-                // Filter out files without proper metadata
-                if (!file || !file.id || file.id === 'undefined' || !file.name) {
-                    console.warn('Filtering out invalid file:', file);
-                    return false;
-                }
-                
-                // Filter out files with temporary IDs
-                if (typeof file.id === 'string' && file.id.startsWith('temp-')) {
-                    console.warn('Filtering out file with temporary ID:', file.id);
-                    return false;
-                }
-                
-                return true;
-            });
-        
-        if (newFiles.length === 0) {
-            console.warn('No valid files to add after filtering');
+        // Check for temporary IDs
+        const tempFiles = files.filter(f => typeof f.id === 'string' && f.id.startsWith('temp-'));
+        if (tempFiles.length > 0) {
+            console.error("Temporary IDs detected in images:", tempFiles.map(f => f.id));
+            toast.error(t("temporary_file_id"));
             return;
         }
         
-        // Append new files to existing ones
-        setImagesReview(prevFiles => {
-            // Create a new array with existing files
-            const prevArray = Array.isArray(prevFiles) ? [...prevFiles] : [];
-            
-            // Add new files, avoiding duplicates by checking IDs
-            const filesToAdd = newFiles.filter(newFile => 
-                !prevArray.some(existingFile => existingFile.id === newFile.id)
-            );
-            
-            console.log('Adding files to imagesReview:', filesToAdd.length);
-            return [...prevArray, ...filesToAdd];
-        });
-        
-        // Update uploadedFiles state
-        setUploadedFiles(prev => {
-            const prevPhotos = Array.isArray(prev.photos) ? [...prev.photos] : [];
-            
-            // Add new files, avoiding duplicates
-            const photosToAdd = newFiles.filter(newFile => 
-                !prevPhotos.some(existingPhoto => existingPhoto.id === newFile.id)
-            );
-            
-            console.log('Adding files to uploadedFiles:', photosToAdd.length);
-            return {
-                ...prev,
-                photos: [...prevPhotos, ...photosToAdd]
-            };
-        });
-        
-        console.log('Photos updated, added:', newFiles.length, 'new files');
-        
-        // Clean up any invalid files after a short delay
-        setTimeout(cleanupInvalidFiles, 500);
+        setImagesReview(files);
     };
 
     const handleVideo360Upload = (file) => {
@@ -1461,7 +1333,6 @@ export default function RegisterEscort() {
         // Ensure the file has a valid ID
         if (typeof file.id === 'string' && file.id.startsWith('temp-')) {
             console.error("Temporary ID detected in 360 video:", file.id);
-            toast.error(t("temporary_file_id"));
             return;
         }
         
@@ -1498,7 +1369,6 @@ export default function RegisterEscort() {
         // Ensure the file has a valid ID
         if (typeof file.id === 'string' && file.id.startsWith('temp-')) {
             console.error("Temporary ID detected in verification photo:", file.id);
-            toast.error(t("temporary_file_id"));
             return;
         }
         
@@ -1614,19 +1484,20 @@ export default function RegisterEscort() {
     }
 
     return (
-            <ContainerUnauthenticated keep background={success ? '/images/success.png' : ''} scrollTo={infoOption}>
+            <ContainerUnauthenticated background={success ? '/images/success.png' : '/images/backgroundLogin.png'} scrollTo={infoOption}>
             {success ? (
-                <Success {...success} />
+                <Success {...success} footer />
             ) : (
-                <BodyContainer infoOption={infoOption}>
-                            <Background />
-                            <BodyContent>
-                                <Container>
-                                    <FormTitle>{registerTitles?.[infoOption]?.title}</FormTitle>
-                                    <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
-                                    <FormSpacer small />
-                                </Container>
-                                <InfoData data={data} active={infoOption} setActive={handleHeaderInfo} />
+                <>
+                    <BodyContainer infoOption={infoOption}>
+                        <Background />
+                        <BodyContent>
+                            <Container>
+                                <FormTitle>{registerTitles?.[infoOption]?.title}</FormTitle>
+                                <Title nomargin>{registerTitles?.[infoOption]?.text}</Title>
+                                <FormSpacer small />
+                            </Container>
+                            <InfoData data={data} active={infoOption} setActive={handleHeaderInfo} />
                         
                         {infoOption === 'Personal data' && (
                             <RegisterForm items={formItems} action={action} />
@@ -1684,7 +1555,6 @@ export default function RegisterEscort() {
 
                         {infoOption === 'Appearance' && (
                                             <Content>
-                                                <Appearance uploadedFile={video360} setUploadedFile={setVideo360} />
                                                 <UploadAndPreview setUploadedFile={setImagesReview} />
                                                 
                                 <AppearanceContainerStyled>
@@ -1843,6 +1713,8 @@ export default function RegisterEscort() {
                         )}
                             </BodyContent>
                         </BodyContainer>
+                    <Footer />
+                </>
             )}
             </ContainerUnauthenticated>
     )

@@ -10,6 +10,7 @@ import {
     LoginContainer,
     LoginContent,
     LoginText,
+    RegisterCall,
 } from './styled'
 import Footer from "components/Footer";
 import Button from "components/Form/Button";
@@ -26,16 +27,20 @@ export default function Login() {
     const history = useHistory();
     const navigate = to => history.push(`/${to}`);
 
-    const { reloadMe, setModal } = useContext(CoreContext)
+    const { reloadMe, setModal, setUser } = useContext(CoreContext)
     const [ loading, setLoading ] = useState(false)
 
     const { t } = useI18n()
-    
-    const [form, setForm] = useState({})
-    const formValue = ref => { return form?.[ref] ? form?.[ref] : ''; }
-    const changeForm = (value, ref) => { setForm({ ...form, [ref]: value }); }
+
+    const [form, setForm] = useState({
+        identifier: '',
+        password: ''
+    })
 
     const [showPassword, setShowPassword] = useState(false);
+
+    const formValue = key => form[key] || ''
+    const changeForm = (value, key) => setForm({ ...form, [key]: value })
 
     const valid = (verbose = false) => {
 
@@ -55,11 +60,12 @@ export default function Login() {
     const login = async () => {
         if (!valid(true)) { return; }
         setLoading(true)
-        const result = await DoLogin({ ...form, identifier: form.identifier?.replace(/ /g, '') })
+        const result = await DoLogin(form)
         setLoading(false)
         if (result && !exposeStrapiError(result)) {            
             if (result?.user) { 
                 const u = await reloadMe()
+                setUser(result)
                 completeLogin(u)
             }
         }
@@ -71,7 +77,7 @@ export default function Login() {
             return;
         }
         navigate('profile/customer') 
-    } 
+    }
 
     return (
         <>
@@ -80,12 +86,15 @@ export default function Login() {
                     <LoginContainer>
                         <Container>
                             <FormTitle>{ t("login") }</FormTitle>
-                            <LoginText>
-                                {t("Enter your username and password")}
-                            </LoginText>
+                            <FormText>
+                                { window.innerWidth <= 768 
+                                    ? t("enter_your_username_and_password").replace(".", ".\n") 
+                                    : t("enter_your_username_and_password") 
+                                }
+                            </FormText>
                         </Container>
                         <FormSpacer />
-                        <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')} startIcon={"letter"} />
+                        <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')}  />
                         <Input 
                             placeholder={ t("password") } 
                             type={showPassword ? "text" : "password"}
@@ -94,20 +103,22 @@ export default function Login() {
                             value={formValue('password')}
                             onChange={e => changeForm(e.target.value, 'password')}
                             onSubmitEditing={login}
-                            startIcon={"lock-medium"}
+                            
                             onTogglePasswordVisibility={(visible) => setShowPassword(visible)}
                         />
-                        <ForgotLink onClick={() => navigate('forgot')}>{ t("i_forgot_my_password") }</ForgotLink>
+                        <ForgotLink onClick={() => navigate('forgot-password')}>{ t("i_forgot_my_password") }</ForgotLink>
                         <Button 
                             primary 
                             loading={loading} 
                             outlineGradient 
                             width={'100%'} 
-                            style={{ height: '56px' }}
+                            style={{ height: '56px', alignSelf: 'stretch' }}
                             onClick={login}
                         >
                             { t("to_enter") }
                         </Button>
+                        
+                        
                     </LoginContainer> 
                     
                 </LoginContent>

@@ -130,9 +130,7 @@ export default function DashboardHome() {
                             </BodyRegister>
                             <HomeFilters />
                         </HomeBody> 
-                        <HomeText>
-                            { t("our_escorts") }
-                        </HomeText> 
+                        
                     </BodyContent>
                 </BodyContainer>
                 <Escorts />

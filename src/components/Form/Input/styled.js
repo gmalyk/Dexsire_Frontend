@@ -5,6 +5,43 @@ import Input from '@mui/material/Input'; // standard (material)
 // import Input from '@mui/material/FilledInput';
 import InputOutline from '@mui/material/OutlinedInput';
 
+export const StyledTextArea = styledCmp.textarea`
+  width: 100%;
+  height: 176px;
+  background: ${props => props.theme.palette.primary.main};
+  border-radius: 40px;
+  padding: 24px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  font-family: Inter;
+  color: ${props => props.theme.palette.colors.white};
+  border: 1px solid white;
+  resize: none;
+  
+  &:focus {
+    outline: none;
+  }
+`;
+
+export const FloatingLabelContainer = styledCmp.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const FloatingLabel = styledCmp.label`
+  position: absolute;
+  left: ${props => props.active ? '12px' : props.hasStartIcon ? '56px' : '32px'};
+  top: ${props => props.active || props.textarea ? '-8px' : '50%'};
+  transform: ${props => props.active || props.textarea ? 'translateY(0)' : 'translateY(-50%)'};
+  background: ${props => props.active ? props.theme.palette.primary.main : 'transparent'};
+  padding: ${props => props.active ? '0 8px' : '0'};
+  font-size: ${props => props.active ? '12px' : '16px'};
+  color: ${props => props.focused ? 'white' : 'rgba(255, 255, 255, 0.7)'};
+  pointer-events: none;
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
+`;
 
 export const MaterialInput = muiStyled(Input)(({ theme, registration, ...props }) => ({
   background: theme.palette.primary.main,
@@ -14,15 +51,29 @@ export const MaterialInput = muiStyled(Input)(({ theme, registration, ...props }
   fontWeight: 500,
   lineHeight: '24px',
   fontFamily: 'Inter',
-  padding: props.textarea ? '24px 16px ' : props.noHolder ? '0' : '0 32px',
+  padding: props.textarea ? '24px 16px ' : '0 32px',
   borderColor: 'white',
   border: '1px solid white',
   '-webkit-text-size-adjust': '100%',
 
+  '&:before': {
+    display: 'none',
+  },
+  '&:after': {
+    display: 'none',
+  },
+
   '& .MuiInputBase-input': {
     color: theme.palette.primary.contrastText,
+    padding: '0 32px 0 0px',
+    ...(props.textarea && {
+      alignItems: 'flex-start',
+      paddingTop: '16px',
+      height: '100%',
+      verticalAlign: 'top',
+    }),
     '&::placeholder': {
-      color: theme.palette.primary.contrastText,
+      color: 'transparent',
       opacity: 1,
     }
   },
@@ -34,6 +85,11 @@ export const MaterialInput = muiStyled(Input)(({ theme, registration, ...props }
     position: 'relative',
     zIndex: 9999,
     pointerEvents: 'all'
+  },
+
+  '& .MuiInputAdornment-positionStart': {
+    marginLeft: '16px',
+    marginRight: '16px',
   },
 
   '& .MuiIconButton-root': {
@@ -141,6 +197,11 @@ export const MaterialInputOutline = muiStyled(InputOutline)(({ theme, registrati
     position: 'relative',
     zIndex: 9999,
     pointerEvents: 'all'
+  },
+
+  '& .MuiInputAdornment-positionStart': {
+    marginLeft: '16px',
+    marginRight: '16px',
   },
 
   '& .MuiIconButton-root': {

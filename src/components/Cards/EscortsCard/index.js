@@ -187,7 +187,18 @@ export default function EscortsCard({ emphasis, urls, name, location, verified, 
             >
               <Icon icon="arrow-left" nomargin />
             </ButtonNextAndPrev>
-            <CardLogo />
+            <CardLogo>
+              <img 
+                src="/icons/logo.svg" 
+                alt="Logo" 
+                style={{ 
+                  filter: 'invert(0.2)', 
+                  opacity: 0.6, 
+                  maxWidth: '120px', 
+                  height: 'auto' 
+                }} 
+              />
+            </CardLogo>
             <ButtonNextAndPrev 
               onClick={(e) => handleArrowClick(e, 'next')}
               position="right"

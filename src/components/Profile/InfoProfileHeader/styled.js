@@ -114,3 +114,20 @@ export const EscortButtonsContainer = styled.div.attrs({})`
     justify-content: center;
   }
 `;
+
+export const EscortFeedBack = styled.div.attrs({})`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    
+    span {
+        font-family: Inter;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 14.52px;
+        text-align: center;
+        color: ${p => p.theme.palette.colors.white};
+    }
+`;

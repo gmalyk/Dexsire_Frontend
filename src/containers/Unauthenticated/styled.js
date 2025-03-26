@@ -90,36 +90,90 @@ export const LoginPage = styled.div.attrs({
     }
 `;
 
-export const Content = styled.div.attrs({
-})`           
-    min-height: 100vh;
-    max-height: 100vh;
-    background: ${p => p.theme.palette.colors.black};
-    overflow: auto;
+export const Container = styled.div.attrs({
+})`
+    display: flex;
+    flex-direction: row;
     width: 100vw;
-    margin: 0;
-    padding: 0;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+
+    @media(max-width:991px){
+        flex-direction: column;
+        background-color: #000000;
+    }
+`;
+
+export const Content = styled.div.attrs({
+})`
     display: flex;
     flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
 
     @media (max-width: 768px) {
         width: 100%;
     }
+
+    @media(max-width:991px){
+        width: 100%;
+        min-height: auto;
+    }
+`;
+
+export const Background = styled.div.attrs({
+})`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+
+    @media(max-width:991px){
+        width: 100%;
+        height: 100vh;
+        background-color: #000000;
+    }
+`;
+
+export const BackgroundImage = styled.img.attrs({
+})`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    @media(max-width:991px){
+        object-position: 90% 0%;
+        object-fit: contain;
+        transform: scale(2.3);
+        transform-origin: top right;
+    }
+`;
+
+export const Logo = styled.div.attrs({
+})`
+    cursor: pointer;
+`;
+
+export const LogoContainer = styled.div.attrs({
+})`
+    padding: 32px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
 `;
 
 export const Touch = styled.div.attrs({
 })`           
     cursor: pointer;
-`;
-
-export const Container = styled.div`
-    width: 100%;
-    min-height: 100vh;
-    background: ${props => props.background ? 
-        `linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${props.background})` : 
-        'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7))'};
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 `; 

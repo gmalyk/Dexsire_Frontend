@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState, useRef, useEffect } from "react";
 
 import DashboardSide from "../Side";
 import {
@@ -7,7 +7,10 @@ import {
     MenuIcon,
     MenuItemsContainer,
     MenuButtonContainer,
-    SearchButtonStyled
+    SearchButtonStyled,
+    SearchInputContainer,
+    SearchInput,
+    SearchIconWrapper
 } from "./styled";
 import { Icon } from "ui/styled";
 import Button from "components/Form/Button";
@@ -36,13 +39,33 @@ export default function DashboardHeader() {
     // console.log('user', user)
 
     const [opened, setOpened] = useState(false)
-    const [showSearch, setShowSearch] = useState(false);
+    const [showSpotlight, setShowSpotlight] = useState(false);
+    const spotlightRef = useRef(null);
     
     const handleSearchClick = () => {
-        setShowSearch(!showSearch);
+        setShowSpotlight(!showSpotlight);
         // You can implement additional search functionality here
         console.log("Search button clicked");
     };
+
+    useEffect(() => {
+        if (showSpotlight && spotlightRef.current) {
+            spotlightRef.current.focus();
+        }
+        
+        const handleClickOutside = (event) => {
+            if (spotlightRef.current && 
+                !spotlightRef.current.contains(event.target) && 
+                !event.target.closest('.search-button')) {
+                setShowSpotlight(false);
+            }
+        };
+        
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showSpotlight]);
 
     // const buttons = []
     const buttons = useMemo(() => [
@@ -69,8 +92,23 @@ export default function DashboardHeader() {
                         }
                         <LangSelector />
                     </MenuButtonContainer>
-                    <SearchButtonStyled onClick={handleSearchClick}>
-                        <img src="/icons/search.svg" alt="Search" />
+                    <SearchButtonStyled 
+                        className="search-button" 
+                        expanded={showSpotlight}
+                        onClick={handleSearchClick}
+                    >
+                        <SearchIconWrapper>
+                            <img src="/icons/search.svg" alt="Search" />
+                        </SearchIconWrapper>
+                        {showSpotlight && (
+                            <SearchInputContainer>
+                                <SearchInput 
+                                    ref={spotlightRef}
+                                    placeholder={t("Search by Name")}
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                            </SearchInputContainer>
+                        )}
                     </SearchButtonStyled>
                     <MenuIcon src={`/icons/menu.svg`} alt="menu-icon" onClick={() => setOpened(true)} />
                 </MenuItemsContainer>

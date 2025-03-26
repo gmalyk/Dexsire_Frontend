@@ -67,23 +67,9 @@ export default function UploadAndPreview({ setUploadedFile, preview = [] }) {
 
     return (
         <AppearanceContainer>
-            <AppearanceTitle>
-                {t("upload")}
-            </AppearanceTitle>
+            
             <UploadFileContent>
-                <UploadFile
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    validate={validateFile}
-                >
-                    <UploadFileContainer>
-                        <Container />
-                        <Icon icon="double-page" />
-                        <AppearanceText>
-                            {uploadError ? uploadError : t("drag_image")}
-                        </AppearanceText>
-                    </UploadFileContainer>
-                </UploadFile>
+                
 
                 {preview && preview.length > 0 && (
                     <UploadImageContainer>
@@ -99,10 +85,7 @@ export default function UploadAndPreview({ setUploadedFile, preview = [] }) {
                     </UploadImageContainer>
                 )}
             </UploadFileContent>
-            <AppearanceTitleContainer>
-                <AppearanceText>{t("supported_image")}</AppearanceText>
-                <AppearanceText>{t("maximum_image")}</AppearanceText>
-            </AppearanceTitleContainer>
+            
         </AppearanceContainer>
     )
 }

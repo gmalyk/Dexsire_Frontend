@@ -38,7 +38,6 @@ export default function PreLogin() {
     return (
         <>
             <ContainerUnauthenticated background={'/images/background.jpeg'} login>
-                <PreLoginContainer>
                     <LoginContent> 
                         <CardContainer>
                             {cardsContent.map((item, index) => {
@@ -47,7 +46,6 @@ export default function PreLogin() {
                         </CardContainer> 
                     </LoginContent>
                     <Footer />
-                </PreLoginContainer>
             </ContainerUnauthenticated>
         </>
     );

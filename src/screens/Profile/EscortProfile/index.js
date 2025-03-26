@@ -119,7 +119,7 @@ export default function EscortProfile() {
   // Handle follow/unfollow
   const handleFollowToggle = () => {
     // Check if user is logged in
-    if (!user) {
+    if (!user?.email) {
       // Redirect to login page
       window.location.href = '/login';
       toast.info('Please login to follow this profile')
@@ -302,7 +302,7 @@ export default function EscortProfile() {
                         outlineGradient={!isFollowing}
                         color={isFollowing ? 'white' : undefined}
                         onClick={handleFollowToggle}
-                        disabled={!user}
+                        disabled={!user?.email}
                     >
                         {isFollowing ? 'Followed' : 'Follow'}
                     </FollowButton>

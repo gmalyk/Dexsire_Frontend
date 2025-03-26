@@ -24,7 +24,12 @@ export const FormText = styled.div.attrs({
     color: ${props => props.theme.palette.colors.white};
 
     @media (max-width: 768px) {
+        font-size: 24px;
+        line-height: 30px;
         text-align: center;
+        white-space: normal;
+        max-width: 300px;
+        margin: 0 auto;
     }
 `;
 
@@ -57,6 +62,11 @@ export const RegisterCall = styled.div.attrs({
     color: ${props => props.theme.palette.colors.grey};
     font-size: 15;
     font-weight: bold;
+    text-align: left;
+    
+    @media (max-width: 768px) {
+        text-align: center;
+    }
 `;
 
 export const CardContainer = styled.div.attrs({
@@ -74,27 +84,40 @@ export const CardContainer = styled.div.attrs({
 export const LoginContainer = styled.div.attrs({
 })` 
     max-width: 526px;
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
-
-    @media (max-width: 768px) {
+    width: 100%;
+    border-radius: 16px;
+    margin-left: 10%;
+    
+    @media (max-width: 991px) {
+        margin-left: 0;
         align-items: center;
-        padding: 0 16px;
+        padding: 20px;
     }
 `;
 
 export const LoginContent = styled.div.attrs({
 })` 
     padding: 85px 70px;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     align-items: center;
-    height: 100vh;
-    max-height: 881px;
+    justify-content: flex-start;
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+
     @media(max-width: 991px){
         padding: 85px 20px 20px 20px;
+        min-height: auto;
+        padding-top: 120px;
+        background: transparent;
+        align-items: center;
+        justify-content: center;
     }
 `;
 
@@ -103,13 +126,14 @@ export const LoginText = styled.div.attrs({
   color: ${props => props.theme.palette.colors.white};
   font-size: 24px;
   font-weight: 400;
-  text-align: center;
+  text-align: left;
   white-space: pre-line;
   margin-bottom: 20px;
   
   @media (max-width: 768px) {
     font-size: 20px; // Smaller text on mobile
     white-space: normal; // Allow text to wrap naturally
+    text-align: center;
     
     // Force two-line display
     &:after {
