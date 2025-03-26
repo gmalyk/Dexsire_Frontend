@@ -43,21 +43,20 @@ export default function Login() {
     const changeForm = (value, key) => setForm({ ...form, [key]: value })
 
     const valid = (verbose = false) => {
-
-        if (!formValue('identifier') || !formValue('identifier').length) {
-            if (verbose) { toast.error( t("fill_email_field") ); }
-            return false;
+        if (!form.identifier) {
+            if (verbose) toast.error(t("email_required"))
+            return false
         }
 
-        if (!formValue('password') || !formValue('password').length) {
-            if (verbose) { toast.error( t("fill_password_field") ); } 
-            return false;
+        if (!form.password) {
+            if (verbose) toast.error(t("password_required"))
+            return false
         }
 
         return true
     }
 
-    const login = async () => {
+    const action = async () => {
         if (!valid(true)) { return; }
         setLoading(true)
         const result = await DoLogin(form)
@@ -67,16 +66,41 @@ export default function Login() {
                 const u = await reloadMe()
                 setUser(result)
                 completeLogin(u)
-            }
+            }                          
         }
     }
 
     const completeLogin = (user) => {
-        if(user?.admin || user?.model){
-            navigate('admin/escort')
-            return;
+        if (user?.blocked) {
+            toast.error(t("account_blocked"))
+            return
         }
-        navigate('profile/customer') 
+
+        if (user?.confirmed === false) {
+            setModal({
+                title: t("confirm_your_account"),
+                text: t("confirm_your_account_text"),
+                action: () => navigate(''),
+                actionText: t("ok")
+            })
+            return
+        }
+
+        navigate('')
+    }
+
+    const exposeStrapiError = (result) => {
+        if (result?.error) {
+            if (result?.error?.message === "Invalid identifier or password") {
+                toast.error(t("invalid_credentials"))
+                return true
+            }
+
+            toast.error(result?.error?.message)
+            return true
+        }
+
+        return false
     }
 
     return (
@@ -94,17 +118,25 @@ export default function Login() {
                             </FormText>
                         </Container>
                         <FormSpacer />
-                        <Input placeholder={ t("email") } noHolder value={formValue('identifier')} onChange={e => changeForm(e.target.value, 'identifier')}  />
+                        <Input 
+                            placeholder={ t("email") } 
+                            noHolder 
+                            value={formValue('identifier')} 
+                            onChange={e => changeForm(e.target.value, 'identifier')}
+                            type="email"
+                            inputMode="email"
+                            autoComplete="email"
+                        />
                         <Input 
                             placeholder={ t("password") } 
+                            noHolder 
                             type={showPassword ? "text" : "password"}
-                            password
-                            noHolder
-                            value={formValue('password')}
+                            inputMode="text"
+                            autoComplete="current-password"
+                            value={formValue('password')} 
                             onChange={e => changeForm(e.target.value, 'password')}
-                            onSubmitEditing={login}
-                            
-                            onTogglePasswordVisibility={(visible) => setShowPassword(visible)}
+                            rightIcon={showPassword ? "eye-off" : "eye"}
+                            onRightIconClick={() => setShowPassword(!showPassword)}
                         />
                         <ForgotLink onClick={() => navigate('forgot-password')}>{ t("i_forgot_my_password") }</ForgotLink>
                         <Button 
@@ -113,7 +145,7 @@ export default function Login() {
                             outlineGradient 
                             width={'100%'} 
                             style={{ height: '56px', alignSelf: 'stretch' }}
-                            onClick={login}
+                            onClick={action}
                         >
                             { t("to_enter") }
                         </Button>
