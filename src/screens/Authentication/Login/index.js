@@ -43,20 +43,20 @@ export default function Login() {
     const changeForm = (value, key) => setForm({ ...form, [key]: value })
 
     const valid = (verbose = false) => {
-        if (!form.identifier) {
-            if (verbose) toast.error(t("email_required"))
-            return false
+        if (!formValue('identifier') || !formValue('identifier').length) {
+            if (verbose) { toast.error( t("fill_email_field") ); }
+            return false;
         }
 
-        if (!form.password) {
-            if (verbose) toast.error(t("password_required"))
-            return false
+        if (!formValue('password') || !formValue('password').length) {
+            if (verbose) { toast.error( t("fill_password_field") ); } 
+            return false;
         }
 
         return true
     }
 
-    const action = async () => {
+    const login = async () => {
         if (!valid(true)) { return; }
         setLoading(true)
         const result = await DoLogin(form)
@@ -86,7 +86,11 @@ export default function Login() {
             return
         }
 
-        navigate('')
+        if(user?.admin || user?.model){
+            navigate('admin/escort')
+            return;
+        }
+        navigate('profile/customer') 
     }
 
     const exposeStrapiError = (result) => {
@@ -118,26 +122,57 @@ export default function Login() {
                             </FormText>
                         </Container>
                         <FormSpacer />
-                        <Input 
-                            placeholder={ t("email") } 
-                            noHolder 
-                            value={formValue('identifier')} 
-                            onChange={e => changeForm(e.target.value, 'identifier')}
+                        <input
                             type="email"
-                            inputMode="email"
+                            placeholder={ t("email") }
+                            value={formValue('identifier')}
+                            onChange={e => changeForm(e.target.value, 'identifier')}
+                            style={{
+                                width: '100%',
+                                padding: '15px 20px',
+                                borderRadius: '28px',
+                                background: '#1A1A1A',
+                                border: 'none',
+                                color: 'white',
+                                fontSize: '16px',
+                                marginBottom: '16px'
+                            }}
                             autoComplete="email"
                         />
-                        <Input 
-                            placeholder={ t("password") } 
-                            noHolder 
-                            type={showPassword ? "text" : "password"}
-                            inputMode="text"
-                            autoComplete="current-password"
-                            value={formValue('password')} 
-                            onChange={e => changeForm(e.target.value, 'password')}
-                            rightIcon={showPassword ? "eye-off" : "eye"}
-                            onRightIconClick={() => setShowPassword(!showPassword)}
-                        />
+                        <div style={{ position: 'relative', width: '100%', marginBottom: '16px' }}>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder={ t("password") }
+                                value={formValue('password')}
+                                onChange={e => changeForm(e.target.value, 'password')}
+                                style={{
+                                    width: '100%',
+                                    padding: '15px 20px',
+                                    borderRadius: '28px',
+                                    background: '#1A1A1A',
+                                    border: 'none',
+                                    color: 'white',
+                                    fontSize: '16px'
+                                }}
+                                autoComplete="current-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                style={{
+                                    position: 'absolute',
+                                    right: '15px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'white',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                {showPassword ? '👁️' : '👁️‍🗨️'}
+                            </button>
+                        </div>
                         <ForgotLink onClick={() => navigate('forgot-password')}>{ t("i_forgot_my_password") }</ForgotLink>
                         <Button 
                             primary 
@@ -145,7 +180,7 @@ export default function Login() {
                             outlineGradient 
                             width={'100%'} 
                             style={{ height: '56px', alignSelf: 'stretch' }}
-                            onClick={action}
+                            onClick={login}
                         >
                             { t("to_enter") }
                         </Button>
