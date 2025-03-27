@@ -119,7 +119,7 @@ Tout litige sera résolu par des négociations de bonne foi.`
 
   return (
     <>
-      <Wrapper>
+      <Wrapper background="/images/background.jpeg">
         <ModalContent id="modal-content" type="cgu">
           <Terms 
             terms={terms} 
