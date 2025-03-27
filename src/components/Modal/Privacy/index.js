@@ -53,7 +53,7 @@ export default function ModalPrivacyPolicy() {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper background="/images/background.jpeg">
         <ModalContent id="modal-content" type="privacy">
           <Terms terms={privacyPolicySections} title={t("privacy_title")} />
         </ModalContent>

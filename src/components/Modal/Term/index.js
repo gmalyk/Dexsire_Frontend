@@ -56,7 +56,7 @@ export default function ModalTerms() {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper background="/images/background.jpeg">
         <ModalContent id="modal-content" type="terms">
           <Terms terms={terms} title={t("terms_title")} />
         </ModalContent>

@@ -37,15 +37,7 @@ export default function ProfileImgPreview({ small, medium, noIcon, profile, relo
     <>
       <PreviewContainer small={small} medium={medium}>
         <PreviewImg src={ source ? source : (preview ? preview : '/images/image.png')} /> 
-        <UploadFile
-          onChange={takePic}
-          onPreview={(url) => setPreview(url)}
-          accept="image/*"
-        >
-          { !(user?.id === profile?.user?.id) ? null : <UploadImgButton small={small} medium={medium}>
-            <Icon icon={small ? 'cam-small' : 'cam'} />
-          </UploadImgButton>}
-        </UploadFile>
+        
       </PreviewContainer>
     </>
   )

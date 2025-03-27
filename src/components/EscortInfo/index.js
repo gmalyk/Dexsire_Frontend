@@ -1,6 +1,6 @@
 import CustomerReview from 'components/CustomerReview';
 import EscortServices from 'components/EscortServices';
-import ImagesGallery from 'components/ImagesGallery';
+import ImagesGalleryUn from 'components/ImagesGalleryUn';
 import AboutMe from 'components/Profile/AboutMe';
 import ProfileOptions from 'components/Profile/ProfileOptions';
 import React, { useMemo, useState } from 'react'
@@ -44,7 +44,7 @@ export default function EscortInfo({ profile, allservices }) {
         <ProfileOptions iconArray={iconArray} active={option} handleActive={setOption} />
         {
           option !== 'cam' ? null : (
-            <ImagesGallery images={imageArray} small noMore profile={profile} />
+            <ImagesGalleryUn images={imageArray} small noMore profile={profile} />
           )
         }
         {
@@ -54,7 +54,7 @@ export default function EscortInfo({ profile, allservices }) {
         }
         {
           option !== 'video' ? null : (
-            <ImagesGallery images={imageArray} videos={videoArray} profile={profile} />
+            <ImagesGalleryUn images={imageArray} videos={videoArray} profile={profile} />
           )
         }
         {

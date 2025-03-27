@@ -14,7 +14,7 @@ export default function ModalLegalNotice() {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper background="/images/background.jpeg">
         <ModalContent id="modal-content" type="legal-notice">
           <Terms terms={terms} title={t("Legal Notice")} />
         </ModalContent>

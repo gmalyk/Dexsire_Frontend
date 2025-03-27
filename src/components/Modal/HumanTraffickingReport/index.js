@@ -90,7 +90,7 @@ Urgences médicales : 144`
 
   return (
     <>
-      <Wrapper>
+      <Wrapper background="/images/background.jpeg">
         <ModalContent id="modal-content" type="human-trafficking-report">
           <Terms 
             terms={terms} 

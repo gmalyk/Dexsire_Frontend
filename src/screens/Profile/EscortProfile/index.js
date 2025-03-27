@@ -1,16 +1,23 @@
 import ContainerAuthenticated from 'containers/Authenticated'
-import React, { useState, useContext } from 'react'
+import React, { useState,useEffect, useContext } from 'react'
 import { Background, BodyContainer, BodyContent, EditContainer } from './styled'
 import Footer from 'components/Footer'
 import Button from 'components/Form/Button'
 import useI18n from 'hooks/useI18n'
+import { Read, ReadOne } from 'services/core'
+import { exposeStrapiError, normalizeStrapiList, normalizeStrapiRegister } from 'utils'
+import useTracker from 'hooks/useTracker' 
 import { Container } from 'reactstrap'
+import VerifiedIcon from '@mui/icons-material/Verified';
+import { useMemo } from 'react';
+
+import ProfileImgPreview from 'components/Profile/ProfileImgPreview'
 import { Icon } from 'ui/styled'
 import {
     ProfileContainer,
     ProfileHeader,
     ProfileAvatar,
-    ProfileInfo,
+    ProfileInfo as ProfileInfoStyled,
     ProfileName,
     ProfileLocation,
     ProfileDescription,
@@ -40,21 +47,100 @@ import {
     AppearanceTitle,
     AppearanceText,
     UploadFileContainer,
+    LoadingContainer,
 } from './styled'
 import { useLocation, useParams, useHistory } from 'react-router-dom'
 import { parseStrapiImage } from 'utils'
 import { toast } from 'react-toastify'
 import { CoreContext } from 'context/CoreContext'
+import EscortInfo from 'components/EscortInfo'
+
+// Définition des composants manquants
+const PhotosGrid = ({ photos, onPhotoClick }) => (
+  <PhotoGallery>
+    <GalleryTitle>Photo gallery</GalleryTitle>
+    <GalleryGrid>
+      {photos.map((photo, index) => (
+        <GalleryItem key={index} onClick={() => onPhotoClick(index)}>
+          <img src={typeof photo === 'string' ? photo : photo.url} alt="" />
+        </GalleryItem>
+      ))}
+    </GalleryGrid>
+  </PhotoGallery>
+);
+
+const ProfileDetails = ({ profile, services }) => (
+  <div>
+    <GalleryTitle>Profile information</GalleryTitle>
+    <ProfileDescription>
+      {profile.description}
+    </ProfileDescription>
+  </div>
+);
+
+const VideosGrid = ({ videos }) => (
+  <div>
+    <GalleryTitle>Video gallery</GalleryTitle>
+    {videos && videos.length > 0 ? (
+      <GalleryGrid>
+        {videos.map((video, index) => (
+          <GalleryItem key={index}>
+            <video controls>
+              <source src={video.url} type={video.mime || 'video/mp4'} />
+              Your browser does not support the video tag.
+            </video>
+          </GalleryItem>
+        ))}
+      </GalleryGrid>
+    ) : (
+      <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
+        No videos available
+      </div>
+    )}
+  </div>
+);
 
 export default function EscortProfile() {
-  const { t } = useI18n()
+  const { id } = useParams()
   const { user } = useContext(CoreContext)
+
+  const { track } = useTracker(true)
+
+  const [loading, setLoading] = useState(true)
+  const [currentProfile, setCurrentProfile] = useState(null)
+  const [allservices, setAllservices] = useState([])
+
+  const init = async () => {
+    const searchableId = id ? id : user?.model?.id
+    
+    setLoading(true)
+    const result = await ReadOne("models", searchableId)
+    setLoading(false)
+
+    if(result && !exposeStrapiError(result)){
+      const normalResult = normalizeStrapiRegister(result)
+      const user = await ReadOne("users", normalResult?.user?.id)
+      const normalUser = normalizeStrapiRegister(user)
+      const nextResult = { ...normalResult, user: normalUser }
+      // console.log("model", nextResult)
+      setCurrentProfile(nextResult)
+
+      track("click", { model: searchableId })
+    }
+
+    const rs = await Read("services")
+    const nrs = normalizeStrapiList(rs)
+    setAllservices(nrs)
+
+  }
+
+  useEffect(() => { init() ;}, [id, user])
+  const { t } = useI18n()
   const history = useHistory()
   const navigate = (to) => history.push(`/${to}`)
   const [isEditing, setIsEditing] = useState(false)
   const [preview, setPreview] = useState(null)
   const [uploadedFile, setUploadedFile] = useState(null)
-  const { id } = useParams()
   const location = useLocation()
   const profileData = location.state?.profileData
   
@@ -66,34 +152,7 @@ export default function EscortProfile() {
   const [isLiked, setIsLiked] = useState(false)
   const [isNotified, setIsNotified] = useState(false)
 
-  const [currentProfile] = useState(profileData || {
-    id: 1,
-    name: "Amanda Borges",
-    age: 23,
-    location: {
-      city: "Florianópolis",
-      state: "SC"
-    },
-    description: "I'm Amanda, I would be very happy to meet you in person and share my attractive and irresistible private content 💋",
-    images: [
-      "/images/profile.png",
-      "/images/escort3.png",
-      "/images/escort.jpeg",
-      "/images/escort2.jpeg"
-    ],
-    services: ["Service 1", "Service 2"],
-    prices: [
-      { text: "1 hour - 300 CHF" },
-      { text: "2 hours - 500 CHF" }
-    ],
-    phone: "+41 123 456 789",
-    whatsapp: "+41123456789",
-    verified: true,
-    posts: 34,
-    videos: 10,
-    likes: 124,
-    comments: 26
-  })
+  
 
   const handleEdit = () => setIsEditing(true)
   const handleSave = () => {
@@ -115,6 +174,13 @@ export default function EscortProfile() {
   const handleTabClick = (tabName) => {
     setActiveTab(tabName)
   }
+
+  const escortFeedBack = useMemo(() => [
+    { title: t("posts"), value: [...(currentProfile?.images||[]), ...(currentProfile?.videos||[])]?.length },
+    { title: t("videos"), value: currentProfile?.videos?.length || "0" },
+    { title: t("likes"), value: currentProfile?.likes?.length || "0" },
+    { title: t("comments"), value: currentProfile?.comments?.length || "0" },
+  ], [currentProfile])
 
   // Handle follow/unfollow
   const handleFollowToggle = () => {
@@ -153,38 +219,17 @@ export default function EscortProfile() {
 
   // Add this after the handleTabClick function
   const renderTabContent = () => {
-    switch(activeTab) {
+    if (!currentProfile) {
+      return <LoadingContainer>Chargement du profil...</LoadingContainer>;
+    }
+    
+    switch (activeTab) {
       case 'photos':
-        return (
-          <PhotoGallery>
-            <GalleryTitle>Photo gallery</GalleryTitle>
-            <GalleryGrid>
-              {currentProfile.images.slice(1).map((photo, index) => (
-                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                  <img src={photo} alt="" />
-                </GalleryItem>
-              ))}
-            </GalleryGrid>
-          </PhotoGallery>
-        );
+        return <PhotosGrid photos={currentProfile.images || []} onPhotoClick={handlePhotoClick} />;
       case 'profile':
-        return (
-          <div>
-            <GalleryTitle>Profile information</GalleryTitle>
-            <ProfileDescription>
-              {currentProfile.description}
-            </ProfileDescription>
-          </div>
-        );
+        return <ProfileDetails profile={currentProfile} services={allservices} />;
       case 'videos':
-        return (
-          <div>
-            <GalleryTitle>Video gallery</GalleryTitle>
-            <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-              No videos available
-            </div>
-          </div>
-        );
+        return <VideosGrid videos={currentProfile.videos || []} />;
       case 'star':
         return (
           <div>
@@ -199,25 +244,14 @@ export default function EscortProfile() {
           <div>
             <GalleryTitle>Services that the escort offers:</GalleryTitle>
             <div style={{padding: '20px', textAlign: 'center', color: 'white'}}>
-              {currentProfile.services.map((service, index) => (
-                <div key={index} style={{margin: '10px 0'}}>{service}</div>
-              ))}
+              {currentProfile.services && Array.isArray(currentProfile.services) ? currentProfile.services.map((service, index) => (
+                <div key={index} style={{margin: '10px 0'}}>{typeof service === 'string' ? service : (service.name || JSON.stringify(service))}</div>
+              )) : <div>No services listed</div>}
             </div>
           </div>
         );
       default:
-        return (
-          <PhotoGallery>
-            <GalleryTitle>Photo gallery</GalleryTitle>
-            <GalleryGrid>
-              {currentProfile.images.slice(1).map((photo, index) => (
-                <GalleryItem key={index} onClick={() => handlePhotoClick(index)}>
-                  <img src={photo} alt="" />
-                </GalleryItem>
-              ))}
-            </GalleryGrid>
-          </PhotoGallery>
-        );
+        return <PhotosGrid photos={currentProfile.images || []} onPhotoClick={handlePhotoClick} />;
     }
   };
 
@@ -227,13 +261,20 @@ export default function EscortProfile() {
         <Background />
         <BodyContent>
           <>
+            {loading ? (
+              <LoadingContainer>Chargement du profil...</LoadingContainer>
+            ) : !currentProfile ? (
+              <LoadingContainer>Profil non trouvé</LoadingContainer>
+            ) : (
             <ProfileContainer>
                 <ProfileHeader>
                     <ProfileTopRow>
-                        <ProfileAvatar src={currentProfile.images[0]} />
-                        <ProfileInfo>
+                        <ProfileImgPreview profile={currentProfile} reload={init} />
+
+                        <ProfileInfoStyled>
                             <ProfileName style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
-                                {currentProfile.name}
+                              { currentProfile?.user?.name }
+                              { currentProfile?.verified ? <VerifiedIcon color='lightBlue' style={{ width: 36, height: 36 }} /> : null }
                             </ProfileName>
                             <HeaderActions>
                                 <NavIcon 
@@ -261,40 +302,31 @@ export default function EscortProfile() {
                                     }}
                                 />
                             </HeaderActions>
-                        </ProfileInfo>
+                        </ProfileInfoStyled>
                     </ProfileTopRow>
                     
                     <ProfileBottomRow>
                         <AgeDisplay>
                             <label>Age</label>
-                            <span>{currentProfile.age} years</span>
+                            <span>{currentProfile.age || "N/A"} years</span>
                         </AgeDisplay>
                         <CityDisplay>
                             <label>City State</label>
-                            <span>{currentProfile.location.city}/{currentProfile.location.state}</span>
+                            <span>{currentProfile.location?.city || "Unknown"}/{currentProfile.location?.state || "Unknown"}</span>
                         </CityDisplay>
                     </ProfileBottomRow>
                 </ProfileHeader>
 
-                <ProfileDescription>{currentProfile.description}</ProfileDescription>
+                <ProfileDescription>{currentProfile.description || "No description available"}</ProfileDescription>
 
                 <ProfileStats style={{ borderColor: 'white' }}>
-                    <StatItem style={{ borderColor: 'white' }}>
-                        <StatValue>{currentProfile.stats?.posts || currentProfile.posts}</StatValue>
-                        <StatLabel>posts</StatLabel>
-                    </StatItem>
-                    <StatItem style={{ borderColor: 'white' }}>
-                        <StatValue>{currentProfile.stats?.videos || currentProfile.videos}</StatValue>
-                        <StatLabel>videos</StatLabel>
-                    </StatItem>
-                    <StatItem style={{ borderColor: 'white' }}>
-                        <StatValue>{currentProfile.stats?.likes || currentProfile.likes}</StatValue>
-                        <StatLabel>likes</StatLabel>
-                    </StatItem>
-                    <StatItem style={{ borderColor: 'white' }}>
-                        <StatValue>{currentProfile.stats?.comments || currentProfile.comments}</StatValue>
-                        <StatLabel>comments</StatLabel>
-                    </StatItem>
+                    { escortFeedBack.map((item, index) => (
+                        <StatItem key={index} style={{ borderColor: 'white' }}>
+                            <StatValue>{item.value}</StatValue>
+                            <StatLabel>{item.title}</StatLabel>
+                        </StatItem>
+                    ))}
+                    
                 </ProfileStats>
 
                 <ActionButtons>
@@ -326,41 +358,9 @@ export default function EscortProfile() {
                     </WhatsappButton>
                 </ActionButtons>
 
-                <NavigationBar>
-                    <NavIcon 
-                        icon="photos" 
-                        src="/icons/cam-white.svg"
-                        active={activeTab === 'photos'}
-                        onClick={() => handleTabClick('photos')}
-                    />
-                    <NavIcon 
-                        icon="profile" 
-                        src="/icons/cabeca.svg"
-                        active={activeTab === 'profile'}
-                        onClick={() => handleTabClick('profile')}
-                    />
-                    <NavIcon 
-                        icon="videos" 
-                        src="/icons/video.svg"
-                        active={activeTab === 'videos'}
-                        onClick={() => handleTabClick('videos')}
-                    />
-                    <NavIcon 
-                        icon="star" 
-                        src="/icons/star-outline-white.svg"
-                        active={activeTab === 'star'}
-                        onClick={() => handleTabClick('star')}
-                    />
-                    <NavIcon 
-                        icon="hot" 
-                        src="/icons/pimenta.svg"
-                        active={activeTab === 'hot'}
-                        onClick={() => handleTabClick('hot')}
-                    />
-                </NavigationBar>
-
-                {renderTabContent()}
+                <EscortInfo profile={currentProfile} allservices={allservices} />
             </ProfileContainer>
+            )}
           </>
         </BodyContent>
       </BodyContainer>

@@ -2,30 +2,30 @@ import styled from "styled-components";
 
 export const PreviewContainer = styled.div.attrs({
 })`
-    width: 303px;
-    height: 302px;
+    width: 100px;
+    height: 100px;
     border-radius: 260px;
     background: linear-gradient(140deg, ${p => p.theme.palette.gradient.primary} 0%, ${p => p.theme.palette.gradient.secondary} 90%);
     position: relative;
-    padding: 8px;
+    padding: 2px;
 
     ${p => p.small ? ` 
-        width: 68px;
-        height: 68px;
+        width: 100px;
+        height: 100px;
         border-radius: 100px;
         padding: 0;
         ` : ``}
 
     ${p => p.medium ? `
-        width: 141px;
-        height: 142px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         padding: 0;
         ` : ``}
 
     @media(max-width: 767px){
-        max-width: 303px;
-        max-height: 302px;
+        max-width: 100px;
+        max-height: 100px;
 
         width: 50vw;
         height: 50vw;
